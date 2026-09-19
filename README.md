@@ -1,6 +1,6 @@
 # stigctl
 
-`stigctl` is an Enterprise Linux STIG lifecycle CLI. It uses **Yip** for remediation, **Goss** for validation, resolves organizational exceptions, and exports scan results as **CKLB 1.0** for DISA STIG Viewer 3.
+`stigctl` is an Enterprise Linux STIG lifecycle CLI. **Yip and Goss are compiled directly into the `stigctl` binary**: Yip provides remediation, Goss provides validation, the policy layer resolves organizational exceptions, and scan results can be exported as **CKLB 1.0** for DISA STIG Viewer 3.
 
 The CLI uses Charmbracelet **Fang v2** on top of Cobra.
 
@@ -8,11 +8,13 @@ The CLI uses Charmbracelet **Fang v2** on top of Cobra.
 
 The project is under active development. The core baseline resolver, Yip/Goss adapters, exception overlay, XCCDF parser, normalized result model, and CKLB exporter are scaffolded and wired together. STIG rule content still needs to be populated from the authoritative DISA release.
 
-## Requirements
+## Runtime dependencies
+
+`stigctl` does **not** require separate `yip` or `goss` executables. Both engines are linked into the Go binary. Host utilities referenced by STIG checks/remediations (for example `systemctl`, `sysctl`, `dnf`, `sshd`, or `auditctl`) are still expected to come from the target operating system.
+
+For development:
 
 - Go 1.27.1
-- [Yip](https://github.com/mudler/yip) on systems where `stigctl apply` is used
-- [Goss](https://github.com/goss-org/goss) on systems where `stigctl validate` or `stigctl scan` is used
 - The authoritative DISA XCCDF XML for CKLB export
 
 ## Commands
