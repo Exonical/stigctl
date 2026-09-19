@@ -9,7 +9,9 @@ import (
 type Request struct {
 	Baseline string
 	Profile  string
-	Rules    []string
+	GossFile string
+	Vars     []string
+	Package  string
 }
 
 type Validator interface {
