@@ -1,3 +1,33 @@
 schema_version: 1
 
+# Use status: exception for approved deviations from an applicable requirement.
+# Use status: not_applicable when the DISA check text explicitly allows N/A for
+# the target's documented role or architecture.
+#
+# Package rules with conditional applicability in RHEL 9 V2R9 include:
+#   V-257825 subscription-manager   - N/A when the system is not internet connected.
+#   V-257832 gssproxy               - N/A when authorized NFS mounts require it.
+#   V-257838 openssl-pkcs11         - N/A with an approved alternate MFA method.
+#   V-257954 libreswan              - N/A when there is no operational need for Libreswan.
+#   V-258124 pcsc-lite              - N/A with an approved alternate MFA method.
+#   V-272488 postfix                - N/A when another approved notification service is used.
+#
+# Example:
+#
+# exceptions:
+#   V-257954:
+#     status: not_applicable
+#     scope:
+#       profiles:
+#         - hpc-compute
+#     justification:
+#       reason: "Libreswan is not used on this system role."
+#     approval:
+#       ticket: "RMF-2026-0001"
+#       owner: platform-security
+#       approved_by: ISSO
+#     lifecycle:
+#       created: 2026-09-19
+#       expires: 2027-09-19
+#
 exceptions: {}
