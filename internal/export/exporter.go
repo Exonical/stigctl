@@ -5,12 +5,23 @@ import (
 	"io"
 
 	"github.com/Exonical/stigctl/internal/results"
+	"github.com/Exonical/stigctl/internal/xccdf"
 )
 
+type Target struct {
+	Hostname   string
+	IPAddress  string
+	MACAddress string
+	FQDN       string
+	Comments   string
+	Role       string
+}
+
 type Request struct {
-	Baseline string
-	Hostname string
-	Results  []results.Result
+	Baseline  string
+	Benchmark xccdf.Benchmark
+	Target    Target
+	Results   []results.Result
 }
 
 type Exporter interface {
