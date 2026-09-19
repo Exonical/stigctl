@@ -25,6 +25,7 @@ func FilterFiles(files []string, stage string, skipSteps map[string]struct{}) (F
 	cleanup := func() { _ = os.RemoveAll(dir) }
 
 	out := make([]string, 0, len(files))
+	found := make(map[string]struct{}, len(skipSteps))
 	for _, source := range files {
 		data, err := os.ReadFile(source)
 		if err != nil {
@@ -50,6 +51,7 @@ func FilterFiles(files []string, stage string, skipSteps map[string]struct{}) (F
 				}
 				name, _ := step["name"].(string)
 				if _, skip := skipSteps[name]; skip {
+					found[name] = struct{}{}
 					continue
 				}
 				filtered = append(filtered, raw)
@@ -68,6 +70,13 @@ func FilterFiles(files []string, stage string, skipSteps map[string]struct{}) (F
 			return FilterResult{}, fmt.Errorf("write filtered Yip file %s: %w", target, err)
 		}
 		out = append(out, target)
+	}
+
+	for name := range skipSteps {
+		if _, ok := found[name]; !ok {
+			cleanup()
+			return FilterResult{}, fmt.Errorf("excepted Yip remediation step %q was not found", name)
+		}
 	}
 
 	return FilterResult{Files: out, Cleanup: cleanup}, nil
