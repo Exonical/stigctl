@@ -28,7 +28,7 @@ type xmlPlainText struct {
 type xmlGroup struct {
 	ID          string    `xml:"id,attr"`
 	Title       string    `xml:"title"`
-	Description string    `xml:"description,innerxml"`
+	Description string    `xml:"description"`
 	Rules       []xmlRule `xml:"Rule"`
 }
 
@@ -38,7 +38,7 @@ type xmlRule struct {
 	Weight      string         `xml:"weight,attr"`
 	Version     string         `xml:"version"`
 	Title       string         `xml:"title"`
-	Description string         `xml:"description,innerxml"`
+	Description string         `xml:"description"`
 	Checks      []xmlCheck     `xml:"check"`
 	Fix         xmlFix         `xml:"fix"`
 	Idents      []xmlIdent     `xml:"ident"`
