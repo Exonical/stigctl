@@ -96,3 +96,33 @@ func Write(w io.Writer, doc Document) error {
 	}
 	return nil
 }
+
+
+func SanitizeTemplate(doc Document, title string) (Document, error) {
+	checklistID, err := id.UUIDv4()
+	if err != nil {
+		return Document{}, err
+	}
+	doc.ID = checklistID
+	doc.Title = title
+	doc.Active = true
+	doc.Mode = 2
+	doc.HasPath = false
+	doc.CKLBVersion = "1.0"
+	doc.TargetData = TargetData{
+		TargetType:     "Computing",
+		Role:           "None",
+		TechnologyArea: "",
+	}
+
+	for stigIndex := range doc.STIGs {
+		for ruleIndex := range doc.STIGs[stigIndex].Rules {
+			rule := &doc.STIGs[stigIndex].Rules[ruleIndex]
+			rule.Status = "not_reviewed"
+			rule.Comments = ""
+			rule.FindingDetails = ""
+			rule.Overrides = map[string]any{}
+		}
+	}
+	return doc, nil
+}
