@@ -1,63 +1,155 @@
 package goss
 
 import (
-	"bytes"
 	"context"
-	"errors"
 	"fmt"
-	"os/exec"
+	"strings"
 
 	"github.com/Exonical/stigctl/internal/results"
 	"github.com/Exonical/stigctl/internal/validation"
+	gosslib "github.com/goss-org/goss"
+	"github.com/goss-org/goss/resource"
+	gossutil "github.com/goss-org/goss/util"
 )
 
-type Runner struct {
-	Binary string
+type Runner struct{}
+
+func New() Runner {
+	return Runner{}
 }
 
-func New(binary string) Runner {
-	if binary == "" {
-		binary = "goss"
-	}
-	return Runner{Binary: binary}
-}
-
-func (r Runner) Validate(ctx context.Context, req validation.Request) ([]results.Result, error) {
+func (Runner) Validate(ctx context.Context, req validation.Request) ([]results.Result, error) {
 	if req.GossFile == "" {
 		return nil, fmt.Errorf("goss file is required")
 	}
 
-	args := []string{"-g", req.GossFile}
-	for _, vars := range req.Vars {
-		args = append(args, "--vars", vars)
+	config, err := gossutil.NewConfig(
+		gossutil.WithSpecFile(req.GossFile),
+		gossutil.WithVarsFiles(req.Vars),
+		gossutil.WithPackageManager(req.Package),
+		gossutil.WithMaxConcurrency(50),
+	)
+	if err != nil {
+		return nil, fmt.Errorf("configure embedded Goss: %w", err)
 	}
-	if req.Package != "" {
-		args = append(args, "--package", req.Package)
+
+	ch, err := gosslib.ValidateResults(ctx, config)
+	if err != nil {
+		return nil, fmt.Errorf("embedded Goss validation setup failed: %w", err)
 	}
-	args = append(args, "validate", "--format", "json", "--format-options", "sort")
 
-	var stdout, stderr bytes.Buffer
-	cmd := exec.CommandContext(ctx, r.Binary, args...)
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
+	var tests []resource.TestResult
+	for batch := range ch {
+		tests = append(tests, batch...)
+	}
+	return normalizeResults(tests), nil
+}
 
-	runErr := cmd.Run()
-	parsed, parseErr := Parse(bytes.NewReader(stdout.Bytes()))
-	if parseErr != nil {
-		if runErr != nil {
-			return nil, fmt.Errorf("goss failed (%v), stderr: %s; parse output: %w", runErr, stderr.String(), parseErr)
+func normalizeResults(tests []resource.TestResult) []results.Result {
+	grouped := map[string][]resource.TestResult{}
+	for _, test := range tests {
+		id := vulnIDFromResource(test)
+		if id == "" {
+			continue
 		}
-		return nil, parseErr
+		grouped[id] = append(grouped[id], test)
 	}
 
-	if runErr != nil {
-		var exitErr *exec.ExitError
-		if errors.As(runErr, &exitErr) && exitErr.ExitCode() == 1 {
-			// Goss uses exit code 1 when validation has findings. Parsed results are authoritative.
-			return parsed, nil
+	ids := make([]string, 0, len(grouped))
+	for id := range grouped {
+		ids = append(ids, id)
+	}
+	sortStrings(ids)
+
+	out := make([]results.Result, 0, len(ids))
+	for _, id := range ids {
+		group := grouped[id]
+		status := results.StatusPass
+		allSkipped := true
+		var evidence []results.Evidence
+		var title string
+		var details []string
+
+		for _, test := range group {
+			if title == "" {
+				title = test.Title
+			}
+			if !test.Skipped {
+				allSkipped = false
+			}
+			if test.Result == resource.FAIL {
+				status = results.StatusFail
+			}
+			message := testMessage(test)
+			evidence = append(evidence, results.Evidence{
+				Type:    test.ResourceType + "." + test.Property,
+				Message: message,
+			})
+			if message != "" {
+				details = append(details, message)
+			}
 		}
-		return parsed, fmt.Errorf("goss execution failed: %w: %s", runErr, stderr.String())
-	}
 
-	return parsed, nil
+		if allSkipped {
+			status = results.StatusSkipped
+		}
+
+		out = append(out, results.Result{
+			VulnID:         id,
+			Title:          title,
+			Status:         status,
+			FindingDetails: strings.Join(details, "\n"),
+			Evidence:       evidence,
+		})
+	}
+	return out
+}
+
+func vulnIDFromResource(test resource.TestResult) string {
+	if raw, ok := test.Meta["stig_id"]; ok {
+		if id := strings.TrimSpace(fmt.Sprint(raw)); vulnIDPattern.MatchString(id) {
+			return id
+		}
+	}
+	if vulnIDPattern.MatchString(test.ResourceId) {
+		return test.ResourceId
+	}
+	for _, token := range strings.Fields(test.Title) {
+		token = strings.Trim(token, " :-")
+		if vulnIDPattern.MatchString(token) {
+			return token
+		}
+	}
+	if match := vulnIDPattern.FindString(test.ResourceId); match != "" {
+		return match
+	}
+	return ""
+}
+
+func testMessage(test resource.TestResult) string {
+	if test.Skipped {
+		return fmt.Sprintf("%s: %s: %s: skipped", test.ResourceType, test.ResourceId, test.Property)
+	}
+	if test.Err != nil {
+		return fmt.Sprintf("%s: %s: %s: %s", test.ResourceType, test.ResourceId, test.Property, test.Err.Error())
+	}
+	if test.Successful {
+		return fmt.Sprintf("%s: %s: %s: matches expectation", test.ResourceType, test.ResourceId, test.Property)
+	}
+	return fmt.Sprintf(
+		"%s: %s: %s: expected=%v actual=%v",
+		test.ResourceType,
+		test.ResourceId,
+		test.Property,
+		test.MatcherResult.Expected,
+		test.MatcherResult.Actual,
+	)
+}
+
+func sortStrings(values []string) {
+	for i := 1; i < len(values); i++ {
+		for j := i; j > 0 && values[j] < values[j-1]; j-- {
+			values[j], values[j-1] = values[j-1], values[j]
+		}
+	}
 }
