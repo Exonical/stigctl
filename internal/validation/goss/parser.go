@@ -99,6 +99,5 @@ func findingDetails(tests []TestResult) string {
 			lines = append(lines, test.SummaryLine)
 		}
 	}
-	return strings.Join(lines, "
-")
+	return strings.Join(lines, "\n")
 }
