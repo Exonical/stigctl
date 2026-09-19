@@ -1,3 +1,68 @@
-# Goss validation resources for services controls.
-# Use DISA V-IDs as resource IDs where possible and add meta.stig_id.
-{}
+service:
+  V-257782:
+    name: rngd
+    title: "RHEL 9 must enable the hardware random number generator entropy gatherer service."
+    meta:
+      stig_id: V-257782
+    running: true
+    skip: {{ not (index .Vars.enabled_rules "V-257782") }}
+  V-257783:
+    name: systemd-journald
+    title: "RHEL 9 systemd-journald service must be enabled."
+    meta:
+      stig_id: V-257783
+    running: true
+    skip: {{ not (index .Vars.enabled_rules "V-257783") }}
+  V-257818-state:
+    name: kdump
+    title: "The kdump service on RHEL 9 must be disabled."
+    meta:
+      stig_id: V-257818
+    enabled: false
+    running: false
+    skip: {{ not (index .Vars.enabled_rules "V-257818") }}
+  V-257936:
+    name: firewalld
+    title: "The firewalld service on RHEL 9 must be active."
+    meta:
+      stig_id: V-257936
+    running: true
+    skip: {{ not (index .Vars.enabled_rules "V-257936") }}
+  V-257944:
+    name: chronyd
+    title: "RHEL 9 chronyd service must be enabled."
+    meta:
+      stig_id: V-257944
+    running: true
+    skip: {{ not (index .Vars.enabled_rules "V-257944") }}
+  V-258142:
+    name: rsyslog
+    title: "The rsyslog service on RHEL 9 must be active."
+    meta:
+      stig_id: V-258142
+    running: true
+    skip: {{ not (index .Vars.enabled_rules "V-258142") }}
+  V-258152:
+    name: auditd
+    title: "RHEL 9 audit service must be enabled."
+    meta:
+      stig_id: V-258152
+    enabled: true
+    running: true
+    skip: {{ not (index .Vars.enabled_rules "V-258152") }}
+
+command:
+  V-257786-mask:
+    title: "RHEL 9 debug-shell systemd service must be disabled."
+    meta:
+      stig_id: V-257786
+    exec: "test \"$(systemctl show debug-shell.service -p LoadState --value)\" = masked"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257786") }}
+  V-257818-mask:
+    title: "The kdump service on RHEL 9 must be disabled."
+    meta:
+      stig_id: V-257818
+    exec: "test \"$(systemctl show kdump -p LoadState --value)\" = masked"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257818") }}
