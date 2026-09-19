@@ -26,7 +26,6 @@ func newScanCommand() *cobra.Command {
 		profile        string
 		format         string
 		output         string
-		gossBinary     string
 		failOnFindings bool
 		hostname       string
 		ipAddress      string
@@ -75,7 +74,7 @@ func newScanCommand() *cobra.Command {
 			}
 			defer cleanup()
 
-			scanned, err := goss.New(gossBinary).Validate(cmd.Context(), validation.Request{
+			scanned, err := goss.New().Validate(cmd.Context(), validation.Request{
 				Baseline: args[0],
 				Profile:  profile,
 				GossFile: gossFile,
@@ -189,7 +188,6 @@ func newScanCommand() *cobra.Command {
 	cmd.Flags().StringVar(&profile, "profile", "default", "system profile")
 	cmd.Flags().StringVar(&format, "format", "cklb", "output format: cklb or json")
 	cmd.Flags().StringVarP(&output, "output", "o", "", "output file")
-	cmd.Flags().StringVar(&gossBinary, "goss-binary", "goss", "path to the Goss executable")
 	cmd.Flags().BoolVar(&failOnFindings, "fail-on-findings", false, "exit non-zero after writing results when findings exist")
 	cmd.Flags().StringVar(&hostname, "hostname", "", "target hostname; defaults to the local hostname")
 	cmd.Flags().StringVar(&ipAddress, "ip-address", "", "target IP address for CKLB metadata")
