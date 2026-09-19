@@ -12,7 +12,10 @@ type Context struct {
 }
 
 func (e Exception) Applies(ctx Context) bool {
-	if e.Status != "" && !strings.EqualFold(e.Status, "exception") {
+	if e.Status != "" &&
+		!strings.EqualFold(e.Status, "exception") &&
+		!strings.EqualFold(e.Status, "not_applicable") &&
+		!strings.EqualFold(e.Status, "not-applicable") {
 		return false
 	}
 	if !e.Active(ctx.Now) {
