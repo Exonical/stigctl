@@ -73,6 +73,7 @@ type Rule struct {
 	Overrides                map[string]any  `json:"overrides"`
 	Comments                 string          `json:"comments"`
 	FindingDetails           string          `json:"finding_details"`
+	SRGID                    string          `json:"srg_id"`
 }
 
 type CheckContentRef struct {
