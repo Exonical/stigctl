@@ -17,7 +17,6 @@ import (
 func newValidateCommand() *cobra.Command {
 	var (
 		profile        string
-		gossBinary     string
 		failOnFindings bool
 	)
 
@@ -54,7 +53,7 @@ func newValidateCommand() *cobra.Command {
 			}
 			defer cleanup()
 
-			scanned, err := goss.New(gossBinary).Validate(cmd.Context(), validation.Request{
+			scanned, err := goss.New().Validate(cmd.Context(), validation.Request{
 				Baseline: args[0],
 				Profile:  profile,
 				GossFile: gossFile,
@@ -84,7 +83,6 @@ func newValidateCommand() *cobra.Command {
 	}
 
 	cmd.Flags().StringVar(&profile, "profile", "default", "system profile")
-	cmd.Flags().StringVar(&gossBinary, "goss-binary", "goss", "path to the Goss executable")
 	cmd.Flags().BoolVar(&failOnFindings, "fail-on-findings", true, "exit non-zero when open findings or validation errors exist")
 	return cmd
 }
