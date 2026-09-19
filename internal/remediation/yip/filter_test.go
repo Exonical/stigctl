@@ -47,3 +47,20 @@ stages:
 		t.Fatal("non-excepted step was removed")
 	}
 }
+
+
+func TestFilterFilesRejectsMissingExceptedStep(t *testing.T) {
+	dir := t.TempDir()
+	source := filepath.Join(dir, "10-kernel.yaml")
+	content := []byte("name: Kernel\nstages:\n  stig:\n    - name: V-1\n      commands:\n        - true\n")
+	if err := os.WriteFile(source, content, 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	_, err := FilterFiles([]string{source}, "stig", map[string]struct{}{
+		"V-DOES-NOT-EXIST": {},
+	})
+	if err == nil {
+		t.Fatal("expected missing excepted remediation step to fail")
+	}
+}
