@@ -20,7 +20,7 @@ jobs:
       - name: Resolve modules
         run: go mod tidy
       - name: Format sources
-        run: gofmt -w .
+        run: gofmt -w $(find . -name '*.go' -type f)
       - name: Vet
         run: go vet ./...
       - name: Test
