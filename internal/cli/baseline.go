@@ -7,6 +7,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 
 	"github.com/Exonical/stigctl/internal/baseline"
@@ -62,6 +63,7 @@ func newBaselineCommand() *cobra.Command {
 		newBaselineImportCommand(),
 		newBaselineImportCKLBCommand(),
 		newBaselineVerifyCommand(),
+		newBaselineCoverageCommand(),
 	)
 
 	return cmd
@@ -385,6 +387,62 @@ func newBaselineVerifyCommand() *cobra.Command {
 				fmt.Fprintf(cmd.OutOrStdout(), ", CKLB template aligned")
 			}
 			fmt.Fprintln(cmd.OutOrStdout())
+			return nil
+		},
+	}
+}
+
+
+func newBaselineCoverageCommand() *cobra.Command {
+	return &cobra.Command{
+		Use:   "coverage <baseline>",
+		Short: "Show implementation coverage for a STIG baseline",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			resolved, err := baseline.NewStore(contentRoot).Resolve(args[0])
+			if err != nil {
+				return err
+			}
+			doc, err := rules.Load(resolved.RulesFile())
+			if err != nil {
+				return err
+			}
+
+			statusCounts := map[rules.Status]int{}
+			moduleCounts := map[string]int{}
+			for _, rule := range doc.Rules {
+				statusCounts[rule.Status]++
+				if rule.Remediation.File != "" {
+					moduleCounts[rule.Remediation.File]++
+				}
+			}
+
+			total := len(doc.Rules)
+			automated := statusCounts[rules.StatusAutomated] + statusCounts[rules.StatusTailored]
+			coverage := 0.0
+			if total > 0 {
+				coverage = float64(automated) / float64(total) * 100
+			}
+
+			fmt.Fprintf(cmd.OutOrStdout(), "%s implementation coverage\n", args[0])
+			fmt.Fprintf(cmd.OutOrStdout(), "  total:          %d\n", total)
+			fmt.Fprintf(cmd.OutOrStdout(), "  automated:      %d\n", statusCounts[rules.StatusAutomated])
+			fmt.Fprintf(cmd.OutOrStdout(), "  tailored:       %d\n", statusCounts[rules.StatusTailored])
+			fmt.Fprintf(cmd.OutOrStdout(), "  manual:         %d\n", statusCounts[rules.StatusManual])
+			fmt.Fprintf(cmd.OutOrStdout(), "  not applicable: %d\n", statusCounts[rules.StatusNotApplicable])
+			fmt.Fprintf(cmd.OutOrStdout(), "  coverage:       %.1f%%\n", coverage)
+
+			if len(moduleCounts) > 0 {
+				fmt.Fprintln(cmd.OutOrStdout(), "  modules:")
+				names := make([]string, 0, len(moduleCounts))
+				for name := range moduleCounts {
+					names = append(names, name)
+				}
+				sort.Strings(names)
+				for _, name := range names {
+					fmt.Fprintf(cmd.OutOrStdout(), "    %-32s %d\n", name, moduleCounts[name])
+				}
+			}
 			return nil
 		},
 	}
