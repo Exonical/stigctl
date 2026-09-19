@@ -6,7 +6,7 @@ on:
   pull_request:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   test:
@@ -17,20 +17,11 @@ jobs:
         with:
           go-version-file: go.mod
           cache: true
-          cache-dependency-path: go.mod
-      - name: Resolve modules
-        run: go mod tidy
-
-      - name: Commit Go module sums
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+          cache-dependency-path: go.sum
+      - name: Verify modules are tidy
         run: |
-          if ! git diff --quiet -- go.mod go.sum; then
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add go.mod go.sum
-            git commit -m "build: commit Go module sums"
-            git push
-          fi
+          go mod tidy
+          git diff --exit-code -- go.mod go.sum
       - name: Format sources
         run: gofmt -w $(find . -name '*.go' -type f)
       - name: Vet
