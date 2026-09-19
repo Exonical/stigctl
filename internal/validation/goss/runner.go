@@ -1,7 +1,6 @@
 package goss
 
 import (
-	"context"
 	"fmt"
 	"strings"
 
@@ -23,17 +22,27 @@ func (Runner) Validate(ctx context.Context, req validation.Request) ([]results.R
 		return nil, fmt.Errorf("goss file is required")
 	}
 
-	config, err := gossutil.NewConfig(
+	if err := ctx.Err(); err != nil {
+		return nil, err
+	}
+	if len(req.Vars) > 1 {
+		return nil, fmt.Errorf("embedded Goss v0.4.10 supports one vars file, got %d", len(req.Vars))
+	}
+
+	options := []gossutil.ConfigOption{
 		gossutil.WithSpecFile(req.GossFile),
-		gossutil.WithVarsFiles(req.Vars),
 		gossutil.WithPackageManager(req.Package),
 		gossutil.WithMaxConcurrency(50),
-	)
+	}
+	if len(req.Vars) == 1 {
+		options = append(options, gossutil.WithVarsFile(req.Vars[0]))
+	}
+	config, err := gossutil.NewConfig(options...)
 	if err != nil {
 		return nil, fmt.Errorf("configure embedded Goss: %w", err)
 	}
 
-	ch, err := gosslib.ValidateResults(ctx, config)
+	ch, err := gosslib.ValidateResults(config)
 	if err != nil {
 		return nil, fmt.Errorf("embedded Goss validation setup failed: %w", err)
 	}
