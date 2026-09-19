@@ -1,0 +1,5 @@
+/bin/
+/dist/
+*.cklb
+*.junit.xml
+coverage.out
