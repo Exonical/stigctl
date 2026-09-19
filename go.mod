@@ -11,3 +11,5 @@ require (
 	github.com/twpayne/go-vfs/v5 v5.0.5
 	gopkg.in/yaml.v3 v3.0.1
 )
+
+replace github.com/tredoe/osutil => github.com/kairos-io/osutil v1.5.0
