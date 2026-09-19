@@ -17,7 +17,6 @@ import (
 func newApplyCommand() *cobra.Command {
 	var (
 		profile          string
-		yipBinary        string
 		ignoreExceptions bool
 	)
 
@@ -75,7 +74,7 @@ func newApplyCommand() *cobra.Command {
 			}
 			defer filtered.Cleanup()
 
-			result, err := yip.New(yipBinary).Apply(cmd.Context(), remediation.Request{
+			result, err := yip.New().Apply(cmd.Context(), remediation.Request{
 				Baseline: args[0],
 				Profile:  profile,
 				Stage:    "stig",
@@ -92,7 +91,6 @@ func newApplyCommand() *cobra.Command {
 	}
 
 	cmd.Flags().StringVar(&profile, "profile", "default", "system profile")
-	cmd.Flags().StringVar(&yipBinary, "yip-binary", "yip", "path to the Yip executable")
 	cmd.Flags().BoolVar(&ignoreExceptions, "ignore-exceptions", false, "apply remediation even when an approved exception applies")
 	return cmd
 }
