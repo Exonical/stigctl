@@ -1,6 +1,7 @@
 package goss
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
