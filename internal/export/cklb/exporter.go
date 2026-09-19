@@ -58,18 +58,13 @@ func (Exporter) Export(_ context.Context, w io.Writer, req stigexport.Request) e
 			}
 		}
 
-		ruleIDSrc := source.RuleID
-		if !strings.HasSuffix(ruleIDSrc, "_rule") && ruleIDSrc != "" {
-			ruleIDSrc += "_rule"
-		}
-
 		stig.Rules = append(stig.Rules, Rule{
 			GroupIDSrc:         source.VulnID,
-			GroupTree:          []GroupTree{{ID: source.VulnID, Title: source.GroupTitle, Description: ""}},
+			GroupTree:          []GroupTree{{ID: source.VulnID, Title: source.GroupTreeTitle, Description: ""}},
 			GroupID:            source.VulnID,
 			Severity:           normalizeSeverity(source.Severity),
 			GroupTitle:         source.GroupTitle,
-			RuleIDSrc:          ruleIDSrc,
+			RuleIDSrc:          source.RuleIDSrc,
 			RuleID:             source.RuleID,
 			RuleVersion:        source.RuleVersion,
 			RuleTitle:          source.Title,
@@ -79,9 +74,16 @@ func (Exporter) Export(_ context.Context, w io.Writer, req stigexport.Request) e
 			CheckContentRef:    CheckContentRef{Href: source.CheckRefHref, Name: source.CheckRefName},
 			Classification:     "Unclassified",
 			Discussion:         source.Discussion,
-			FalsePositives:     "",
-			FalseNegatives:     "",
-			Documentable:       "false",
+			FalsePositives:     source.FalsePositives,
+			FalseNegatives:     source.FalseNegatives,
+			Documentable:       source.Documentable,
+			SecurityOverrideGuidance: source.SecurityOverrideGuidance,
+			PotentialImpacts:   source.PotentialImpacts,
+			ThirdPartyTools:    source.ThirdPartyTools,
+			IAControls:         source.IAControls,
+			Responsibility:     source.Responsibility,
+			Mitigations:        source.Mitigations,
+			MitigationControl:  source.MitigationControl,
 			LegacyIDs:          source.LegacyIDs,
 			CCIs:               source.CCIs,
 			ReferenceIdentifier: source.ReferenceID,
