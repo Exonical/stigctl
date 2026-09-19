@@ -1,4 +1,56 @@
 name: RHEL 9 STIG - Services
 
 stages:
-  stig: []
+  stig:
+    - name: V-257782
+      only_service_manager: systemd
+      systemctl:
+        enable:
+          - rngd
+        start:
+          - rngd
+    - name: V-257783
+      only_service_manager: systemd
+      systemctl:
+        enable:
+          - systemd-journald
+        start:
+          - systemd-journald
+    - name: V-257786
+      only_service_manager: systemd
+      commands:
+        - systemctl disable --now debug-shell.service
+        - systemctl mask --now debug-shell.service
+    - name: V-257818
+      only_service_manager: systemd
+      commands:
+        - systemctl disable --now kdump
+        - systemctl mask --now kdump
+    - name: V-257936
+      only_service_manager: systemd
+      systemctl:
+        enable:
+          - firewalld
+        start:
+          - firewalld
+    - name: V-257944
+      only_service_manager: systemd
+      systemctl:
+        enable:
+          - chronyd
+        start:
+          - chronyd
+    - name: V-258142
+      only_service_manager: systemd
+      systemctl:
+        enable:
+          - rsyslog
+        start:
+          - rsyslog
+    - name: V-258152
+      only_service_manager: systemd
+      systemctl:
+        enable:
+          - auditd
+        start:
+          - auditd
