@@ -89,3 +89,23 @@ func (r Resolved) GossFile() (string, error) {
 	}
 	return path, nil
 }
+
+func (r Resolved) RulesFile() string {
+	return filepath.Join(r.Path, "rules.yaml")
+}
+
+func (r Resolved) ExceptionsFile() string {
+	return filepath.Join(r.Path, "exceptions.yaml")
+}
+
+func (r Resolved) XCCDFFile() (string, error) {
+	files, err := filepath.Glob(filepath.Join(r.Path, "source", "*.xml"))
+	if err != nil {
+		return "", fmt.Errorf("glob XCCDF source: %w", err)
+	}
+	sort.Strings(files)
+	if len(files) == 0 {
+		return "", fmt.Errorf("no XCCDF source XML found under %s", filepath.Join(r.Path, "source"))
+	}
+	return files[0], nil
+}
