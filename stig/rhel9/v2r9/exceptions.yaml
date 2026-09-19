@@ -30,4 +30,88 @@ schema_version: 1
 #       created: 2026-09-19
 #       expires: 2027-09-19
 #
-exceptions: {}
+exceptions:
+  V-257825:
+    status: not_applicable
+    scope:
+      profiles:
+        - container-ci
+    justification:
+      reason: "The CI container is not a Red Hat subscribed system and does not use subscription-manager."
+    approval:
+      owner: stigctl-ci
+      approved_by: stigctl-ci
+    lifecycle:
+      created: 2026-09-19
+
+  # Containers share the host kernel. These controls are exercised on real
+  # hosts, not by mutating the GitHub Actions runner kernel from CI.
+  V-257797: &container_kernel_na
+    status: not_applicable
+    scope:
+      profiles: [container-ci]
+    justification:
+      reason: "CI container does not own the host kernel."
+    approval:
+      owner: stigctl-ci
+      approved_by: stigctl-ci
+    lifecycle:
+      created: 2026-09-19
+  V-257798: *container_kernel_na
+  V-257799: *container_kernel_na
+  V-257800: *container_kernel_na
+  V-257801: *container_kernel_na
+  V-257802: *container_kernel_na
+  V-257803: *container_kernel_na
+  V-257804: *container_kernel_na
+  V-257805: *container_kernel_na
+  V-257806: *container_kernel_na
+  V-257807: *container_kernel_na
+  V-257808: *container_kernel_na
+  V-257809: *container_kernel_na
+  V-257810: *container_kernel_na
+  V-257811: *container_kernel_na
+  V-257816: *container_kernel_na
+  V-257942: *container_kernel_na
+
+  V-257957: *container_kernel_na
+  V-257958: *container_kernel_na
+  V-257959: *container_kernel_na
+  V-257960: *container_kernel_na
+  V-257961: *container_kernel_na
+  V-257962: *container_kernel_na
+  V-257963: *container_kernel_na
+  V-257964: *container_kernel_na
+  V-257965: *container_kernel_na
+  V-257966: *container_kernel_na
+  V-257967: *container_kernel_na
+  V-257968: *container_kernel_na
+  V-257969: *container_kernel_na
+  V-257970: *container_kernel_na
+  V-257971: *container_kernel_na
+  V-257972: *container_kernel_na
+  V-257973: *container_kernel_na
+  V-257974: *container_kernel_na
+  V-257975: *container_kernel_na
+  V-257976: *container_kernel_na
+  V-257977: *container_kernel_na
+
+  # These services represent host hardware, firewall, audit, or boot behavior.
+  V-257782: &container_service_na
+    status: not_applicable
+    scope:
+      profiles: [container-ci]
+    justification:
+      reason: "CI container does not own the host service/hardware boundary."
+    approval:
+      owner: stigctl-ci
+      approved_by: stigctl-ci
+    lifecycle:
+      created: 2026-09-19
+  V-257783: *container_service_na
+  V-257786: *container_service_na
+  V-257818: *container_service_na
+  V-257936: *container_service_na
+  V-257944: *container_service_na
+  V-258142: *container_service_na
+  V-258152: *container_service_na
