@@ -28,7 +28,7 @@ type xmlPlainText struct {
 type xmlGroup struct {
 	ID          string    `xml:"id,attr"`
 	Title       string    `xml:"title"`
-	Description string    `xml:"description"`
+	Description string    `xml:"description,innerxml"`
 	Rules       []xmlRule `xml:"Rule"`
 }
 
@@ -38,16 +38,19 @@ type xmlRule struct {
 	Weight      string         `xml:"weight,attr"`
 	Version     string         `xml:"version"`
 	Title       string         `xml:"title"`
-	Description string         `xml:"description"`
+	Description string         `xml:"description,innerxml"`
 	Checks      []xmlCheck     `xml:"check"`
+	FixText     xmlFixText     `xml:"fixtext"`
 	Fix         xmlFix         `xml:"fix"`
 	Idents      []xmlIdent     `xml:"ident"`
 	References  []xmlReference `xml:"reference"`
 }
 
 type xmlCheck struct {
+	System  string      `xml:"system,attr"`
 	Content string      `xml:"check-content"`
 	Ref     xmlCheckRef `xml:"check-content-ref"`
+	Text    string      `xml:",chardata"`
 }
 
 type xmlCheckRef struct {
@@ -55,7 +58,13 @@ type xmlCheckRef struct {
 	Name string `xml:"name,attr"`
 }
 
+type xmlFixText struct {
+	FixRef string `xml:"fixref,attr"`
+	Text   string `xml:",chardata"`
+}
+
 type xmlFix struct {
+	ID   string `xml:"id,attr"`
 	Text string `xml:",chardata"`
 }
 
@@ -90,33 +99,44 @@ func Parse(r io.Reader) (Benchmark, error) {
 		for _, rule := range group.Rules {
 			description := parseDescription(rule.Description)
 			converted := Rule{
-				VulnID:                  normalizeID(group.ID),
-				RuleID:                  normalizeRuleID(rule.ID),
-				RuleIDSrc:               normalizeRuleIDSource(rule.ID),
-				RuleVersion:             strings.TrimSpace(rule.Version),
-				Title:                   strings.TrimSpace(rule.Title),
-				GroupTitle:              strings.TrimSpace(rule.Title),
-				GroupTreeTitle:          strings.TrimSpace(group.Title),
-				Severity:                strings.TrimSpace(rule.Severity),
-				Weight:                  strings.TrimSpace(rule.Weight),
-				Description:             description.All,
-				Discussion:              description.VulnDiscussion,
-				FalsePositives:          description.FalsePositives,
-				FalseNegatives:          description.FalseNegatives,
-				Documentable:            description.Documentable,
-				Mitigations:             description.Mitigations,
+				VulnID:                   normalizeID(group.ID),
+				RuleID:                   normalizeRuleID(rule.ID),
+				RuleIDSrc:                normalizeRuleIDSource(rule.ID),
+				RuleVersion:              strings.TrimSpace(rule.Version),
+				Title:                    strings.TrimSpace(rule.Title),
+				GroupTitle:               strings.TrimSpace(rule.Title),
+				GroupTreeTitle:           strings.TrimSpace(group.Title),
+				Severity:                 strings.TrimSpace(rule.Severity),
+				Weight:                   strings.TrimSpace(rule.Weight),
+				Description:              description.All,
+				Discussion:               description.VulnDiscussion,
+				FalsePositives:           description.FalsePositives,
+				FalseNegatives:           description.FalseNegatives,
+				Documentable:             description.Documentable,
+				Mitigations:              description.Mitigations,
 				SecurityOverrideGuidance: description.SeverityOverrideGuidance,
-				PotentialImpacts:        description.PotentialImpacts,
-				ThirdPartyTools:         description.ThirdPartyTools,
-				MitigationControl:       description.MitigationControl,
-				Responsibility:          description.Responsibility,
-				IAControls:              description.IAControls,
-				FixText:                 strings.TrimSpace(rule.Fix.Text),
+				PotentialImpacts:         description.PotentialImpacts,
+				ThirdPartyTools:          description.ThirdPartyTools,
+				MitigationControl:        description.MitigationControl,
+				Responsibility:           description.Responsibility,
+				IAControls:               description.IAControls,
+				FixText:                  strings.TrimSpace(rule.FixText.Text),
 			}
+			if converted.FixText == "" {
+				converted.FixText = strings.TrimSpace(rule.Fix.Text)
+			}
+
 			if len(rule.Checks) > 0 {
-				converted.CheckContent = strings.TrimSpace(rule.Checks[0].Content)
-				converted.CheckRefHref = rule.Checks[0].Ref.Href
-				converted.CheckRefName = rule.Checks[0].Ref.Name
+				check := rule.Checks[0]
+				converted.CheckContent = strings.TrimSpace(check.Content)
+				if converted.CheckContent == "" {
+					converted.CheckContent = strings.TrimSpace(check.Text)
+				}
+				converted.CheckRefHref = check.Ref.Href
+				converted.CheckRefName = check.Ref.Name
+				if converted.CheckRefName == "" {
+					converted.CheckRefName = check.System
+				}
 			}
 
 			for _, ident := range rule.Idents {
@@ -146,13 +166,13 @@ type descriptionFields struct {
 	FalsePositives           string
 	FalseNegatives           string
 	Documentable             string
-	Mitigations               string
+	Mitigations              string
 	SeverityOverrideGuidance string
-	PotentialImpacts          string
-	ThirdPartyTools           string
+	PotentialImpacts         string
+	ThirdPartyTools          string
 	MitigationControl        string
-	Responsibility            string
-	IAControls                string
+	Responsibility           string
+	IAControls               string
 }
 
 func parseDescription(raw string) descriptionFields {
@@ -163,13 +183,13 @@ func parseDescription(raw string) descriptionFields {
 		FalsePositives:           extractTag(decoded, "FalsePositives"),
 		FalseNegatives:           extractTag(decoded, "FalseNegatives"),
 		Documentable:             extractTag(decoded, "Documentable"),
-		Mitigations:               extractTag(decoded, "Mitigations"),
+		Mitigations:              extractTag(decoded, "Mitigations"),
 		SeverityOverrideGuidance: extractTag(decoded, "SeverityOverrideGuidance"),
-		PotentialImpacts:          extractTag(decoded, "PotentialImpacts"),
-		ThirdPartyTools:           extractTag(decoded, "ThirdPartyTools"),
+		PotentialImpacts:         extractTag(decoded, "PotentialImpacts"),
+		ThirdPartyTools:          extractTag(decoded, "ThirdPartyTools"),
 		MitigationControl:        extractTag(decoded, "MitigationControl"),
-		Responsibility:            extractTag(decoded, "Responsibility"),
-		IAControls:                extractTag(decoded, "IAControls"),
+		Responsibility:           extractTag(decoded, "Responsibility"),
+		IAControls:               extractTag(decoded, "IA_Controls"),
 	}
 }
 
