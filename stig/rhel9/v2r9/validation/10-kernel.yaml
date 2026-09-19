@@ -1,0 +1,3 @@
+# Goss validation resources for kernel controls.
+# Use DISA V-IDs as resource IDs where possible and add meta.stig_id.
+{}
