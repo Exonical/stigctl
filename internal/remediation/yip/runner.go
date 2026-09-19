@@ -4,23 +4,21 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"os/exec"
 
 	"github.com/Exonical/stigctl/internal/remediation"
+	yipconsole "github.com/mudler/yip/pkg/console"
+	yipexecutor "github.com/mudler/yip/pkg/executor"
+	"github.com/sirupsen/logrus"
+	"github.com/twpayne/go-vfs/v5"
 )
 
-type Runner struct {
-	Binary string
+type Runner struct{}
+
+func New() Runner {
+	return Runner{}
 }
 
-func New(binary string) Runner {
-	if binary == "" {
-		binary = "yip"
-	}
-	return Runner{Binary: binary}
-}
-
-func (r Runner) Apply(ctx context.Context, req remediation.Request) (remediation.Result, error) {
+func (Runner) Apply(ctx context.Context, req remediation.Request) (remediation.Result, error) {
 	stage := req.Stage
 	if stage == "" {
 		stage = "stig"
@@ -28,23 +26,25 @@ func (r Runner) Apply(ctx context.Context, req remediation.Request) (remediation
 	if len(req.Files) == 0 {
 		return remediation.Result{}, fmt.Errorf("no Yip remediation files supplied")
 	}
+	if err := ctx.Err(); err != nil {
+		return remediation.Result{}, err
+	}
 
-	args := []string{"-s", stage}
-	args = append(args, req.Files...)
+	var logs bytes.Buffer
+	logger := logrus.New()
+	logger.SetOutput(&logs)
+	logger.SetFormatter(&logrus.TextFormatter{DisableTimestamp: true, DisableColors: true})
 
-	var stdout, stderr bytes.Buffer
-	cmd := exec.CommandContext(ctx, r.Binary, args...)
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
+	console := yipconsole.NewStandardConsole(yipconsole.WithLogger(logger))
+	runner := yipexecutor.NewExecutor(yipexecutor.WithLogger(logger))
 
-	err := cmd.Run()
+	err := runner.Run(stage, vfs.OSFS, console, req.Files...)
 	result := remediation.Result{
 		Files:  append([]string(nil), req.Files...),
-		Stdout: stdout.String(),
-		Stderr: stderr.String(),
+		Stdout: logs.String(),
 	}
 	if err != nil {
-		return result, fmt.Errorf("yip failed: %w", err)
+		return result, fmt.Errorf("embedded Yip remediation failed: %w", err)
 	}
 	return result, nil
 }
