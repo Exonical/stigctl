@@ -28,7 +28,7 @@ func Detect() Facts {
 		if !ok {
 			continue
 		}
-		value = strings.Trim(value, """)
+		value = strings.Trim(value, `"`)
 		switch key {
 		case "ID":
 			facts.OSID = value
