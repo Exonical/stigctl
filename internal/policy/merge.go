@@ -45,19 +45,25 @@ func Merge(ruleDoc rules.Document, exceptionDoc exceptions.Document, scanned []r
 			Host:    ctx.Hostname,
 			Now:     ctx.Now,
 		}) {
+			technicalDetails := result.FindingDetails
+			technicalStatus := result.Status
 			switch strings.ToLower(exception.Status) {
 			case "not_applicable", "not-applicable", "n/a":
 				result.Status = results.StatusNotApplicable
 				result.Comments = exceptionComment(exception)
-				if result.FindingDetails == "" {
-					result.FindingDetails = "Rule is not applicable for this target by approved policy."
-				}
+				result.FindingDetails = policyFindingDetails(
+					"Rule is not applicable for this target by approved policy.",
+					technicalStatus,
+					technicalDetails,
+				)
 			default:
 				result.Status = results.StatusException
 				result.Comments = exceptionComment(exception)
-				if result.FindingDetails == "" {
-					result.FindingDetails = "Rule has an approved organizational exception; technical compliance was not asserted."
-				}
+				result.FindingDetails = policyFindingDetails(
+					"Rule has an approved organizational exception; automated enforcement was skipped.",
+					technicalStatus,
+					technicalDetails,
+				)
 			}
 			out = append(out, result)
 			delete(scannedByID, id)
@@ -141,4 +147,12 @@ func Summary(items []results.Result) string {
 		counts[results.StatusSkipped],
 		counts[results.StatusError],
 	)
+}
+
+
+func policyFindingDetails(prefix string, technicalStatus results.Status, technicalDetails string) string {
+	if technicalDetails == "" || technicalStatus == results.StatusSkipped {
+		return prefix
+	}
+	return prefix + "\n\nTechnical evidence before policy overlay:\n" + technicalDetails
 }
