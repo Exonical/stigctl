@@ -1,0 +1,10 @@
+schema_version: 1
+
+profile:
+  id: container-ci
+  name: Rocky Linux 9 CI container
+  description: >
+    CI-only profile used to exercise stigctl remediation and validation inside
+    a privileged Rocky Linux 9 container. Controls that require ownership of
+    the host kernel, hardware, boot process, or host firewall are marked not
+    applicable for this profile.
