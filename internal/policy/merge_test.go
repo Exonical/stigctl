@@ -41,3 +41,38 @@ func TestMergeExceptionOverridesTechnicalResult(t *testing.T) {
 		t.Fatalf("Status = %q", got[0].Status)
 	}
 }
+
+
+func TestMergeNotApplicablePolicyOverlay(t *testing.T) {
+	var rule rules.Rule
+	rule.VulnID = "V-2"
+	rule.Title = "Conditional requirement"
+	rule.Status = rules.StatusAutomated
+
+	ruleDoc := rules.Document{Rules: map[string]rules.Rule{"V-2": rule}}
+
+	var exception exceptions.Exception
+	exception.VulnID = "V-2"
+	exception.Status = "not_applicable"
+	exception.Scope.Profiles = []string{"server"}
+	exception.Justification.Reason = "Alternate control applies."
+
+	exceptionDoc := exceptions.Document{Exceptions: map[string]exceptions.Exception{"V-2": exception}}
+
+	got := Merge(
+		ruleDoc,
+		exceptionDoc,
+		[]results.Result{{VulnID: "V-2", Status: results.StatusFail}},
+		Context{
+			Profile: "server",
+			Now:     time.Date(2026, 9, 19, 0, 0, 0, 0, time.UTC),
+		},
+	)
+
+	if len(got) != 1 {
+		t.Fatalf("len(results) = %d", len(got))
+	}
+	if got[0].Status != results.StatusNotApplicable {
+		t.Fatalf("Status = %q", got[0].Status)
+	}
+}
