@@ -34,6 +34,7 @@ func newScanCommand() *cobra.Command {
 		fqdn           string
 		role           string
 		targetComments string
+		cklbTemplate  string
 	)
 
 	cmd := &cobra.Command{
@@ -113,23 +114,8 @@ func newScanCommand() *cobra.Command {
 					return fmt.Errorf("encode JSON results: %w", err)
 				}
 			case "cklb":
-				xccdfPath, err := resolved.XCCDFFile()
-				if err != nil {
-					return err
-				}
-				source, err := os.Open(xccdfPath)
-				if err != nil {
-					return fmt.Errorf("open XCCDF source: %w", err)
-				}
-				benchmark, parseErr := xccdf.Parse(source)
-				_ = source.Close()
-				if parseErr != nil {
-					return parseErr
-				}
-
-				if err := (cklb.Exporter{}).Export(cmd.Context(), file, stigexport.Request{
-					Baseline:  args[0],
-					Benchmark: benchmark,
+				req := stigexport.Request{
+					Baseline: args[0],
 					Target: stigexport.Target{
 						Hostname:   hostname,
 						IPAddress:  ipAddress,
@@ -139,8 +125,46 @@ func newScanCommand() *cobra.Command {
 						Role:       role,
 					},
 					Results: merged,
-				}); err != nil {
-					return err
+				}
+
+				templatePath := cklbTemplate
+				if templatePath == "" {
+					templatePath, err = resolved.CKLBTemplateFile()
+					if err != nil {
+						return err
+					}
+				}
+
+				if templatePath != "" {
+					template, err := cklb.LoadFile(templatePath)
+					if err != nil {
+						return err
+					}
+					doc, err := cklb.Overlay(template, req)
+					if err != nil {
+						return err
+					}
+					if err := cklb.Write(file, doc); err != nil {
+						return err
+					}
+				} else {
+					xccdfPath, err := resolved.XCCDFFile()
+					if err != nil {
+						return err
+					}
+					source, err := os.Open(xccdfPath)
+					if err != nil {
+						return fmt.Errorf("open XCCDF source: %w", err)
+					}
+					benchmark, parseErr := xccdf.Parse(source)
+					_ = source.Close()
+					if parseErr != nil {
+						return parseErr
+					}
+					req.Benchmark = benchmark
+					if err := (cklb.Exporter{}).Export(cmd.Context(), file, req); err != nil {
+						return err
+					}
 				}
 			default:
 				return fmt.Errorf("unsupported format %q: use cklb or json", format)
@@ -165,5 +189,6 @@ func newScanCommand() *cobra.Command {
 	cmd.Flags().StringVar(&fqdn, "fqdn", "", "target FQDN for CKLB metadata")
 	cmd.Flags().StringVar(&role, "role", "None", "STIG Viewer target role")
 	cmd.Flags().StringVar(&targetComments, "target-comments", "", "comments stored in CKLB target metadata")
+	cmd.Flags().StringVar(&cklbTemplate, "cklb-template", "", "STIG Viewer 3 CKLB template; preserves official checklist metadata and UUIDs")
 	return cmd
 }
