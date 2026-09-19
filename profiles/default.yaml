@@ -1,0 +1,5 @@
+schema_version: 1
+
+profile:
+  id: default
+  name: Default Enterprise Linux profile
