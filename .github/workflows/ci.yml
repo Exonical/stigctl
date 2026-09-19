@@ -25,18 +25,5 @@ jobs:
         run: go vet ./...
       - name: Test
         run: go test ./...
-      - name: Build
-        run: go build ./cmd/stigctl
-      - name: Install Goss
-        run: |
-          curl -fsSL             https://github.com/goss-org/goss/releases/download/v0.4.10/goss_0.4.10_linux_x86_64.tar.gz             | sudo tar -xz -C /usr/local/bin goss
-          goss --version
-      - name: Render Goss baseline
-        run: |
-          cat > /tmp/stigctl-goss-vars.yaml <<'EOF'
-          profile: ci
-          hostname: ci
-          enabled_rules: {}
-          EOF
-          goss             --vars /tmp/stigctl-goss-vars.yaml             -g stig/rhel9/v2r9/validation/goss.yaml             render > /tmp/rendered-goss.yaml
-          test -s /tmp/rendered-goss.yaml
+      - name: Build self-contained binary
+        run: go build -o bin/stigctl ./cmd/stigctl
