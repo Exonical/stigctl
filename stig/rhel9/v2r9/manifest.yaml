@@ -1,0 +1,21 @@
+schema_version: 1
+
+profile:
+  id: rhel9-stig
+  name: Red Hat Enterprise Linux 9 STIG
+
+os:
+  family: rhel
+  major_version: 9
+
+baseline:
+  authority: DISA
+  version: 2
+  release: 9
+  identifier: RHEL_9_STIG
+  display_name: "Red Hat Enterprise Linux 9 STIG - Ver 2, Rel 9"
+
+implementation:
+  revision: 1
+
+status: development
