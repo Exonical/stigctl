@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Exonical/stigctl/schemas/exceptions.schema.json",
+  "title": "stigctl STIG exceptions",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "exceptions"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "exceptions": {
+      "type": "object",
+      "patternProperties": {
+        "^V-[0-9]+$": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status",
+            "scope",
+            "justification"
+          ],
+          "properties": {
+            "status": {
+              "const": "exception"
+            },
+            "scope": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "all": {
+                  "type": "boolean"
+                },
+                "profiles": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "uniqueItems": true
+                },
+                "hosts": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "uniqueItems": true
+                }
+              }
+            },
+            "justification": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "reason"
+              ],
+              "properties": {
+                "reason": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "impact": {
+                  "type": "string"
+                },
+                "risk": {
+                  "type": "string"
+                }
+              }
+            },
+            "compensating_controls": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "approval": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "ticket": {
+                  "type": "string"
+                },
+                "owner": {
+                  "type": "string"
+                },
+                "approved_by": {
+                  "type": "string"
+                },
+                "approved_date": {
+                  "type": "string",
+                  "format": "date"
+                }
+              }
+            },
+            "lifecycle": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "created": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "expires": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "review_interval_days": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              }
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}
