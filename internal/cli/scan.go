@@ -28,6 +28,12 @@ func newScanCommand() *cobra.Command {
 		output         string
 		gossBinary     string
 		failOnFindings bool
+		hostname       string
+		ipAddress      string
+		macAddress     string
+		fqdn           string
+		role           string
+		targetComments string
 	)
 
 	cmd := &cobra.Command{
@@ -62,28 +68,34 @@ func newScanCommand() *cobra.Command {
 			if err != nil {
 				return err
 			}
+
 			facts := host.Detect()
+			if hostname == "" {
+				hostname = facts.Hostname
+			}
+
 			merged := policy.Merge(ruleDoc, exceptionDoc, scanned, policy.Context{
 				Profile:  profile,
-				Hostname: facts.Hostname,
+				Hostname: hostname,
 				Now:      time.Now(),
 			})
 
 			if output == "" {
 				ext := strings.ToLower(format)
-				if ext == "json" {
-					ext = "json"
-				}
 				name := strings.ReplaceAll(args[0], ":", "-")
-				if facts.Hostname != "" {
-					name = facts.Hostname + "-" + name
+				if hostname != "" {
+					name = hostname + "-" + name
 				}
 				output = name + "." + ext
 			}
 
-			if err := os.MkdirAll(filepath.Dir(output), 0o755); err != nil && filepath.Dir(output) != "." {
-				return fmt.Errorf("create output directory: %w", err)
+			dir := filepath.Dir(output)
+			if dir != "." {
+				if err := os.MkdirAll(dir, 0o755); err != nil {
+					return fmt.Errorf("create output directory: %w", err)
+				}
 			}
+
 			file, err := os.Create(output)
 			if err != nil {
 				return fmt.Errorf("create output: %w", err)
@@ -107,7 +119,7 @@ func newScanCommand() *cobra.Command {
 					return fmt.Errorf("open XCCDF source: %w", err)
 				}
 				benchmark, parseErr := xccdf.Parse(source)
-				source.Close()
+				_ = source.Close()
 				if parseErr != nil {
 					return parseErr
 				}
@@ -116,7 +128,12 @@ func newScanCommand() *cobra.Command {
 					Baseline:  args[0],
 					Benchmark: benchmark,
 					Target: stigexport.Target{
-						Hostname: facts.Hostname,
+						Hostname:   hostname,
+						IPAddress:  ipAddress,
+						MACAddress: macAddress,
+						FQDN:       fqdn,
+						Comments:   targetComments,
+						Role:       role,
 					},
 					Results: merged,
 				}); err != nil {
@@ -139,5 +156,11 @@ func newScanCommand() *cobra.Command {
 	cmd.Flags().StringVarP(&output, "output", "o", "", "output file")
 	cmd.Flags().StringVar(&gossBinary, "goss-binary", "goss", "path to the Goss executable")
 	cmd.Flags().BoolVar(&failOnFindings, "fail-on-findings", false, "exit non-zero after writing results when findings exist")
+	cmd.Flags().StringVar(&hostname, "hostname", "", "target hostname; defaults to the local hostname")
+	cmd.Flags().StringVar(&ipAddress, "ip-address", "", "target IP address for CKLB metadata")
+	cmd.Flags().StringVar(&macAddress, "mac-address", "", "target MAC address for CKLB metadata")
+	cmd.Flags().StringVar(&fqdn, "fqdn", "", "target FQDN for CKLB metadata")
+	cmd.Flags().StringVar(&role, "role", "None", "STIG Viewer target role")
+	cmd.Flags().StringVar(&targetComments, "target-comments", "", "comments stored in CKLB target metadata")
 	return cmd
 }
