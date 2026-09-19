@@ -1,3 +1,204 @@
-# Goss validation resources for packages controls.
-# Use DISA V-IDs as resource IDs where possible and add meta.stig_id.
-{}
+package:
+  V-257825:
+    name: subscription-manager
+    title: "RHEL 9 subscription-manager package must be installed."
+    meta:
+      stig_id: V-257825
+    installed: true
+    skip: {{ not (index .Vars.enabled_rules "V-257825") }}
+  V-257827:
+    name: sendmail
+    title: "RHEL 9 must not have the sendmail package installed."
+    meta:
+      stig_id: V-257827
+    installed: false
+    skip: {{ not (index .Vars.enabled_rules "V-257827") }}
+  V-257828:
+    name: nfs-utils
+    title: "RHEL 9 must not have the nfs-utils package installed."
+    meta:
+      stig_id: V-257828
+    installed: false
+    skip: {{ not (index .Vars.enabled_rules "V-257828") }}
+  V-257829:
+    name: ypserv
+    title: "RHEL 9 must not have the ypserv package installed."
+    meta:
+      stig_id: V-257829
+    installed: false
+    skip: {{ not (index .Vars.enabled_rules "V-257829") }}
+  V-257831:
+    name: telnet-server
+    title: "RHEL 9 must not have the telnet-server package installed."
+    meta:
+      stig_id: V-257831
+    installed: false
+    skip: {{ not (index .Vars.enabled_rules "V-257831") }}
+  V-257832:
+    name: gssproxy
+    title: "RHEL 9 must not have the gssproxy package installed."
+    meta:
+      stig_id: V-257832
+    installed: false
+    skip: {{ not (index .Vars.enabled_rules "V-257832") }}
+  V-257833:
+    name: iprutils
+    title: "RHEL 9 must not have the iprutils package installed."
+    meta:
+      stig_id: V-257833
+    installed: false
+    skip: {{ not (index .Vars.enabled_rules "V-257833") }}
+  V-257834:
+    name: tuned
+    title: "RHEL 9 must not have the tuned package installed."
+    meta:
+      stig_id: V-257834
+    installed: false
+    skip: {{ not (index .Vars.enabled_rules "V-257834") }}
+  V-257836:
+    name: quagga
+    title: "RHEL 9 must not have the quagga package installed."
+    meta:
+      stig_id: V-257836
+    installed: false
+    skip: {{ not (index .Vars.enabled_rules "V-257836") }}
+  V-257838:
+    name: openssl-pkcs11
+    title: "RHEL 9 must have the openssl-pkcs11 package installed."
+    meta:
+      stig_id: V-257838
+    installed: true
+    skip: {{ not (index .Vars.enabled_rules "V-257838") }}
+  V-257839:
+    name: gnutls-utils
+    title: "RHEL 9 must have the gnutls-utils package installed."
+    meta:
+      stig_id: V-257839
+    installed: true
+    skip: {{ not (index .Vars.enabled_rules "V-257839") }}
+  V-257840:
+    name: nss-tools
+    title: "RHEL 9 must have the nss-tools package installed."
+    meta:
+      stig_id: V-257840
+    installed: true
+    skip: {{ not (index .Vars.enabled_rules "V-257840") }}
+  V-257841:
+    name: rng-tools
+    title: "RHEL 9 must have the rng-tools package installed."
+    meta:
+      stig_id: V-257841
+    installed: true
+    skip: {{ not (index .Vars.enabled_rules "V-257841") }}
+  V-257842:
+    name: s-nail
+    title: "RHEL 9 must have the s-nail package installed."
+    meta:
+      stig_id: V-257842
+    installed: true
+    skip: {{ not (index .Vars.enabled_rules "V-257842") }}
+  V-257935:
+    name: firewalld
+    title: "RHEL 9 must have the firewalld package installed."
+    meta:
+      stig_id: V-257935
+    installed: true
+    skip: {{ not (index .Vars.enabled_rules "V-257935") }}
+  V-257943:
+    name: chrony
+    title: "RHEL 9 must have the chrony package installed."
+    meta:
+      stig_id: V-257943
+    installed: true
+    skip: {{ not (index .Vars.enabled_rules "V-257943") }}
+  V-257954:
+    name: libreswan
+    title: "RHEL 9 libreswan package must be installed."
+    meta:
+      stig_id: V-257954
+    installed: true
+    skip: {{ not (index .Vars.enabled_rules "V-257954") }}
+  V-257980:
+    name: openssh-clients
+    title: "RHEL 9 must have the openssh-clients package installed."
+    meta:
+      stig_id: V-257980
+    installed: true
+    skip: {{ not (index .Vars.enabled_rules "V-257980") }}
+  V-258035:
+    name: usbguard
+    title: "RHEL 9 must have the USBGuard package installed."
+    meta:
+      stig_id: V-258035
+    installed: true
+    skip: {{ not (index .Vars.enabled_rules "V-258035") }}
+  V-258082:
+    name: policycoreutils-python-utils
+    title: "RHEL 9 policycoreutils-python-utils package must be installed."
+    meta:
+      stig_id: V-258082
+    installed: true
+    skip: {{ not (index .Vars.enabled_rules "V-258082") }}
+  V-258083:
+    name: sudo
+    title: "RHEL 9 must have the sudo package installed."
+    meta:
+      stig_id: V-258083
+    installed: true
+    skip: {{ not (index .Vars.enabled_rules "V-258083") }}
+  V-258124:
+    name: pcsc-lite
+    title: "RHEL 9 must have the pcsc-lite package installed."
+    meta:
+      stig_id: V-258124
+    installed: true
+    skip: {{ not (index .Vars.enabled_rules "V-258124") }}
+  V-258126:
+    name: opensc
+    title: "RHEL 9 must have the opensc package installed."
+    meta:
+      stig_id: V-258126
+    installed: true
+    skip: {{ not (index .Vars.enabled_rules "V-258126") }}
+  V-258134:
+    name: aide
+    title: "RHEL 9 must have the AIDE package installed."
+    meta:
+      stig_id: V-258134
+    installed: true
+    skip: {{ not (index .Vars.enabled_rules "V-258134") }}
+  V-258140:
+    name: rsyslog
+    title: "RHEL 9 must have the rsyslog package installed."
+    meta:
+      stig_id: V-258140
+    installed: true
+    skip: {{ not (index .Vars.enabled_rules "V-258140") }}
+  V-258151:
+    name: audit
+    title: "RHEL 9 audit package must be installed."
+    meta:
+      stig_id: V-258151
+    installed: true
+    skip: {{ not (index .Vars.enabled_rules "V-258151") }}
+  V-258175:
+    name: audispd-plugins
+    title: "RHEL 9 audispd-plugins package must be installed."
+    meta:
+      stig_id: V-258175
+    installed: true
+    skip: {{ not (index .Vars.enabled_rules "V-258175") }}
+  V-258234:
+    name: crypto-policies
+    title: "RHEL 9 must have the crypto-policies package installed."
+    meta:
+      stig_id: V-258234
+    installed: true
+    skip: {{ not (index .Vars.enabled_rules "V-258234") }}
+  V-272488:
+    name: postfix
+    title: "RHEL 9 must have the Postfix package installed."
+    meta:
+      stig_id: V-272488
+    installed: true
+    skip: {{ not (index .Vars.enabled_rules "V-272488") }}
