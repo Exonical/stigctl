@@ -1,0 +1,4 @@
+name: RHEL 9 STIG - Kernel
+
+stages:
+  stig: []
