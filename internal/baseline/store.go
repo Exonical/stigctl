@@ -109,3 +109,19 @@ func (r Resolved) XCCDFFile() (string, error) {
 	}
 	return files[0], nil
 }
+
+
+func (r Resolved) CKLBTemplateFile() (string, error) {
+	files, err := filepath.Glob(filepath.Join(r.Path, "source", "*.cklb"))
+	if err != nil {
+		return "", fmt.Errorf("glob CKLB template: %w", err)
+	}
+	sort.Strings(files)
+	if len(files) == 0 {
+		return "", nil
+	}
+	if len(files) > 1 {
+		return "", fmt.Errorf("multiple CKLB templates found under %s", filepath.Join(r.Path, "source"))
+	}
+	return files[0], nil
+}
