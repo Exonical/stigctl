@@ -14,7 +14,7 @@ import (
 func TestExportMapsStatuses(t *testing.T) {
 	benchmark := xccdf.Benchmark{
 		ID:          "RHEL_9_STIG",
-		Title:       "Red Hat Enterprise Linux 9 STIG",
+		Title:       "Red Hat Enterprise Linux 9 Security Technical Implementation Guide",
 		Version:     "2",
 		ReleaseInfo: "Release: 9",
 		Rules: []xccdf.Rule{
@@ -25,6 +25,7 @@ func TestExportMapsStatuses(t *testing.T) {
 				RuleVersion:  "RHEL-09-000001",
 				Title:        "Example rule",
 				GroupTitle:   "Example rule",
+				GroupTreeTitle: "SRG-OS-000480-GPOS-00227",
 				Severity:     "high",
 				Weight:       "10.0",
 				CheckContent: "Check it.",
@@ -58,6 +59,15 @@ func TestExportMapsStatuses(t *testing.T) {
 	if got.CKLBVersion != "1.0" {
 		t.Fatalf("cklb_version = %q", got.CKLBVersion)
 	}
+	if got.STIGs[0].DisplayName != "Red Hat Enterprise Linux 9" {
+		t.Fatalf("display_name = %q", got.STIGs[0].DisplayName)
+	}
+	if !got.Active {
+		t.Fatal("expected active checklist")
+	}
+	if got.TargetData.TechnologyArea != "" {
+		t.Fatalf("technology_area = %q, want empty", got.TargetData.TechnologyArea)
+	}
 	if len(got.STIGs) != 1 || len(got.STIGs[0].Rules) != 1 {
 		t.Fatalf("unexpected STIG/rule count")
 	}
@@ -67,5 +77,11 @@ func TestExportMapsStatuses(t *testing.T) {
 	}
 	if rule.Comments == "" {
 		t.Fatal("exception comments were not exported")
+	}
+	if rule.SRGID != "SRG-OS-000480-GPOS-00227" {
+		t.Fatalf("srg_id = %q", rule.SRGID)
+	}
+	if len(rule.GroupTree) != 1 || rule.GroupTree[0].Description != "<GroupDescription></GroupDescription>" {
+		t.Fatalf("unexpected group_tree = %#v", rule.GroupTree)
 	}
 }
