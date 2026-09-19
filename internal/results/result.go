@@ -5,6 +5,7 @@ type Status string
 const (
 	StatusPass          Status = "pass"
 	StatusFail          Status = "fail"
+	StatusSkipped       Status = "skipped"
 	StatusNotApplicable Status = "not_applicable"
 	StatusException     Status = "exception"
 	StatusManual        Status = "manual"
