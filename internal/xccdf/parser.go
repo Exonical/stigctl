@@ -26,10 +26,9 @@ type xmlPlainText struct {
 }
 
 type xmlGroup struct {
-	ID          string    `xml:"id,attr"`
-	Title       string    `xml:"title"`
-	Description string    `xml:"description,innerxml"`
-	Rules       []xmlRule `xml:"Rule"`
+	ID    string    `xml:"id,attr"`
+	Title string    `xml:"title"`
+	Rules []xmlRule `xml:"Rule"`
 }
 
 type xmlRule struct {
@@ -38,12 +37,16 @@ type xmlRule struct {
 	Weight      string         `xml:"weight,attr"`
 	Version     string         `xml:"version"`
 	Title       string         `xml:"title"`
-	Description string         `xml:"description,innerxml"`
+	Description xmlRichText    `xml:"description"`
 	Checks      []xmlCheck     `xml:"check"`
 	FixText     xmlFixText     `xml:"fixtext"`
 	Fix         xmlFix         `xml:"fix"`
 	Idents      []xmlIdent     `xml:"ident"`
 	References  []xmlReference `xml:"reference"`
+}
+
+type xmlRichText struct {
+	Inner string `xml:",innerxml"`
 }
 
 type xmlCheck struct {
@@ -97,7 +100,7 @@ func Parse(r io.Reader) (Benchmark, error) {
 
 	for _, group := range raw.Groups {
 		for _, rule := range group.Rules {
-			description := parseDescription(rule.Description)
+			description := parseDescription(rule.Description.Inner)
 			converted := Rule{
 				VulnID:                   normalizeID(group.ID),
 				RuleID:                   normalizeRuleID(rule.ID),
