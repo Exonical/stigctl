@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/Exonical/stigctl/internal/baseline"
+	"github.com/Exonical/stigctl/internal/export/cklb"
 	"github.com/Exonical/stigctl/internal/rules"
 	"github.com/Exonical/stigctl/internal/xccdf"
 	"github.com/spf13/cobra"
@@ -59,6 +60,7 @@ func newBaselineCommand() *cobra.Command {
 		},
 		newBaselineSyncCommand(),
 		newBaselineImportCommand(),
+		newBaselineImportCKLBCommand(),
 	)
 
 	return cmd
@@ -212,4 +214,76 @@ func newBaselineImportCommand() *cobra.Command {
 
 	cmd.Flags().BoolVar(&syncRules, "sync-rules", true, "refresh rules.yaml from the imported XCCDF")
 	return cmd
+}
+
+
+func newBaselineImportCKLBCommand() *cobra.Command {
+	return &cobra.Command{
+		Use:   "import-cklb <baseline> <cklb-file>",
+		Short: "Import a STIG Viewer 3 CKLB template for exact metadata preservation",
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			resolved, err := baseline.NewStore(contentRoot).Resolve(args[0])
+			if err != nil {
+				return err
+			}
+
+			template, err := cklb.LoadFile(args[1])
+			if err != nil {
+				return err
+			}
+			if len(template.STIGs) != 1 {
+				return fmt.Errorf("expected exactly one STIG in CKLB template, got %d", len(template.STIGs))
+			}
+
+			stig := template.STIGs[0]
+			if stig.STIGID != resolved.Manifest.Baseline.Identifier {
+				return fmt.Errorf(
+					"CKLB STIG ID %q does not match manifest identifier %q",
+					stig.STIGID,
+					resolved.Manifest.Baseline.Identifier,
+				)
+			}
+			if stig.Version != fmt.Sprint(resolved.Manifest.Baseline.Version) {
+				return fmt.Errorf(
+					"CKLB version %q does not match manifest version %d",
+					stig.Version,
+					resolved.Manifest.Baseline.Version,
+				)
+			}
+
+			sourceDir := filepath.Join(resolved.Path, "source")
+			if err := os.MkdirAll(sourceDir, 0o755); err != nil {
+				return fmt.Errorf("create source directory: %w", err)
+			}
+			destination := filepath.Join(sourceDir, "template.cklb")
+
+			src, err := os.Open(args[1])
+			if err != nil {
+				return fmt.Errorf("open CKLB source: %w", err)
+			}
+			defer src.Close()
+
+			dst, err := os.Create(destination)
+			if err != nil {
+				return fmt.Errorf("create CKLB destination: %w", err)
+			}
+			if _, err := io.Copy(dst, src); err != nil {
+				dst.Close()
+				return fmt.Errorf("copy CKLB template: %w", err)
+			}
+			if err := dst.Close(); err != nil {
+				return fmt.Errorf("close CKLB destination: %w", err)
+			}
+
+			fmt.Fprintf(
+				cmd.OutOrStdout(),
+				"imported CKLB template %s (%d rules) to %s\n",
+				stig.DisplayName,
+				len(stig.Rules),
+				destination,
+			)
+			return nil
+		},
+	}
 }
