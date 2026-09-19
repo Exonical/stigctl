@@ -41,6 +41,9 @@ func newScanCommand() *cobra.Command {
 		Short: "Validate and export STIG results",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
+			if err := validateProfile(profile); err != nil {
+				return err
+			}
 			resolved, err := baseline.NewStore(contentRoot).Resolve(args[0])
 			if err != nil {
 				return err
