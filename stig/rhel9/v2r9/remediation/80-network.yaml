@@ -1,4 +1,172 @@
 name: RHEL 9 STIG - Network
 
 stages:
-  stig: []
+  stig:
+    - name: V-257957
+      files:
+        - path: /etc/sysctl.d/60-stig-V-257957.conf
+          permissions: "0644"
+          content: |
+            net.ipv4.tcp_syncookies = 1
+      sysctl:
+        net.ipv4.tcp_syncookies: "1"
+    - name: V-257958
+      files:
+        - path: /etc/sysctl.d/60-stig-V-257958.conf
+          permissions: "0644"
+          content: |
+            net.ipv4.conf.all.accept_redirects = 0
+      sysctl:
+        net.ipv4.conf.all.accept_redirects: "0"
+    - name: V-257959
+      files:
+        - path: /etc/sysctl.d/60-stig-V-257959.conf
+          permissions: "0644"
+          content: |
+            net.ipv4.conf.all.accept_source_route = 0
+      sysctl:
+        net.ipv4.conf.all.accept_source_route: "0"
+    - name: V-257960
+      files:
+        - path: /etc/sysctl.d/60-stig-V-257960.conf
+          permissions: "0644"
+          content: |
+            net.ipv4.conf.all.log_martians = 1
+      sysctl:
+        net.ipv4.conf.all.log_martians: "1"
+    - name: V-257961
+      files:
+        - path: /etc/sysctl.d/60-stig-V-257961.conf
+          permissions: "0644"
+          content: |
+            net.ipv4.conf.default.log_martians = 1
+      sysctl:
+        net.ipv4.conf.default.log_martians: "1"
+    - name: V-257962
+      files:
+        - path: /etc/sysctl.d/60-stig-V-257962.conf
+          permissions: "0644"
+          content: |
+            net.ipv4.conf.all.rp_filter = 1
+      sysctl:
+        net.ipv4.conf.all.rp_filter: "1"
+    - name: V-257963
+      files:
+        - path: /etc/sysctl.d/60-stig-V-257963.conf
+          permissions: "0644"
+          content: |
+            net.ipv4.conf.default.accept_redirects = 0
+      sysctl:
+        net.ipv4.conf.default.accept_redirects: "0"
+    - name: V-257964
+      files:
+        - path: /etc/sysctl.d/60-stig-V-257964.conf
+          permissions: "0644"
+          content: |
+            net.ipv4.conf.default.accept_source_route = 0
+      sysctl:
+        net.ipv4.conf.default.accept_source_route: "0"
+    - name: V-257965
+      files:
+        - path: /etc/sysctl.d/60-stig-V-257965.conf
+          permissions: "0644"
+          content: |
+            net.ipv4.conf.default.rp_filter = 1
+      sysctl:
+        net.ipv4.conf.default.rp_filter: "1"
+    - name: V-257966
+      files:
+        - path: /etc/sysctl.d/60-stig-V-257966.conf
+          permissions: "0644"
+          content: |
+            net.ipv4.icmp_echo_ignore_broadcasts = 1
+      sysctl:
+        net.ipv4.icmp_echo_ignore_broadcasts: "1"
+    - name: V-257967
+      files:
+        - path: /etc/sysctl.d/60-stig-V-257967.conf
+          permissions: "0644"
+          content: |
+            net.ipv4.icmp_ignore_bogus_error_responses = 1
+      sysctl:
+        net.ipv4.icmp_ignore_bogus_error_responses: "1"
+    - name: V-257968
+      files:
+        - path: /etc/sysctl.d/60-stig-V-257968.conf
+          permissions: "0644"
+          content: |
+            net.ipv4.conf.all.send_redirects = 0
+      sysctl:
+        net.ipv4.conf.all.send_redirects: "0"
+    - name: V-257969
+      files:
+        - path: /etc/sysctl.d/60-stig-V-257969.conf
+          permissions: "0644"
+          content: |
+            net.ipv4.conf.default.send_redirects = 0
+      sysctl:
+        net.ipv4.conf.default.send_redirects: "0"
+    - name: V-257970
+      files:
+        - path: /etc/sysctl.d/60-stig-V-257970.conf
+          permissions: "0644"
+          content: |
+            net.ipv4.conf.all.forwarding = 0
+      sysctl:
+        net.ipv4.conf.all.forwarding: "0"
+    - name: V-257971
+      files:
+        - path: /etc/sysctl.d/60-stig-V-257971.conf
+          permissions: "0644"
+          content: |
+            net.ipv6.conf.all.accept_ra = 0
+      sysctl:
+        net.ipv6.conf.all.accept_ra: "0"
+    - name: V-257972
+      files:
+        - path: /etc/sysctl.d/60-stig-V-257972.conf
+          permissions: "0644"
+          content: |
+            net.ipv6.conf.all.accept_redirects = 0
+      sysctl:
+        net.ipv6.conf.all.accept_redirects: "0"
+    - name: V-257973
+      files:
+        - path: /etc/sysctl.d/60-stig-V-257973.conf
+          permissions: "0644"
+          content: |
+            net.ipv6.conf.all.accept_source_route = 0
+      sysctl:
+        net.ipv6.conf.all.accept_source_route: "0"
+    - name: V-257974
+      files:
+        - path: /etc/sysctl.d/60-stig-V-257974.conf
+          permissions: "0644"
+          content: |
+            net.ipv6.conf.all.forwarding = 0
+      sysctl:
+        net.ipv6.conf.all.forwarding: "0"
+    - name: V-257975
+      files:
+        - path: /etc/sysctl.d/60-stig-V-257975.conf
+          permissions: "0644"
+          content: |
+            net.ipv6.conf.default.accept_ra = 0
+      sysctl:
+        net.ipv6.conf.default.accept_ra: "0"
+    - name: V-257976
+      files:
+        - path: /etc/sysctl.d/60-stig-V-257976.conf
+          permissions: "0644"
+          content: |
+            net.ipv6.conf.default.accept_redirects = 0
+      sysctl:
+        net.ipv6.conf.default.accept_redirects: "0"
+    - name: V-257977
+      files:
+        - path: /etc/sysctl.d/60-stig-V-257977.conf
+          permissions: "0644"
+          content: |
+            net.ipv6.conf.default.accept_source_route = 0
+      sysctl:
+        net.ipv6.conf.default.accept_source_route: "0"
