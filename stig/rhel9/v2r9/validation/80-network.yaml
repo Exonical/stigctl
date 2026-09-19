@@ -1,3 +1,148 @@
-# Goss validation resources for network controls.
-# Use DISA V-IDs as resource IDs where possible and add meta.stig_id.
-{}
+kernel-param:
+  V-257957:
+    name: net.ipv4.tcp_syncookies
+    title: "RHEL 9 must be configured to use TCP syncookies."
+    meta:
+      stig_id: V-257957
+    value: "1"
+    skip: {{ not (index .Vars.enabled_rules "V-257957") }}
+  V-257958:
+    name: net.ipv4.conf.all.accept_redirects
+    title: "RHEL 9 must ignore Internet Protocol version 4 (IPv4) Internet Control Message Protocol (ICMP) redirect messages."
+    meta:
+      stig_id: V-257958
+    value: "0"
+    skip: {{ not (index .Vars.enabled_rules "V-257958") }}
+  V-257959:
+    name: net.ipv4.conf.all.accept_source_route
+    title: "RHEL 9 must not forward Internet Protocol version 4 (IPv4) source-routed packets."
+    meta:
+      stig_id: V-257959
+    value: "0"
+    skip: {{ not (index .Vars.enabled_rules "V-257959") }}
+  V-257960:
+    name: net.ipv4.conf.all.log_martians
+    title: "RHEL 9 must log IPv4 packets with impossible addresses."
+    meta:
+      stig_id: V-257960
+    value: "1"
+    skip: {{ not (index .Vars.enabled_rules "V-257960") }}
+  V-257961:
+    name: net.ipv4.conf.default.log_martians
+    title: "RHEL 9 must log IPv4 packets with impossible addresses by default."
+    meta:
+      stig_id: V-257961
+    value: "1"
+    skip: {{ not (index .Vars.enabled_rules "V-257961") }}
+  V-257962:
+    name: net.ipv4.conf.all.rp_filter
+    title: "RHEL 9 must use reverse path filtering on all IPv4 interfaces."
+    meta:
+      stig_id: V-257962
+    value: "1"
+    skip: {{ not (index .Vars.enabled_rules "V-257962") }}
+  V-257963:
+    name: net.ipv4.conf.default.accept_redirects
+    title: "RHEL 9 must prevent IPv4 Internet Control Message Protocol (ICMP) redirect messages from being accepted."
+    meta:
+      stig_id: V-257963
+    value: "0"
+    skip: {{ not (index .Vars.enabled_rules "V-257963") }}
+  V-257964:
+    name: net.ipv4.conf.default.accept_source_route
+    title: "RHEL 9 must not forward IPv4 source-routed packets by default."
+    meta:
+      stig_id: V-257964
+    value: "0"
+    skip: {{ not (index .Vars.enabled_rules "V-257964") }}
+  V-257965:
+    name: net.ipv4.conf.default.rp_filter
+    title: "RHEL 9 must use a reverse-path filter for IPv4 network traffic when possible by default."
+    meta:
+      stig_id: V-257965
+    value: "1"
+    skip: {{ not (index .Vars.enabled_rules "V-257965") }}
+  V-257966:
+    name: net.ipv4.icmp_echo_ignore_broadcasts
+    title: "RHEL 9 must not respond to Internet Control Message Protocol (ICMP) echoes sent to a broadcast address."
+    meta:
+      stig_id: V-257966
+    value: "1"
+    skip: {{ not (index .Vars.enabled_rules "V-257966") }}
+  V-257967:
+    name: net.ipv4.icmp_ignore_bogus_error_responses
+    title: "RHEL 9 must limit the number of bogus Internet Control Message Protocol (ICMP) response errors logs."
+    meta:
+      stig_id: V-257967
+    value: "1"
+    skip: {{ not (index .Vars.enabled_rules "V-257967") }}
+  V-257968:
+    name: net.ipv4.conf.all.send_redirects
+    title: "RHEL 9 must not send Internet Control Message Protocol (ICMP) redirects."
+    meta:
+      stig_id: V-257968
+    value: "0"
+    skip: {{ not (index .Vars.enabled_rules "V-257968") }}
+  V-257969:
+    name: net.ipv4.conf.default.send_redirects
+    title: "RHEL 9 must not allow interfaces to perform Internet Control Message Protocol (ICMP) redirects by default."
+    meta:
+      stig_id: V-257969
+    value: "0"
+    skip: {{ not (index .Vars.enabled_rules "V-257969") }}
+  V-257970:
+    name: net.ipv4.conf.all.forwarding
+    title: "RHEL 9 must not enable IPv4 packet forwarding unless the system is a router."
+    meta:
+      stig_id: V-257970
+    value: "0"
+    skip: {{ not (index .Vars.enabled_rules "V-257970") }}
+  V-257971:
+    name: net.ipv6.conf.all.accept_ra
+    title: "RHEL 9 must not accept router advertisements on all IPv6 interfaces."
+    meta:
+      stig_id: V-257971
+    value: "0"
+    skip: {{ not (index .Vars.enabled_rules "V-257971") }}
+  V-257972:
+    name: net.ipv6.conf.all.accept_redirects
+    title: "RHEL 9 must ignore IPv6 Internet Control Message Protocol (ICMP) redirect messages."
+    meta:
+      stig_id: V-257972
+    value: "0"
+    skip: {{ not (index .Vars.enabled_rules "V-257972") }}
+  V-257973:
+    name: net.ipv6.conf.all.accept_source_route
+    title: "RHEL 9 must not forward IPv6 source-routed packets."
+    meta:
+      stig_id: V-257973
+    value: "0"
+    skip: {{ not (index .Vars.enabled_rules "V-257973") }}
+  V-257974:
+    name: net.ipv6.conf.all.forwarding
+    title: "RHEL 9 must not enable IPv6 packet forwarding unless the system is a router."
+    meta:
+      stig_id: V-257974
+    value: "0"
+    skip: {{ not (index .Vars.enabled_rules "V-257974") }}
+  V-257975:
+    name: net.ipv6.conf.default.accept_ra
+    title: "RHEL 9 must not accept router advertisements on all IPv6 interfaces by default."
+    meta:
+      stig_id: V-257975
+    value: "0"
+    skip: {{ not (index .Vars.enabled_rules "V-257975") }}
+  V-257976:
+    name: net.ipv6.conf.default.accept_redirects
+    title: "RHEL 9 must prevent IPv6 Internet Control Message Protocol (ICMP) redirect messages from being accepted."
+    meta:
+      stig_id: V-257976
+    value: "0"
+    skip: {{ not (index .Vars.enabled_rules "V-257976") }}
+  V-257977:
+    name: net.ipv6.conf.default.accept_source_route
+    title: "RHEL 9 must not forward IPv6 source-routed packets by default."
+    meta:
+      stig_id: V-257977
+    value: "0"
+    skip: {{ not (index .Vars.enabled_rules "V-257977") }}
