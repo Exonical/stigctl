@@ -1,4 +1,100 @@
 name: RHEL 9 STIG - Kernel
 
 stages:
-  stig: []
+  stig:
+    - name: V-257797
+      files:
+        - path: /etc/sysctl.d/60-stig-V-257797.conf
+          permissions: "0644"
+          content: |
+            kernel.dmesg_restrict = 1
+      sysctl:
+        kernel.dmesg_restrict: "1"
+    - name: V-257798
+      files:
+        - path: /etc/sysctl.d/60-stig-V-257798.conf
+          permissions: "0644"
+          content: |
+            kernel.perf_event_paranoid = 2
+      sysctl:
+        kernel.perf_event_paranoid: "2"
+    - name: V-257799
+      files:
+        - path: /etc/sysctl.d/60-stig-V-257799.conf
+          permissions: "0644"
+          content: |
+            kernel.kexec_load_disabled = 1
+      sysctl:
+        kernel.kexec_load_disabled: "1"
+    - name: V-257800
+      files:
+        - path: /etc/sysctl.d/60-stig-V-257800.conf
+          permissions: "0644"
+          content: |
+            kernel.kptr_restrict = 1
+      sysctl:
+        kernel.kptr_restrict: "1"
+    - name: V-257801
+      files:
+        - path: /etc/sysctl.d/60-stig-V-257801.conf
+          permissions: "0644"
+          content: |
+            fs.protected_hardlinks = 1
+      sysctl:
+        fs.protected_hardlinks: "1"
+    - name: V-257802
+      files:
+        - path: /etc/sysctl.d/60-stig-V-257802.conf
+          permissions: "0644"
+          content: |
+            fs.protected_symlinks = 1
+      sysctl:
+        fs.protected_symlinks: "1"
+    - name: V-257803
+      files:
+        - path: /etc/sysctl.d/60-stig-V-257803.conf
+          permissions: "0644"
+          content: |
+            kernel.core_pattern = |/bin/false
+      sysctl:
+        kernel.core_pattern: "|/bin/false"
+    - name: V-257809
+      files:
+        - path: /etc/sysctl.d/60-stig-V-257809.conf
+          permissions: "0644"
+          content: |
+            kernel.randomize_va_space = 2
+      sysctl:
+        kernel.randomize_va_space: "2"
+    - name: V-257810
+      files:
+        - path: /etc/sysctl.d/60-stig-V-257810.conf
+          permissions: "0644"
+          content: |
+            kernel.unprivileged_bpf_disabled = 1
+      sysctl:
+        kernel.unprivileged_bpf_disabled: "1"
+    - name: V-257811
+      files:
+        - path: /etc/sysctl.d/60-stig-V-257811.conf
+          permissions: "0644"
+          content: |
+            kernel.yama.ptrace_scope = 1
+      sysctl:
+        kernel.yama.ptrace_scope: "1"
+    - name: V-257816
+      files:
+        - path: /etc/sysctl.d/60-stig-V-257816.conf
+          permissions: "0644"
+          content: |
+            user.max_user_namespaces = 0
+      sysctl:
+        user.max_user_namespaces: "0"
+    - name: V-257942
+      files:
+        - path: /etc/sysctl.d/60-stig-V-257942.conf
+          permissions: "0644"
+          content: |
+            net.core.bpf_jit_harden = 2
+      sysctl:
+        net.core.bpf_jit_harden: "2"
