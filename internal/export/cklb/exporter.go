@@ -31,7 +31,7 @@ func (Exporter) Export(_ context.Context, w io.Writer, req stigexport.Request) e
 
 	stig := STIG{
 		STIGName:    req.Benchmark.Title,
-		DisplayName: req.Benchmark.Title,
+		DisplayName: displayName(req.Benchmark.Title),
 		STIGID:      req.Benchmark.ID,
 		ReleaseInfo: req.Benchmark.ReleaseInfo,
 		Version:     req.Benchmark.Version,
@@ -60,7 +60,7 @@ func (Exporter) Export(_ context.Context, w io.Writer, req stigexport.Request) e
 
 		stig.Rules = append(stig.Rules, Rule{
 			GroupIDSrc:         source.VulnID,
-			GroupTree:          []GroupTree{{ID: source.VulnID, Title: source.GroupTreeTitle, Description: ""}},
+			GroupTree:          []GroupTree{{ID: source.VulnID, Title: source.GroupTreeTitle, Description: "<GroupDescription></GroupDescription>"}},
 			GroupID:            source.VulnID,
 			Severity:           normalizeSeverity(source.Severity),
 			GroupTitle:         source.GroupTitle,
@@ -93,6 +93,7 @@ func (Exporter) Export(_ context.Context, w io.Writer, req stigexport.Request) e
 			Overrides:          map[string]any{},
 			Comments:           result.Comments,
 			FindingDetails:     result.FindingDetails,
+			SRGID:              source.GroupTreeTitle,
 		})
 	}
 
@@ -100,7 +101,7 @@ func (Exporter) Export(_ context.Context, w io.Writer, req stigexport.Request) e
 		Title:  title(req),
 		ID:     checklistID,
 		STIGs:  []STIG{stig},
-		Active: false,
+		Active: true,
 		Mode:   2,
 		HasPath: false,
 		TargetData: TargetData{
@@ -112,7 +113,7 @@ func (Exporter) Export(_ context.Context, w io.Writer, req stigexport.Request) e
 			Comments:       req.Target.Comments,
 			Role:           role(req.Target.Role),
 			IsWebDatabase:  false,
-			TechnologyArea: "UNIX OS",
+			TechnologyArea: "",
 			WebDBSite:      "",
 			WebDBInstance:  "",
 			Classification: nil,
@@ -162,4 +163,13 @@ func title(req stigexport.Request) string {
 		return req.Baseline
 	}
 	return req.Target.Hostname + " - " + req.Baseline
+}
+
+
+func displayName(title string) string {
+	const suffix = " Security Technical Implementation Guide"
+	if strings.HasSuffix(title, suffix) {
+		return strings.TrimSuffix(title, suffix)
+	}
+	return title
 }
