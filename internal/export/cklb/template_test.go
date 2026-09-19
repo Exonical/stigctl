@@ -104,3 +104,53 @@ func TestOverlayPreservesTemplateMetadata(t *testing.T) {
 		t.Fatalf("ip = %q", got.TargetData.IPAddress)
 	}
 }
+
+
+func TestSanitizeTemplateClearsTargetAndReviewData(t *testing.T) {
+	doc := Document{
+		Title: "host-specific",
+		ID:    "old-id",
+		TargetData: TargetData{
+			HostName:      "secret-host",
+			IPAddress:     "10.0.0.1",
+			MACAddress:    "00:11:22:33:44:55",
+			FQDN:          "secret.example",
+			Comments:      "host note",
+			Role:          "Member Server",
+			Classification: func() *string { v := "CUI"; return &v }(),
+		},
+		STIGs: []STIG{{
+			UUID: "stig-uuid",
+			Rules: []Rule{{
+				UUID:           "rule-uuid",
+				STIGUUID:       "stig-uuid",
+				Status:         "open",
+				Comments:       "finding note",
+				FindingDetails: "finding",
+				Overrides:      map[string]any{"severity": map[string]any{"severity": "medium"}},
+			}},
+		}},
+		CKLBVersion: "1.0",
+	}
+
+	got, err := SanitizeTemplate(doc, "rhel9:v2r9")
+	if err != nil {
+		t.Fatalf("SanitizeTemplate() error = %v", err)
+	}
+	if got.Title != "rhel9:v2r9" {
+		t.Fatalf("title = %q", got.Title)
+	}
+	if got.TargetData.HostName != "" || got.TargetData.IPAddress != "" || got.TargetData.FQDN != "" {
+		t.Fatalf("target data was not cleared: %#v", got.TargetData)
+	}
+	if got.TargetData.Role != "None" {
+		t.Fatalf("role = %q", got.TargetData.Role)
+	}
+	rule := got.STIGs[0].Rules[0]
+	if rule.Status != "not_reviewed" || rule.Comments != "" || rule.FindingDetails != "" {
+		t.Fatalf("rule review data was not cleared: %#v", rule)
+	}
+	if rule.UUID != "rule-uuid" || got.STIGs[0].UUID != "stig-uuid" {
+		t.Fatal("template STIG/rule UUIDs should be preserved")
+	}
+}
