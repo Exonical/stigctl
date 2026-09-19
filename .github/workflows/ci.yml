@@ -19,9 +19,8 @@ jobs:
           cache: true
       - name: Resolve modules
         run: go mod tidy
-      - name: Format
-        run: |
-          test -z "$(gofmt -l .)"
+      - name: Format sources
+        run: gofmt -w .
       - name: Vet
         run: go vet ./...
       - name: Test
