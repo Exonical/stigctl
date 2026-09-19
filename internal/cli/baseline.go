@@ -253,25 +253,40 @@ func newBaselineImportCKLBCommand() *cobra.Command {
 				)
 			}
 
+			if xccdfPath, err := resolved.XCCDFFile(); err == nil {
+				source, err := os.Open(xccdfPath)
+				if err != nil {
+					return fmt.Errorf("open XCCDF source: %w", err)
+				}
+				benchmark, parseErr := xccdf.Parse(source)
+				source.Close()
+				if parseErr != nil {
+					return parseErr
+				}
+				mismatches := cklb.CompareBenchmark(template, benchmark)
+				if len(mismatches) > 0 {
+					return fmt.Errorf("CKLB template does not align with XCCDF: %d metadata mismatch(es)", len(mismatches))
+				}
+			}
+
+			template, err = cklb.SanitizeTemplate(template, args[0])
+			if err != nil {
+				return err
+			}
+
 			sourceDir := filepath.Join(resolved.Path, "source")
 			if err := os.MkdirAll(sourceDir, 0o755); err != nil {
 				return fmt.Errorf("create source directory: %w", err)
 			}
 			destination := filepath.Join(sourceDir, "template.cklb")
 
-			src, err := os.Open(args[1])
-			if err != nil {
-				return fmt.Errorf("open CKLB source: %w", err)
-			}
-			defer src.Close()
-
 			dst, err := os.Create(destination)
 			if err != nil {
 				return fmt.Errorf("create CKLB destination: %w", err)
 			}
-			if _, err := io.Copy(dst, src); err != nil {
+			if err := cklb.Write(dst, template); err != nil {
 				dst.Close()
-				return fmt.Errorf("copy CKLB template: %w", err)
+				return err
 			}
 			if err := dst.Close(); err != nil {
 				return fmt.Errorf("close CKLB destination: %w", err)
