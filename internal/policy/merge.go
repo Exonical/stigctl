@@ -45,10 +45,19 @@ func Merge(ruleDoc rules.Document, exceptionDoc exceptions.Document, scanned []r
 			Host:    ctx.Hostname,
 			Now:     ctx.Now,
 		}) {
-			result.Status = results.StatusException
-			result.Comments = exceptionComment(exception)
-			if result.FindingDetails == "" {
-				result.FindingDetails = "Rule has an approved organizational exception; technical compliance was not asserted."
+			switch strings.ToLower(exception.Status) {
+			case "not_applicable", "not-applicable", "n/a":
+				result.Status = results.StatusNotApplicable
+				result.Comments = exceptionComment(exception)
+				if result.FindingDetails == "" {
+					result.FindingDetails = "Rule is not applicable for this target by approved policy."
+				}
+			default:
+				result.Status = results.StatusException
+				result.Comments = exceptionComment(exception)
+				if result.FindingDetails == "" {
+					result.FindingDetails = "Rule has an approved organizational exception; technical compliance was not asserted."
+				}
 			}
 			out = append(out, result)
 			delete(scannedByID, id)
@@ -91,7 +100,11 @@ func Merge(ruleDoc rules.Document, exceptionDoc exceptions.Document, scanned []r
 }
 
 func exceptionComment(exception exceptions.Exception) string {
-	parts := []string{"Approved exception"}
+	label := "Approved exception"
+	if strings.EqualFold(exception.Status, "not_applicable") || strings.EqualFold(exception.Status, "not-applicable") {
+		label = "Approved not applicable"
+	}
+	parts := []string{label}
 	if exception.Approval.Ticket != "" {
 		parts = append(parts, "ticket="+exception.Approval.Ticket)
 	}
