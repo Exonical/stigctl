@@ -54,15 +54,6 @@ func newScanCommand() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			scanned, err := goss.New(gossBinary).Validate(cmd.Context(), validation.Request{
-				Baseline: args[0],
-				Profile:  profile,
-				GossFile: gossFile,
-				Package:  "rpm",
-			})
-			if err != nil {
-				return err
-			}
 
 			ruleDoc, err := rules.Load(resolved.RulesFile())
 			if err != nil {
@@ -76,6 +67,23 @@ func newScanCommand() *cobra.Command {
 			facts := host.Detect()
 			if hostname == "" {
 				hostname = facts.Hostname
+			}
+
+			varsFile, cleanup, err := writeEffectiveGossVars(ruleDoc, exceptionDoc, profile, hostname)
+			if err != nil {
+				return err
+			}
+			defer cleanup()
+
+			scanned, err := goss.New(gossBinary).Validate(cmd.Context(), validation.Request{
+				Baseline: args[0],
+				Profile:  profile,
+				GossFile: gossFile,
+				Vars:     []string{varsFile},
+				Package:  "rpm",
+			})
+			if err != nil {
+				return err
 			}
 
 			merged := policy.Merge(ruleDoc, exceptionDoc, scanned, policy.Context{
