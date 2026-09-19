@@ -911,3 +911,68 @@ rules:
       file: validation/80-network.yaml
       resource: kernel-param
       test: V-257977
+  V-257804:
+    title: RHEL 9 must be configured to disable the Asynchronous Transfer Mode kernel module.
+    rule_id: SV-257804r1044853
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/10-kernel.yaml
+      step: V-257804
+    validation:
+      type: goss
+      file: validation/10-kernel.yaml
+      resource: command
+      test: V-257804
+  V-257805:
+    title: RHEL 9 must be configured to disable the Controller Area Network kernel module.
+    rule_id: SV-257805r1044856
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/10-kernel.yaml
+      step: V-257805
+    validation:
+      type: goss
+      file: validation/10-kernel.yaml
+      resource: command
+      test: V-257805
+  V-257806:
+    title: RHEL 9 must be configured to disable the FireWire kernel module.
+    rule_id: SV-257806r1044859
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/10-kernel.yaml
+      step: V-257806
+    validation:
+      type: goss
+      file: validation/10-kernel.yaml
+      resource: command
+      test: V-257806
+  V-257807:
+    title: RHEL 9 must disable the Stream Control Transmission Protocol (SCTP) kernel module.
+    rule_id: SV-257807r1044862
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/10-kernel.yaml
+      step: V-257807
+    validation:
+      type: goss
+      file: validation/10-kernel.yaml
+      resource: command
+      test: V-257807
+  V-257808:
+    title: RHEL 9 must disable the Transparent Inter Process Communication (TIPC) kernel module.
+    rule_id: SV-257808r1044865
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/10-kernel.yaml
+      step: V-257808
+    validation:
+      type: goss
+      file: validation/10-kernel.yaml
+      resource: command
+      test: V-257808
