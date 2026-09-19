@@ -5,13 +5,14 @@ import "context"
 type Request struct {
 	Baseline string
 	Profile  string
-	Rules    []string
+	Stage    string
+	Files    []string
 }
 
 type Result struct {
-	Applied []string
-	Skipped []string
-	Failed  []string
+	Files  []string
+	Stdout string
+	Stderr string
 }
 
 type Remediator interface {
