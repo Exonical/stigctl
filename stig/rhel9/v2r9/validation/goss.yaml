@@ -1,0 +1,11 @@
+gossfile:
+  00-packages.yaml: {}
+  10-kernel.yaml: {}
+  20-filesystem.yaml: {}
+  30-ssh.yaml: {}
+  40-authentication.yaml: {}
+  50-audit.yaml: {}
+  60-logging.yaml: {}
+  70-services.yaml: {}
+  80-network.yaml: {}
+  90-crypto.yaml: {}
