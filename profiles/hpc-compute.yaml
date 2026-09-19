@@ -1,0 +1,5 @@
+schema_version: 1
+
+profile:
+  id: hpc-compute
+  name: HPC compute node
