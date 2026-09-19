@@ -24,7 +24,8 @@ func TestParseDISAXCCDF11(t *testing.T) {
       <fixtext fixref="F-61442r925317_fix">Upgrade to a supported version of RHEL 9.</fixtext>
       <fix id="F-61442r925317_fix"></fix>
       <check system="C-61518r1155675_chk">
-        Verify the version of RHEL 9 is vendor supported.
+        <check-content-ref href="Red_Hat_Enterprise_Linux_9_STIG.xml" name="M"/>
+        <check-content>Verify the version of RHEL 9 is vendor supported.</check-content>
       </check>
     </Rule>
   </Group>
@@ -69,8 +70,11 @@ func TestParseDISAXCCDF11(t *testing.T) {
 	if rule.CheckContent != "Verify the version of RHEL 9 is vendor supported." {
 		t.Fatalf("CheckContent = %q", rule.CheckContent)
 	}
-	if rule.CheckRefName != "C-61518r1155675_chk" {
+	if rule.CheckRefName != "M" {
 		t.Fatalf("CheckRefName = %q", rule.CheckRefName)
+	}
+	if rule.CheckRefHref != "Red_Hat_Enterprise_Linux_9_STIG.xml" {
+		t.Fatalf("CheckRefHref = %q", rule.CheckRefHref)
 	}
 	if rule.ReferenceID != "5551" {
 		t.Fatalf("ReferenceID = %q", rule.ReferenceID)
