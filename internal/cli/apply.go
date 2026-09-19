@@ -3,11 +3,11 @@ package cli
 import (
 	"fmt"
 	"sort"
-	"time"
 
 	"github.com/Exonical/stigctl/internal/baseline"
 	"github.com/Exonical/stigctl/internal/exceptions"
 	"github.com/Exonical/stigctl/internal/host"
+	"github.com/Exonical/stigctl/internal/policy"
 	"github.com/Exonical/stigctl/internal/remediation"
 	"github.com/Exonical/stigctl/internal/remediation/yip"
 	"github.com/Exonical/stigctl/internal/rules"
@@ -50,28 +50,16 @@ func newApplyCommand() *cobra.Command {
 				}
 
 				facts := host.Detect()
+				enabled := policy.EnabledRules(ruleDoc, exceptionDoc, policy.DefaultContext(profile, facts.Hostname))
 				skipSteps := map[string]struct{}{}
 				var skippedIDs []string
-				for id, exception := range exceptionDoc.Exceptions {
-					if !exception.Applies(exceptions.Context{
-						Profile: profile,
-						Host:    facts.Hostname,
-						Now:     time.Now(),
-					}) {
-						continue
-					}
-
-					rule, ok := ruleDoc.Rules[id]
-					if !ok {
-						return fmt.Errorf("active exception %s has no matching rules.yaml entry", id)
-					}
-					if rule.Remediation.File == "" {
+				for id, rule := range ruleDoc.Rules {
+					if enabled[id] || rule.Remediation.File == "" {
 						continue
 					}
 					if rule.Remediation.Step == "" {
-						return fmt.Errorf("active exception %s has remediation file %s but no remediation.step mapping", id, rule.Remediation.File)
+						return fmt.Errorf("rule %s has remediation file %s but no remediation.step mapping", id, rule.Remediation.File)
 					}
-
 					skipSteps[rule.Remediation.Step] = struct{}{}
 					skippedIDs = append(skippedIDs, id)
 				}
@@ -82,7 +70,7 @@ func newApplyCommand() *cobra.Command {
 				}
 				sort.Strings(skippedIDs)
 				for _, id := range skippedIDs {
-					fmt.Fprintf(cmd.OutOrStdout(), "skipping excepted remediation %s\n", id)
+					fmt.Fprintf(cmd.OutOrStdout(), "skipping remediation %s due to effective policy\n", id)
 				}
 			}
 			defer filtered.Cleanup()
