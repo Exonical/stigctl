@@ -98,3 +98,38 @@ stages:
             net.core.bpf_jit_harden = 2
       sysctl:
         net.core.bpf_jit_harden: "2"
+    - name: V-257804
+      files:
+        - path: /etc/modprobe.d/atm.conf
+          permissions: "0644"
+          content: |
+            install atm /bin/false
+            blacklist atm
+    - name: V-257805
+      files:
+        - path: /etc/modprobe.d/can.conf
+          permissions: "0644"
+          content: |
+            install can /bin/false
+            blacklist can
+    - name: V-257806
+      files:
+        - path: /etc/modprobe.d/firewire-core.conf
+          permissions: "0644"
+          content: |
+            install firewire-core /bin/false
+            blacklist firewire-core
+    - name: V-257807
+      files:
+        - path: /etc/modprobe.d/sctp.conf
+          permissions: "0644"
+          content: |
+            install sctp /bin/false
+            blacklist sctp
+    - name: V-257808
+      files:
+        - path: /etc/modprobe.d/tipc.conf
+          permissions: "0644"
+          content: |
+            install tipc /bin/false
+            blacklist tipc
