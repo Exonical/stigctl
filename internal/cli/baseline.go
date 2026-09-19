@@ -61,6 +61,7 @@ func newBaselineCommand() *cobra.Command {
 		newBaselineSyncCommand(),
 		newBaselineImportCommand(),
 		newBaselineImportCKLBCommand(),
+		newBaselineVerifyCommand(),
 	)
 
 	return cmd
@@ -283,6 +284,92 @@ func newBaselineImportCKLBCommand() *cobra.Command {
 				len(stig.Rules),
 				destination,
 			)
+			return nil
+		},
+	}
+}
+
+
+func newBaselineVerifyCommand() *cobra.Command {
+	return &cobra.Command{
+		Use:   "verify <baseline>",
+		Short: "Verify XCCDF, rules, and optional CKLB template alignment",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			resolved, err := baseline.NewStore(contentRoot).Resolve(args[0])
+			if err != nil {
+				return err
+			}
+
+			xccdfPath, err := resolved.XCCDFFile()
+			if err != nil {
+				return err
+			}
+			source, err := os.Open(xccdfPath)
+			if err != nil {
+				return fmt.Errorf("open XCCDF source: %w", err)
+			}
+			benchmark, err := xccdf.Parse(source)
+			source.Close()
+			if err != nil {
+				return err
+			}
+
+			ruleDoc, err := rules.Load(resolved.RulesFile())
+			if err != nil {
+				return err
+			}
+			if len(ruleDoc.Rules) != len(benchmark.Rules) {
+				return fmt.Errorf(
+					"rules.yaml contains %d rules but XCCDF contains %d",
+					len(ruleDoc.Rules),
+					len(benchmark.Rules),
+				)
+			}
+
+			templatePath, err := resolved.CKLBTemplateFile()
+			if err != nil {
+				return err
+			}
+			if templatePath != "" {
+				template, err := cklb.LoadFile(templatePath)
+				if err != nil {
+					return err
+				}
+				mismatches := cklb.CompareBenchmark(template, benchmark)
+				if len(mismatches) > 0 {
+					limit := len(mismatches)
+					if limit > 20 {
+						limit = 20
+					}
+					for _, mismatch := range mismatches[:limit] {
+						fmt.Fprintf(
+							cmd.ErrOrStderr(),
+							"%s %s: XCCDF=%q CKLB=%q\n",
+							mismatch.VulnID,
+							mismatch.Field,
+							mismatch.Want,
+							mismatch.Got,
+						)
+					}
+					return fmt.Errorf(
+						"CKLB template differs from XCCDF in %d field(s)",
+						len(mismatches),
+					)
+				}
+			}
+
+			fmt.Fprintf(
+				cmd.OutOrStdout(),
+				"verified %s: %d rules, %s",
+				args[0],
+				len(benchmark.Rules),
+				benchmark.ReleaseInfo,
+			)
+			if templatePath != "" {
+				fmt.Fprintf(cmd.OutOrStdout(), ", CKLB template aligned")
+			}
+			fmt.Fprintln(cmd.OutOrStdout())
 			return nil
 		},
 	}
