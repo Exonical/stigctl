@@ -53,13 +53,21 @@ jobs:
       - name: Pull Rocky Linux 9
         run: docker pull rockylinux/rockylinux:9
 
-      - name: Apply STIG in Rocky Linux 9 container
+      - name: Apply and validate STIG in Rocky Linux 9 container
         run: |
-          docker run --rm             --privileged             --hostname stigctl-rocky9-ci             -v "$PWD:/workspace"             -w /workspace             rockylinux/rockylinux:9             /bin/bash -euxo pipefail -c '
+          docker run --rm \
+            --privileged \
+            --hostname stigctl-rocky9-ci \
+            -v "$PWD:/workspace" \
+            -w /workspace \
+            rockylinux/rockylinux:9 \
+            /bin/bash -euxo pipefail -c '
               cat /etc/os-release
+
+              # Exercise the embedded Yip engine.
               ./bin/stigctl apply rhel9:v2r9 --profile container-ci
 
-              # Verify representative package remediations were actually applied.
+              # Verify representative remediations changed the container.
               rpm -q firewalld
               rpm -q chrony
               rpm -q openssh-clients
@@ -73,10 +81,10 @@ jobs:
               ! rpm -q telnet-server
               ! rpm -q ypserv
               ! rpm -q quagga
-            '
 
-      - name: Validate remediated Rocky Linux 9 container with embedded Goss
-        run: |
-          docker run --rm             --privileged             --hostname stigctl-rocky9-ci             -v "$PWD:/workspace"             -w /workspace             rockylinux/rockylinux:9             /bin/bash -euxo pipefail -c '
-              ./bin/stigctl validate rhel9:v2r9                 --profile container-ci                 --fail-on-findings
+              # Exercise the embedded Goss engine against the same remediated
+              # container filesystem.
+              ./bin/stigctl validate rhel9:v2r9 \
+                --profile container-ci \
+                --fail-on-findings
             '
