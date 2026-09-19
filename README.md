@@ -22,6 +22,15 @@ The project is under active development. The core baseline resolver, Yip/Goss ad
 stigctl baseline list
 stigctl baseline show rhel9:v2r9
 
+# Import an official DISA STIG ZIP and sync rules.yaml
+stigctl baseline import rhel9:v2r9 U_RHEL_9_V2R9_STIG.zip
+
+# Optionally import a clean STIG Viewer 3 CKLB as the exact export template
+stigctl baseline import-cklb rhel9:v2r9 RHEL_9_Dev.cklb
+
+# Verify XCCDF, rules.yaml, and CKLB metadata stay aligned
+stigctl baseline verify rhel9:v2r9
+
 # Apply numbered Yip remediation modules
 stigctl apply rhel9:v2r9 --profile server
 
@@ -93,7 +102,8 @@ stig/rhel9/v2r9/
 ├── rules.yaml
 ├── exceptions.yaml
 ├── source/
-│   └── <official DISA XCCDF>.xml
+│   ├── <official DISA XCCDF>.xml
+│   └── template.cklb              # optional, sanitized STIG Viewer 3 template
 ├── remediation/
 │   ├── 00-packages.yaml
 │   ├── 10-kernel.yaml
@@ -120,6 +130,34 @@ stig/rhel9/v2r9/
 ```
 
 The numbered files are engine configuration. `manifest.yaml`, `rules.yaml`, and `exceptions.yaml` are interpreted by `stigctl`.
+
+## Authoritative baseline import
+
+The preferred baseline bootstrap is the official DISA release ZIP:
+
+```bash
+stigctl baseline import rhel9:v2r9 U_RHEL_9_V2R9_STIG.zip
+```
+
+`stigctl` extracts the XCCDF, validates the release against the manifest, and refreshes `rules.yaml` while preserving implementation metadata such as remediation and validation mappings.
+
+A STIG Viewer 3 CKLB can also be imported as an exact export template:
+
+```bash
+stigctl baseline import-cklb rhel9:v2r9 RHEL_9_Dev.cklb
+```
+
+The imported checklist is validated against the XCCDF when available and sanitized before it is stored: target host data, findings, comments, statuses, and overrides are cleared while STIG/rule UUIDs and official checklist metadata are preserved.
+
+When `template.cklb` exists, `stigctl scan --format cklb` overlays Goss results onto that template. Otherwise, it builds a CKLB from the XCCDF. A one-off template can also be supplied with `--cklb-template`.
+
+```bash
+stigctl scan rhel9:v2r9 \
+  --profile server \
+  --cklb-template ./RHEL_9_Dev.cklb \
+  --format cklb \
+  -o node01.cklb
+```
 
 ## Goss rule identity
 
