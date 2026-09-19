@@ -1,4 +1,120 @@
 name: RHEL 9 STIG - Packages
 
 stages:
-  stig: []
+  stig:
+    - name: V-257825
+      packages:
+        install:
+          - subscription-manager
+    - name: V-257827
+      packages:
+        remove:
+          - sendmail
+    - name: V-257828
+      packages:
+        remove:
+          - nfs-utils
+    - name: V-257829
+      packages:
+        remove:
+          - ypserv
+    - name: V-257831
+      packages:
+        remove:
+          - telnet-server
+    - name: V-257832
+      packages:
+        remove:
+          - gssproxy
+    - name: V-257833
+      packages:
+        remove:
+          - iprutils
+    - name: V-257834
+      packages:
+        remove:
+          - tuned
+    - name: V-257836
+      packages:
+        remove:
+          - quagga
+    - name: V-257838
+      packages:
+        install:
+          - openssl-pkcs11
+    - name: V-257839
+      packages:
+        install:
+          - gnutls-utils
+    - name: V-257840
+      packages:
+        install:
+          - nss-tools
+    - name: V-257841
+      packages:
+        install:
+          - rng-tools
+    - name: V-257842
+      packages:
+        install:
+          - s-nail
+    - name: V-257935
+      packages:
+        install:
+          - firewalld
+    - name: V-257943
+      packages:
+        install:
+          - chrony
+    - name: V-257954
+      packages:
+        install:
+          - libreswan
+    - name: V-257980
+      packages:
+        install:
+          - openssh-clients
+    - name: V-258035
+      packages:
+        install:
+          - usbguard
+    - name: V-258082
+      packages:
+        install:
+          - policycoreutils-python-utils
+    - name: V-258083
+      packages:
+        install:
+          - sudo
+    - name: V-258124
+      packages:
+        install:
+          - pcsc-lite
+    - name: V-258126
+      packages:
+        install:
+          - opensc
+    - name: V-258134
+      packages:
+        install:
+          - aide
+    - name: V-258140
+      packages:
+        install:
+          - rsyslog
+    - name: V-258151
+      packages:
+        install:
+          - audit
+    - name: V-258175
+      packages:
+        install:
+          - audispd-plugins
+    - name: V-258234
+      packages:
+        install:
+          - crypto-policies
+    - name: V-272488
+      packages:
+        install:
+          - postfix
