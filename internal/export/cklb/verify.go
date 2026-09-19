@@ -119,16 +119,12 @@ func CompareBenchmark(doc Document, benchmark xccdf.Benchmark) []Mismatch {
 }
 
 func normalizeText(value string) string {
-	value = strings.ReplaceAll(value, "
-", "
-")
-	lines := strings.Split(value, "
-")
+	value = strings.ReplaceAll(value, "\r\n", "\n")
+	lines := strings.Split(value, "\n")
 	for i := range lines {
-		lines[i] = strings.TrimRight(lines[i], " 	")
+		lines[i] = strings.TrimRight(lines[i], " \t")
 	}
-	return strings.TrimSpace(strings.Join(lines, "
-"))
+	return strings.TrimSpace(strings.Join(lines, "\n"))
 }
 
 func sameStrings(a, b []string) bool {
