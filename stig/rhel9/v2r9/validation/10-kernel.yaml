@@ -83,3 +83,50 @@ kernel-param:
       stig_id: V-257942
     value: "2"
     skip: {{ not (index .Vars.enabled_rules "V-257942") }}
+
+command:
+  V-257804:
+    title: "RHEL 9 must be configured to disable the Asynchronous Transfer Mode kernel module."
+    meta:
+      stig_id: V-257804
+    exec: |
+      grep -RhsE '^[[:space:]]*install[[:space:]]+atm[[:space:]]+/bin/false[[:space:]]*$' /etc/modprobe.d /etc/modprobe.conf 2>/dev/null | grep -q . &&
+      grep -RhsE '^[[:space:]]*blacklist[[:space:]]+atm[[:space:]]*$' /etc/modprobe.d /etc/modprobe.conf 2>/dev/null | grep -q .
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257804") }}
+  V-257805:
+    title: "RHEL 9 must be configured to disable the Controller Area Network kernel module."
+    meta:
+      stig_id: V-257805
+    exec: |
+      grep -RhsE '^[[:space:]]*install[[:space:]]+can[[:space:]]+/bin/false[[:space:]]*$' /etc/modprobe.d /etc/modprobe.conf 2>/dev/null | grep -q . &&
+      grep -RhsE '^[[:space:]]*blacklist[[:space:]]+can[[:space:]]*$' /etc/modprobe.d /etc/modprobe.conf 2>/dev/null | grep -q .
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257805") }}
+  V-257806:
+    title: "RHEL 9 must be configured to disable the FireWire kernel module."
+    meta:
+      stig_id: V-257806
+    exec: |
+      grep -RhsE '^[[:space:]]*install[[:space:]]+firewire-core[[:space:]]+/bin/false[[:space:]]*$' /etc/modprobe.d /etc/modprobe.conf 2>/dev/null | grep -q . &&
+      grep -RhsE '^[[:space:]]*blacklist[[:space:]]+firewire-core[[:space:]]*$' /etc/modprobe.d /etc/modprobe.conf 2>/dev/null | grep -q .
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257806") }}
+  V-257807:
+    title: "RHEL 9 must disable the Stream Control Transmission Protocol (SCTP) kernel module."
+    meta:
+      stig_id: V-257807
+    exec: |
+      grep -RhsE '^[[:space:]]*install[[:space:]]+sctp[[:space:]]+/bin/false[[:space:]]*$' /etc/modprobe.d /etc/modprobe.conf 2>/dev/null | grep -q . &&
+      grep -RhsE '^[[:space:]]*blacklist[[:space:]]+sctp[[:space:]]*$' /etc/modprobe.d /etc/modprobe.conf 2>/dev/null | grep -q .
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257807") }}
+  V-257808:
+    title: "RHEL 9 must disable the Transparent Inter Process Communication (TIPC) kernel module."
+    meta:
+      stig_id: V-257808
+    exec: |
+      grep -RhsE '^[[:space:]]*install[[:space:]]+tipc[[:space:]]+/bin/false[[:space:]]*$' /etc/modprobe.d /etc/modprobe.conf 2>/dev/null | grep -q . &&
+      grep -RhsE '^[[:space:]]*blacklist[[:space:]]+tipc[[:space:]]*$' /etc/modprobe.d /etc/modprobe.conf 2>/dev/null | grep -q .
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257808") }}
