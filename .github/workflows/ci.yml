@@ -27,3 +27,56 @@ jobs:
         run: go test ./...
       - name: Build self-contained binary
         run: go build -o bin/stigctl ./cmd/stigctl
+
+
+  rocky9-stig:
+    name: Apply and validate RHEL 9 STIG on Rocky Linux 9
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.27.1"
+          cache: true
+
+      - name: Build self-contained Linux binary
+        env:
+          CGO_ENABLED: "0"
+          GOOS: linux
+          GOARCH: amd64
+        run: |
+          mkdir -p bin
+          go build -o bin/stigctl ./cmd/stigctl
+
+      - name: Pull Rocky Linux 9
+        run: docker pull rockylinux/rockylinux:9
+
+      - name: Apply STIG in Rocky Linux 9 container
+        run: |
+          docker run --rm             --privileged             --hostname stigctl-rocky9-ci             -v "$PWD:/workspace"             -w /workspace             rockylinux/rockylinux:9             /bin/bash -euxo pipefail -c '
+              cat /etc/os-release
+              ./bin/stigctl apply rhel9:v2r9 --profile container-ci
+
+              # Verify representative package remediations were actually applied.
+              rpm -q firewalld
+              rpm -q chrony
+              rpm -q openssh-clients
+              rpm -q usbguard
+              rpm -q aide
+              rpm -q rsyslog
+              rpm -q audit
+              rpm -q crypto-policies
+
+              ! rpm -q sendmail
+              ! rpm -q telnet-server
+              ! rpm -q ypserv
+              ! rpm -q quagga
+            '
+
+      - name: Validate remediated Rocky Linux 9 container with embedded Goss
+        run: |
+          docker run --rm             --privileged             --hostname stigctl-rocky9-ci             -v "$PWD:/workspace"             -w /workspace             rockylinux/rockylinux:9             /bin/bash -euxo pipefail -c '
+              ./bin/stigctl validate rhel9:v2r9                 --profile container-ci                 --fail-on-findings
+            '
