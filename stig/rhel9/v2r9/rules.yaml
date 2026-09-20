@@ -1247,44 +1247,68 @@ rules:
     title: RHEL 9 must require a unique superusers name upon booting into single-user and maintenance modes.
     rule_id: SV-257789r1137691
     severity: high
-    status: manual
+    status: automated
     remediation: {}
-    validation: {}
+    validation:
+      type: goss
+      file: validation/20-system.yaml
+      resource: command
+      test: V-257789
   V-257835:
     title: The Trivial File Transfer Protocol (TFTP) server must not be installed unless it is required, and if required, the RHEL 9 TFTP daemon must be configured to operate in secure mode.
     rule_id: SV-257835r1155679
     severity: high
-    status: manual
+    status: automated
     remediation: {}
-    validation: {}
+    validation:
+      type: goss
+      file: validation/20-system.yaml
+      resource: command
+      test: V-257835
   V-257879:
     title: RHEL 9 local disk partitions must implement cryptographic mechanisms to prevent unauthorized disclosure or modification of all information that requires at rest protection.
     rule_id: SV-257879r1045454
     severity: high
-    status: manual
+    status: automated
     remediation: {}
-    validation: {}
+    validation:
+      type: goss
+      file: validation/20-filesystem.yaml
+      resource: command
+      test: V-257879
   V-258018:
     title: RHEL 9 must not allow unattended or automatic logon via the graphical user interface.
     rule_id: SV-258018r1045090
     severity: high
-    status: manual
+    status: automated
     remediation: {}
-    validation: {}
+    validation:
+      type: goss
+      file: validation/20-system.yaml
+      resource: command
+      test: V-258018
   V-258232:
     title: RHEL 9 IP tunnels must use FIPS 140-3 approved cryptographic algorithms.
     rule_id: SV-258232r1184335
     severity: high
-    status: manual
+    status: automated
     remediation: {}
-    validation: {}
+    validation:
+      type: goss
+      file: validation/90-crypto.yaml
+      resource: command
+      test: V-258232
   V-258242:
     title: RHEL 9 must implement DOD-approved encryption in the bind package.
     rule_id: SV-258242r1184336
     severity: high
-    status: manual
+    status: automated
     remediation: {}
-    validation: {}
+    validation:
+      type: goss
+      file: validation/90-crypto.yaml
+      resource: command
+      test: V-258242
   V-257978:
     title: All RHEL 9 networked systems must have SSH installed.
     rule_id: SV-257978r1045013
