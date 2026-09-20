@@ -37,3 +37,22 @@ stages:
       commands:
         - dnf -y reinstall crypto-policies
         - update-crypto-policies --set FIPS
+
+    - name: V-258232
+      commands:
+        - |
+          if rpm -q libreswan >/dev/null 2>&1; then
+            touch /etc/ipsec.conf
+            grep -Eq '^[[:space:]]*include[[:space:]]+/etc/crypto-policies/back-ends/libreswan\.config[[:space:]]*$' /etc/ipsec.conf ||
+              printf '\ninclude /etc/crypto-policies/back-ends/libreswan.config\n' >> /etc/ipsec.conf
+          fi
+
+    - name: V-258242
+      commands:
+        - |
+          if rpm -q bind >/dev/null 2>&1; then
+            touch /etc/named.conf
+            grep -Eq '^[[:space:]]*include[[:space:]]+"/etc/crypto-policies/back-ends/bind\.config";[[:space:]]*$' /etc/named.conf ||
+              printf '\ninclude "/etc/crypto-policies/back-ends/bind.config";\n' >> /etc/named.conf
+          fi
+
