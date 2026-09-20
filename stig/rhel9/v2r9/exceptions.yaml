@@ -146,3 +146,28 @@ exceptions:
 
   V-257989: *container_service_na
   V-257991: *container_service_na
+
+  # The Rocky Linux CI container does not run or own an SSH daemon.
+  V-257978: *container_service_na
+  V-257979: *container_service_na
+  V-257982: *container_service_na
+  V-257983: *container_service_na
+  V-257985: *container_service_na
+  V-257992: *container_service_na
+  V-257993: *container_service_na
+  V-257994: *container_service_na
+  V-257995: *container_service_na
+  V-257996: *container_service_na
+  V-257997: *container_service_na
+  V-257998: *container_service_na
+  V-257999: *container_service_na
+  V-258000: *container_service_na
+  V-258001: *container_service_na
+  V-258003: *container_service_na
+  V-258004: *container_service_na
+  V-258005: *container_service_na
+  V-258006: *container_service_na
+  V-258007: *container_service_na
+  V-258008: *container_service_na
+  V-258009: *container_service_na
+  V-258011: *container_service_na
