@@ -524,3 +524,107 @@ stages:
             -a always,exit -F arch=b64 -S execve -F subj_type=crond_t -F auid>=1000 -F auid!=unset -k cron_exec
             -a always,exit -F arch=b32 -S execve -F subj_type=crond_t -F auid>=1000 -F auid!=unset -k cron_exec
 
+    - name: V-258153
+      commands:
+        - |
+          if grep -qE '^[[:space:]]*disk_error_action[[:space:]]*=' /etc/audit/auditd.conf; then
+            sed -ri 's|^[[:space:]]*disk_error_action[[:space:]]*=.*|disk_error_action = HALT|' /etc/audit/auditd.conf
+          else
+            printf '\ndisk_error_action = HALT\n' >> /etc/audit/auditd.conf
+          fi
+
+
+    - name: V-258154
+      commands:
+        - |
+          if grep -qE '^[[:space:]]*disk_full_action[[:space:]]*=' /etc/audit/auditd.conf; then
+            sed -ri 's|^[[:space:]]*disk_full_action[[:space:]]*=.*|disk_full_action = HALT|' /etc/audit/auditd.conf
+          else
+            printf '\ndisk_full_action = HALT\n' >> /etc/audit/auditd.conf
+          fi
+
+
+    - name: V-258156
+      commands:
+        - |
+          if grep -qE '^[[:space:]]*space_left[[:space:]]*=' /etc/audit/auditd.conf; then
+            sed -ri 's|^[[:space:]]*space_left[[:space:]]*=.*|space_left = 25%|' /etc/audit/auditd.conf
+          else
+            printf '\nspace_left = 25%\n' >> /etc/audit/auditd.conf
+          fi
+
+
+    - name: V-258157
+      commands:
+        - |
+          if grep -qE '^[[:space:]]*space_left_action[[:space:]]*=' /etc/audit/auditd.conf; then
+            sed -ri 's|^[[:space:]]*space_left_action[[:space:]]*=.*|space_left_action = email|' /etc/audit/auditd.conf
+          else
+            printf '\nspace_left_action = email\n' >> /etc/audit/auditd.conf
+          fi
+
+
+    - name: V-258158
+      commands:
+        - |
+          if grep -qE '^[[:space:]]*admin_space_left[[:space:]]*=' /etc/audit/auditd.conf; then
+            sed -ri 's|^[[:space:]]*admin_space_left[[:space:]]*=.*|admin_space_left = 5%|' /etc/audit/auditd.conf
+          else
+            printf '\nadmin_space_left = 5%\n' >> /etc/audit/auditd.conf
+          fi
+
+
+    - name: V-258159
+      commands:
+        - |
+          if grep -qE '^[[:space:]]*admin_space_left_action[[:space:]]*=' /etc/audit/auditd.conf; then
+            sed -ri 's|^[[:space:]]*admin_space_left_action[[:space:]]*=.*|admin_space_left_action = single|' /etc/audit/auditd.conf
+          else
+            printf '\nadmin_space_left_action = single\n' >> /etc/audit/auditd.conf
+          fi
+
+
+    - name: V-258160
+      commands:
+        - |
+          if grep -qE '^[[:space:]]*max_log_file_action[[:space:]]*=' /etc/audit/auditd.conf; then
+            sed -ri 's|^[[:space:]]*max_log_file_action[[:space:]]*=.*|max_log_file_action = ROTATE|' /etc/audit/auditd.conf
+          else
+            printf '\nmax_log_file_action = ROTATE\n' >> /etc/audit/auditd.conf
+          fi
+
+
+    - name: V-258161
+      commands:
+        - |
+          if grep -qE '^[[:space:]]*name_format[[:space:]]*=' /etc/audit/auditd.conf; then
+            sed -ri 's|^[[:space:]]*name_format[[:space:]]*=.*|name_format = hostname|' /etc/audit/auditd.conf
+          else
+            printf '\nname_format = hostname\n' >> /etc/audit/auditd.conf
+          fi
+
+
+    - name: V-258162
+      commands:
+        - |
+          if grep -qE '^[[:space:]]*overflow_action[[:space:]]*=' /etc/audit/auditd.conf; then
+            sed -ri 's|^[[:space:]]*overflow_action[[:space:]]*=.*|overflow_action = syslog|' /etc/audit/auditd.conf
+          else
+            printf '\noverflow_action = syslog\n' >> /etc/audit/auditd.conf
+          fi
+
+
+    - name: V-258163
+      commands:
+        - |
+          if grep -qE '^[[:space:]]*action_mail_acct[[:space:]]*=' /etc/audit/auditd.conf; then
+            sed -ri 's|^[[:space:]]*action_mail_acct[[:space:]]*=.*|action_mail_acct = root|' /etc/audit/auditd.conf
+          else
+            printf '\naction_mail_acct = root\n' >> /etc/audit/auditd.conf
+          fi
+
+
+    - name: V-258173
+      commands:
+        - grubby --update-kernel=ALL --args=audit_backlog_limit=8192
+
