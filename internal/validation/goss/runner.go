@@ -144,7 +144,13 @@ func testMessage(test resource.TestResult) string {
 		return fmt.Sprintf("%s: %s: %s: %s", test.ResourceType, test.ResourceId, test.Property, test.Err.Error())
 	}
 	if test.Result == resource.SUCCESS {
-		return fmt.Sprintf("%s: %s: %s: matches expectation", test.ResourceType, test.ResourceId, test.Property)
+		return fmt.Sprintf(
+			"%s: %s: %s: actual=%v",
+			test.ResourceType,
+			test.ResourceId,
+			test.Property,
+			test.MatcherResult.Actual,
+		)
 	}
 	return fmt.Sprintf(
 		"%s: %s: %s: expected=%v actual=%v",
