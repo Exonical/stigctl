@@ -15,7 +15,7 @@ import (
 
 const (
 	rhel9V2R9GoldenCKLBSourceSHA256 = "a9f65d3b0120abdb210375009a813dedb0f5e51bf9ce806a171bac74d1f13a9a"
-	rhel9V2R9GoldenDocumentSHA256   = "2ebc1f833e84e448324ecc0d21a9f30b365f1805abdd4cf63f54388904209d4d"
+	rhel9V2R9GoldenDocumentSHA256   = "df35c4e082755c56e45838fa804e1d6fc19203df8dc829ee5a84df13b6cd7448"
 )
 
 func TestRHEL9V2R9GoldenCKLB(t *testing.T) {
