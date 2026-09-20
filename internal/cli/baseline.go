@@ -344,6 +344,46 @@ func newBaselineVerifyCommand() *cobra.Command {
 				)
 			}
 
+			for id, rule := range ruleDoc.Rules {
+				if rule.Status == rules.StatusAutomated || rule.Status == rules.StatusTailored {
+					if rule.Validation.File == "" || rule.Validation.Type == "" || rule.Validation.Resource == "" || rule.Validation.Test == "" {
+						return fmt.Errorf("automated rule %s has incomplete validation mapping", id)
+					}
+					validationPath := filepath.Join(resolved.Path, rule.Validation.File)
+					data, err := os.ReadFile(validationPath)
+					if err != nil {
+						return fmt.Errorf("read validation mapping for %s: %w", id, err)
+					}
+					if !strings.Contains(string(data), rule.Validation.Test) {
+						return fmt.Errorf(
+							"validation mapping for %s references missing test %q in %s",
+							id,
+							rule.Validation.Test,
+							rule.Validation.File,
+						)
+					}
+				}
+
+				if rule.Remediation.File != "" {
+					if rule.Remediation.Step == "" {
+						return fmt.Errorf("rule %s has remediation file %s but no remediation step", id, rule.Remediation.File)
+					}
+					remediationPath := filepath.Join(resolved.Path, rule.Remediation.File)
+					data, err := os.ReadFile(remediationPath)
+					if err != nil {
+						return fmt.Errorf("read remediation mapping for %s: %w", id, err)
+					}
+					if !strings.Contains(string(data), "name: "+rule.Remediation.Step) {
+						return fmt.Errorf(
+							"remediation mapping for %s references missing step %q in %s",
+							id,
+							rule.Remediation.Step,
+							rule.Remediation.File,
+						)
+					}
+				}
+			}
+
 			templatePath, err := resolved.CKLBTemplateFile()
 			if err != nil {
 				return err
