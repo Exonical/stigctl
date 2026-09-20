@@ -219,7 +219,9 @@ command:
   V-257888:
     title: "RHEL 9 permissions of cron configuration files and directories must not be modified from operating system defaults."
     meta: { stig_id: V-257888 }
-    exec: "test -z \"$(rpm --verify cronie crontabs | awk '!($2==\"c\" && $1 ~ /^.\\..\\.\\.\\..\\./){print}')\""
+    exec: |
+      rpm -V cronie crontabs 2>/dev/null |
+        awk '$NF ~ "^/etc/(cron|crontab)" && substr($1,2,1) != "." { bad=1 } END { exit bad }'
     exit-status: 0
     skip: {{ not (index .Vars.enabled_rules "V-257888") }}
 
