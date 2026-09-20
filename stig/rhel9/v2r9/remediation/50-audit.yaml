@@ -1,4 +1,65 @@
 name: RHEL 9 STIG - Audit
 
 stages:
-  stig: []
+  stig:
+    - name: V-257924
+      commands:
+        - |
+          for tool in /sbin/auditctl /sbin/aureport /sbin/ausearch /sbin/autrace /sbin/auditd /sbin/augenrules; do
+            test ! -e "$tool" || chown root "$tool"
+          done
+
+    - name: V-257925
+      commands:
+        - |
+          for tool in /sbin/auditctl /sbin/aureport /sbin/ausearch /sbin/autrace /sbin/auditd /sbin/augenrules; do
+            test ! -e "$tool" || chgrp root "$tool"
+          done
+
+    - name: V-258165
+      commands:
+        - |
+          group="$(awk -F= '/^[[:space:]]*log_group[[:space:]]*=/{gsub(/[[:space:]]/,"",$2); print $2; exit}' /etc/audit/auditd.conf)"
+          test -n "$group" || group=root
+          chgrp "$group" /var/log/audit
+
+    - name: V-258166
+      commands:
+        - chown root /var/log/audit
+
+    - name: V-258167
+      commands:
+        - find /var/log/audit -type f -exec chmod 0600 {} +
+
+    - name: V-258168
+      commands:
+        - |
+          if grep -qE '^[[:space:]]*freq[[:space:]]*=' /etc/audit/auditd.conf; then
+            sed -ri 's/^[[:space:]]*freq[[:space:]]*=.*/freq = 100/' /etc/audit/auditd.conf
+          else
+            printf '\nfreq = 100\n' >> /etc/audit/auditd.conf
+          fi
+
+    - name: V-258169
+      commands:
+        - |
+          if grep -qE '^[[:space:]]*log_format[[:space:]]*=' /etc/audit/auditd.conf; then
+            sed -ri 's/^[[:space:]]*log_format[[:space:]]*=.*/log_format = ENRICHED/' /etc/audit/auditd.conf
+          else
+            printf '\nlog_format = ENRICHED\n' >> /etc/audit/auditd.conf
+          fi
+
+    - name: V-258170
+      commands:
+        - |
+          if grep -qE '^[[:space:]]*write_logs[[:space:]]*=' /etc/audit/auditd.conf; then
+            sed -ri 's/^[[:space:]]*write_logs[[:space:]]*=.*/write_logs = yes/' /etc/audit/auditd.conf
+          else
+            printf '\nwrite_logs = yes\n' >> /etc/audit/auditd.conf
+          fi
+
+    - name: V-258171
+      commands:
+        - chmod 0600 /etc/audit/auditd.conf
+        - test ! -e /etc/audit/audit.rules || chmod 0600 /etc/audit/audit.rules
+        - find /etc/audit/rules.d -type f -name '*.rules' -exec chmod 0600 {} +
