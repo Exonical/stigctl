@@ -4188,4 +4188,381 @@ rules:
     status: manual
     remediation: {}
     validation: {}
+  V-258012:
+    title: RHEL 9 must display the Standard Mandatory DOD Notice and Consent Banner before granting local or remote access to the system via a graphical user logon.
+    rule_id: SV-258012r1014855
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/35-desktop-device.yaml
+      step: V-258012
+    validation:
+      type: goss
+      file: validation/35-desktop-device.yaml
+      resource: command
+      test: V-258012
+
+  V-258013:
+    title: RHEL 9 must prevent a user from overriding the banner-message-enable setting for the graphical user interface.
+    rule_id: SV-258013r1045082
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/35-desktop-device.yaml
+      step: V-258013
+    validation:
+      type: goss
+      file: validation/35-desktop-device.yaml
+      resource: command
+      test: V-258013
+
+  V-258014:
+    title: RHEL 9 must disable the graphical user interface automount function unless required.
+    rule_id: SV-258014r1045084
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/35-desktop-device.yaml
+      step: V-258014
+    validation:
+      type: goss
+      file: validation/35-desktop-device.yaml
+      resource: command
+      test: V-258014
+
+  V-258015:
+    title: RHEL 9 must prevent a user from overriding the disabling of the graphical user interface automount function.
+    rule_id: SV-258015r1045086
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/35-desktop-device.yaml
+      step: V-258015
+    validation:
+      type: goss
+      file: validation/35-desktop-device.yaml
+      resource: command
+      test: V-258015
+
+  V-258016:
+    title: RHEL 9 must disable the graphical user interface autorun function unless required.
+    rule_id: SV-258016r958804
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/35-desktop-device.yaml
+      step: V-258016
+    validation:
+      type: goss
+      file: validation/35-desktop-device.yaml
+      resource: command
+      test: V-258016
+
+  V-258017:
+    title: RHEL 9 must prevent a user from overriding the disabling of the graphical user interface autorun function.
+    rule_id: SV-258017r1155688
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/35-desktop-device.yaml
+      step: V-258017
+    validation:
+      type: goss
+      file: validation/35-desktop-device.yaml
+      resource: command
+      test: V-258017
+
+  V-258019:
+    title: RHEL 9 must be able to initiate directly a session lock for all connection types using smart card when the smart card is removed.
+    rule_id: SV-258019r1045092
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/35-desktop-device.yaml
+      step: V-258019
+    validation:
+      type: goss
+      file: validation/35-desktop-device.yaml
+      resource: command
+      test: V-258019
+
+  V-258020:
+    title: RHEL 9 must prevent a user from overriding the disabling of the graphical user smart card removal action.
+    rule_id: SV-258020r1045094
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/35-desktop-device.yaml
+      step: V-258020
+    validation:
+      type: goss
+      file: validation/35-desktop-device.yaml
+      resource: command
+      test: V-258020
+
+  V-258021:
+    title: RHEL 9 must enable a user session lock until that user re-establishes access using established identification and authentication procedures for graphical user sessions.
+    rule_id: SV-258021r1015088
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/35-desktop-device.yaml
+      step: V-258021
+    validation:
+      type: goss
+      file: validation/35-desktop-device.yaml
+      resource: command
+      test: V-258021
+
+  V-258022:
+    title: RHEL 9 must prevent a user from overriding the screensaver lock-enabled setting for the graphical user interface.
+    rule_id: SV-258022r1045097
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/35-desktop-device.yaml
+      step: V-258022
+    validation:
+      type: goss
+      file: validation/35-desktop-device.yaml
+      resource: command
+      test: V-258022
+
+  V-258023:
+    title: RHEL 9 must automatically lock graphical user sessions after 10 minutes of inactivity.
+    rule_id: SV-258023r1155656
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/35-desktop-device.yaml
+      step: V-258023
+    validation:
+      type: goss
+      file: validation/35-desktop-device.yaml
+      resource: command
+      test: V-258023
+
+  V-258024:
+    title: RHEL 9 must prevent a user from overriding the session idle-delay setting for the graphical user interface.
+    rule_id: SV-258024r1045100
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/35-desktop-device.yaml
+      step: V-258024
+    validation:
+      type: goss
+      file: validation/35-desktop-device.yaml
+      resource: command
+      test: V-258024
+
+  V-258025:
+    title: RHEL 9 must initiate a session lock for graphical user interfaces when the screensaver is activated.
+    rule_id: SV-258025r958402
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/35-desktop-device.yaml
+      step: V-258025
+    validation:
+      type: goss
+      file: validation/35-desktop-device.yaml
+      resource: command
+      test: V-258025
+
+  V-258026:
+    title: RHEL 9 must prevent a user from overriding the session lock-delay setting for the graphical user interface.
+    rule_id: SV-258026r1045103
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/35-desktop-device.yaml
+      step: V-258026
+    validation:
+      type: goss
+      file: validation/35-desktop-device.yaml
+      resource: command
+      test: V-258026
+
+  V-258027:
+    title: RHEL 9 must conceal, via the session lock, information previously visible on the display with a publicly viewable image.
+    rule_id: SV-258027r1045106
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/35-desktop-device.yaml
+      step: V-258027
+    validation:
+      type: goss
+      file: validation/35-desktop-device.yaml
+      resource: command
+      test: V-258027
+
+  V-258028:
+    title: RHEL 9 effective dconf policy must match the policy keyfiles.
+    rule_id: SV-258028r991589
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/35-desktop-device.yaml
+      step: V-258028
+    validation:
+      type: goss
+      file: validation/35-desktop-device.yaml
+      resource: command
+      test: V-258028
+
+  V-258029:
+    title: RHEL 9 must disable the ability of a user to restart the system from the login screen.
+    rule_id: SV-258029r1045109
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/35-desktop-device.yaml
+      step: V-258029
+    validation:
+      type: goss
+      file: validation/35-desktop-device.yaml
+      resource: command
+      test: V-258029
+
+  V-258030:
+    title: RHEL 9 must prevent a user from overriding the disable-restart-buttons setting for the graphical user interface.
+    rule_id: SV-258030r1045112
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/35-desktop-device.yaml
+      step: V-258030
+    validation:
+      type: goss
+      file: validation/35-desktop-device.yaml
+      resource: command
+      test: V-258030
+
+  V-258031:
+    title: RHEL 9 must disable the ability of a user to accidentally press Ctrl-Alt-Del and cause a system to shut down or reboot.
+    rule_id: SV-258031r1134920
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/35-desktop-device.yaml
+      step: V-258031
+    validation:
+      type: goss
+      file: validation/35-desktop-device.yaml
+      resource: command
+      test: V-258031
+
+  V-258032:
+    title: RHEL 9 must prevent a user from overriding the Ctrl-Alt-Del sequence settings for the graphical user interface.
+    rule_id: SV-258032r1045117
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/35-desktop-device.yaml
+      step: V-258032
+    validation:
+      type: goss
+      file: validation/35-desktop-device.yaml
+      resource: command
+      test: V-258032
+
+  V-258033:
+    title: RHEL 9 must disable the user list at logon for graphical user interfaces.
+    rule_id: SV-258033r1045120
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/35-desktop-device.yaml
+      step: V-258033
+    validation:
+      type: goss
+      file: validation/35-desktop-device.yaml
+      resource: command
+      test: V-258033
+
+  V-258034:
+    title: RHEL 9 must be configured to disable USB mass storage.
+    rule_id: SV-258034r1051267
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/35-desktop-device.yaml
+      step: V-258034
+    validation:
+      type: goss
+      file: validation/35-desktop-device.yaml
+      resource: command
+      test: V-258034
+
+  V-258036:
+    title: RHEL 9 must have the USBGuard package enabled.
+    rule_id: SV-258036r1014861
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/35-desktop-device.yaml
+      step: V-258036
+    validation:
+      type: goss
+      file: validation/35-desktop-device.yaml
+      resource: command
+      test: V-258036
+
+  V-258037:
+    title: RHEL 9 must enable Linux audit logging for the USBGuard daemon.
+    rule_id: SV-258037r1014863
+    severity: low
+    status: automated
+    remediation:
+      file: remediation/35-desktop-device.yaml
+      step: V-258037
+    validation:
+      type: goss
+      file: validation/35-desktop-device.yaml
+      resource: command
+      test: V-258037
+
+  V-258038:
+    title: RHEL 9 must block unauthorized peripherals before establishing a connection.
+    rule_id: SV-258038r1045128
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/35-desktop-device.yaml
+      step: V-258038
+    validation:
+      type: goss
+      file: validation/35-desktop-device.yaml
+      resource: command
+      test: V-258038
+
+  V-258039:
+    title: RHEL 9 Bluetooth must be disabled.
+    rule_id: SV-258039r1045131
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/35-desktop-device.yaml
+      step: V-258039
+    validation:
+      type: goss
+      file: validation/35-desktop-device.yaml
+      resource: command
+      test: V-258039
+
+  V-258040:
+    title: RHEL 9 wireless network adapters must be disabled.
+    rule_id: SV-258040r991568
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/35-desktop-device.yaml
+      step: V-258040
+    validation:
+      type: goss
+      file: validation/35-desktop-device.yaml
+      resource: command
+      test: V-258040
 
