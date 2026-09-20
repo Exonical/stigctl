@@ -21,6 +21,7 @@ type ScanRequest struct {
 	Baseline       string
 	Format         string
 	OutputDir      string
+	JUnitOutputDir string
 	Payload        string
 	Binary         string
 	FailOnFindings bool
@@ -28,12 +29,14 @@ type ScanRequest struct {
 }
 
 type ScanResult struct {
-	Target     inventory.Target
-	OutputPath string
-	Published  bool
-	Stdout     string
-	Stderr     string
-	ExitCode   int
+	Target          inventory.Target
+	OutputPath      string
+	Published       bool
+	JUnitOutputPath string
+	JUnitPublished  bool
+	Stdout          string
+	Stderr          string
+	ExitCode        int
 }
 
 type commandRunner interface {
@@ -66,6 +69,12 @@ func (s Scanner) Scan(ctx context.Context, req ScanRequest) (result ScanResult, 
 	}
 	extension := artifactExtension(req.Format)
 	result.OutputPath = filepath.Join(req.OutputDir, req.Target.Name+"-"+strings.ReplaceAll(req.Baseline, ":", "-")+"."+extension)
+	if req.JUnitOutputDir != "" {
+		if err := os.MkdirAll(req.JUnitOutputDir, 0o755); err != nil {
+			return result, fmt.Errorf("create remote JUnit output directory: %w", err)
+		}
+		result.JUnitOutputPath = filepath.Join(req.JUnitOutputDir, req.Target.Name+"-"+strings.ReplaceAll(req.Baseline, ":", "-")+".xml")
+	}
 
 	remoteDir, err := s.makeRemoteDir(ctx, req.Target)
 	if err != nil {
@@ -88,49 +97,65 @@ func (s Scanner) Scan(ctx context.Context, req ScanRequest) (result ScanResult, 
 	}
 
 	remoteOutput := remoteDir + "/result." + extension
-	command := buildScanCommand(req, remoteDir, remoteOutput)
+	remoteJUnitOutput := ""
+	if req.JUnitOutputDir != "" {
+		remoteJUnitOutput = remoteDir + "/result.xml"
+	}
+	command := buildScanCommand(req, remoteDir, remoteOutput, remoteJUnitOutput)
 	var stdout, stderr bytes.Buffer
 	runErr := s.runner.Run(ctx, "ssh", append(sshArgs(req.Target), destination(req.Target), command), &stdout, &stderr)
 	result.Stdout = stdout.String()
 	result.Stderr = stderr.String()
 	result.ExitCode = exitCode(runErr)
 
-	tempFile, err := os.CreateTemp(req.OutputDir, "."+filepath.Base(result.OutputPath)+".tmp-*")
+	var artifactErrs []error
+	result.Published, err = s.collectArtifact(ctx, req.Target, remoteOutput, result.OutputPath, req.Format)
 	if err != nil {
-		return result, fmt.Errorf("create temporary scan artifact for %s: %w", req.Target.Name, err)
+		artifactErrs = append(artifactErrs, fmt.Errorf("primary report: %w", err))
+	}
+	if remoteJUnitOutput != "" {
+		result.JUnitPublished, err = s.collectArtifact(ctx, req.Target, remoteJUnitOutput, result.JUnitOutputPath, "junit")
+		if err != nil {
+			artifactErrs = append(artifactErrs, fmt.Errorf("JUnit report: %w", err))
+		}
+	}
+	if runErr != nil {
+		artifactErrs = append([]error{fmt.Errorf("scan %s exited with status %d: %s", req.Target.Name, result.ExitCode, strings.TrimSpace(result.Stderr))}, artifactErrs...)
+	}
+	if len(artifactErrs) > 0 {
+		return result, errors.Join(artifactErrs...)
+	}
+	return result, nil
+}
+
+func (s Scanner) collectArtifact(
+	ctx context.Context,
+	target inventory.Target,
+	remotePath string,
+	outputPath string,
+	format string,
+) (bool, error) {
+	tempFile, err := os.CreateTemp(filepath.Dir(outputPath), "."+filepath.Base(outputPath)+".tmp-*")
+	if err != nil {
+		return false, fmt.Errorf("create temporary artifact: %w", err)
 	}
 	tempPath := tempFile.Name()
 	if err := tempFile.Close(); err != nil {
 		_ = os.Remove(tempPath)
-		return result, fmt.Errorf("close temporary scan artifact for %s: %w", req.Target.Name, err)
+		return false, fmt.Errorf("close temporary artifact: %w", err)
 	}
 	defer func() { _ = os.Remove(tempPath) }()
 
-	copyErr := s.copyFrom(ctx, req.Target, remoteOutput, tempPath)
-	if copyErr != nil {
-		if runErr != nil {
-			return result, fmt.Errorf("scan %s: %w: %s", req.Target.Name, runErr, strings.TrimSpace(result.Stderr))
-		}
-		return result, fmt.Errorf("collect scan from %s: %w", req.Target.Name, copyErr)
+	if err := s.copyFrom(ctx, target, remotePath, tempPath); err != nil {
+		return false, fmt.Errorf("collect artifact: %w", err)
 	}
-	if err := validateArtifact(tempPath, req.Format); err != nil {
-		artifactErr := fmt.Errorf("validate scan artifact from %s: %w", req.Target.Name, err)
-		if runErr != nil {
-			return result, errors.Join(
-				fmt.Errorf("scan %s: %w: %s", req.Target.Name, runErr, strings.TrimSpace(result.Stderr)),
-				artifactErr,
-			)
-		}
-		return result, artifactErr
+	if err := validateArtifact(tempPath, format); err != nil {
+		return false, fmt.Errorf("validate artifact: %w", err)
 	}
-	if err := os.Rename(tempPath, result.OutputPath); err != nil {
-		return result, fmt.Errorf("publish scan artifact from %s: %w", req.Target.Name, err)
+	if err := os.Rename(tempPath, outputPath); err != nil {
+		return false, fmt.Errorf("publish artifact: %w", err)
 	}
-	result.Published = true
-	if runErr != nil {
-		return result, fmt.Errorf("scan %s exited with status %d: %s", req.Target.Name, result.ExitCode, strings.TrimSpace(result.Stderr))
-	}
-	return result, nil
+	return true, nil
 }
 
 func validateArtifact(path, format string) error {
@@ -207,7 +232,7 @@ func (s Scanner) copyFrom(ctx context.Context, target inventory.Target, remotePa
 	return nil
 }
 
-func buildScanCommand(req ScanRequest, remoteDir, output string) string {
+func buildScanCommand(req ScanRequest, remoteDir, output, junitOutput string) string {
 	args := []string{remoteDir + "/stigctl", "--content-root", remoteDir + "/content", "scan", req.Baseline,
 		"--profile", req.Target.Profile, "--format", req.Format, "--output", output,
 	}
@@ -225,8 +250,17 @@ func buildScanCommand(req ScanRequest, remoteDir, output string) string {
 	appendValue("--fqdn", req.Target.FQDN)
 	appendValue("--role", req.Target.Role)
 	appendValue("--target-comments", req.Target.Comments)
+	appendValue("--junit-output", junitOutput)
 
-	command := "set -eu; touch " + shellQuote(output) + "; chmod 600 " + shellQuote(output) +
+	outputs := []string{output}
+	if junitOutput != "" {
+		outputs = append(outputs, junitOutput)
+	}
+	quotedOutputs := make([]string, 0, len(outputs))
+	for _, path := range outputs {
+		quotedOutputs = append(quotedOutputs, shellQuote(path))
+	}
+	command := "set -eu; touch " + strings.Join(quotedOutputs, " ") + "; chmod 600 " + strings.Join(quotedOutputs, " ") +
 		"; tar -xzf " + shellQuote(remoteDir+"/payload.tar.gz") + " -C " + shellQuote(remoteDir) +
 		"; chmod 700 " + shellQuote(remoteDir+"/stigctl") + "; "
 	if req.Target.Sudo {
