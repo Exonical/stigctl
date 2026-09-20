@@ -1353,3 +1353,39 @@ command:
       - "audit_backlog_limit="
     skip: {{ not (index .Vars.enabled_rules "V-258173") }}
 
+  V-258227:
+    title: "RHEL 9 must take appropriate action when a critical audit processing failure occurs."
+    meta: { stig_id: V-258227 }
+    exec: |
+      v="$(grep -RhsE '^[[:space:]]*-f[[:space:]]+[0-9]+([[:space:]]|$)' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | tail -n1 | awk '{print $2}')"
+      echo "evidence=audit_failure_mode=${v:-missing}"
+      test "$v" = 2
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258227") }}
+
+  V-270175:
+    title: "RHEL 9 \"/etc/audit/\" must be owned by root."
+    meta: { stig_id: V-270175 }
+    exec: |
+      u="$(stat -c %U /etc/audit 2>/dev/null || true)"
+      echo "evidence=audit_dir_owner=${u:-missing}"
+      test "$u" = root
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-270175") }}
+
+  V-270176:
+    title: "RHEL 9 \"/etc/audit/\" must be group-owned by root."
+    meta: { stig_id: V-270176 }
+    exec: |
+      g="$(stat -c %G /etc/audit 2>/dev/null || true)"
+      echo "evidence=audit_dir_group=${g:-missing}"
+      test "$g" = root
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-270176") }}
+
