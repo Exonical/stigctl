@@ -214,4 +214,4 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: v0.0.1
-        run: gh workflow run release.yml --ref "${TAG}"
+        run: gh workflow run release.yml --ref main -f tag="${TAG}"
