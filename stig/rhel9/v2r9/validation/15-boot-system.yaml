@@ -146,8 +146,7 @@ command:
       line="$(grep -RhsE '^[[:space:]]*(password_pbkdf2|GRUB2_PASSWORD=)' /etc/grub.d /boot/grub2/user.cfg /boot/grub2/grub.cfg /boot/efi/EFI/*/user.cfg /boot/efi/EFI/*/grub.cfg 2>/dev/null | head -n1)"
       echo "evidence=grub_superuser_password=${line:-missing}"
       test -n "$line"
-      printf '%s
-' "$line" | grep -q 'grub.pbkdf2'
+      printf '%s\\n' "$line" | grep -q 'grub.pbkdf2'
     exit-status: 0
     stdout:
       - "evidence="
