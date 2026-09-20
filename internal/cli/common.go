@@ -21,6 +21,7 @@ func writeEffectiveGossVars(
 	exceptionDoc exceptions.Document,
 	profile string,
 	hostname string,
+	checkScript string,
 ) (string, func(), error) {
 	file, err := os.CreateTemp("", "stigctl-goss-vars-*.yaml")
 	if err != nil {
@@ -40,6 +41,7 @@ func writeEffectiveGossVars(
 	if err := validation.WriteVars(path, validation.Vars{
 		Profile:      profile,
 		Hostname:     hostname,
+		CheckScript:  checkScript,
 		EnabledRules: enabled,
 	}); err != nil {
 		_ = os.Remove(path)
