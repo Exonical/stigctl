@@ -1,3 +1,217 @@
-# Goss validation resources for filesystem controls.
-# Use DISA V-IDs as resource IDs where possible and add meta.stig_id.
-{}
+command:
+  V-257885:
+    title: "RHEL 9 /var/log directory must have mode 0755 or less permissive."
+    meta: { stig_id: V-257885 }
+    exec: "test $(( 8#$(stat -c %a /var/log) & 8#0022 )) -eq 0"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257885") }}
+
+  V-257886:
+    title: "RHEL 9 /var/log/messages file must have mode 0640 or less permissive."
+    meta: { stig_id: V-257886 }
+    exec: "test -e /var/log/messages && test $(( 8#$(stat -c %a /var/log/messages) & 8#0137 )) -eq 0"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257886") }}
+
+  V-257887:
+    title: "RHEL 9 audit tools must have a mode of 0755 or less permissive."
+    meta: { stig_id: V-257887 }
+    exec: |
+      found=0
+      for tool in /sbin/auditctl /sbin/aureport /sbin/ausearch /sbin/autrace /sbin/auditd /sbin/augenrules; do
+        test -e "$tool" || continue
+        found=1
+        test $(( 8#$(stat -c %a "$tool") & 8#0022 )) -eq 0 || exit 1
+      done
+      test "$found" -eq 1
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257887") }}
+
+  V-257891:
+    title: "RHEL 9 /etc/group file must have mode 0644 or less permissive."
+    meta: { stig_id: V-257891 }
+    exec: "test $(( 8#$(stat -c %a /etc/group) & 8#0133 )) -eq 0"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257891") }}
+
+  V-257892:
+    title: "RHEL 9 /etc/group- file must have mode 0644 or less permissive."
+    meta: { stig_id: V-257892 }
+    exec: "test -e /etc/group- && test $(( 8#$(stat -c %a /etc/group-) & 8#0133 )) -eq 0"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257892") }}
+
+  V-257893:
+    title: "RHEL 9 /etc/gshadow file must have mode 0000 or less permissive."
+    meta: { stig_id: V-257893 }
+    exec: "test \"$(stat -c %a /etc/gshadow)\" = 0"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257893") }}
+
+  V-257894:
+    title: "RHEL 9 /etc/gshadow- file must have mode 0000 or less permissive."
+    meta: { stig_id: V-257894 }
+    exec: "test -e /etc/gshadow- && test \"$(stat -c %a /etc/gshadow-)\" = 0"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257894") }}
+
+  V-257895:
+    title: "RHEL 9 /etc/passwd file must have mode 0644 or less permissive."
+    meta: { stig_id: V-257895 }
+    exec: "test $(( 8#$(stat -c %a /etc/passwd) & 8#0133 )) -eq 0"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257895") }}
+
+  V-257896:
+    title: "RHEL 9 /etc/passwd- file must have mode 0644 or less permissive."
+    meta: { stig_id: V-257896 }
+    exec: "test -e /etc/passwd- && test $(( 8#$(stat -c %a /etc/passwd-) & 8#0133 )) -eq 0"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257896") }}
+
+  V-257897:
+    title: "RHEL 9 /etc/shadow- file must have mode 0000 or less permissive."
+    meta: { stig_id: V-257897 }
+    exec: "test -e /etc/shadow- && test \"$(stat -c %a /etc/shadow-)\" = 0"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257897") }}
+
+  V-257898:
+    title: "RHEL 9 /etc/group file must be owned by root."
+    meta: { stig_id: V-257898 }
+    exec: "test \"$(stat -c %U /etc/group)\" = root"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257898") }}
+
+  V-257899:
+    title: "RHEL 9 /etc/group file must be group-owned by root."
+    meta: { stig_id: V-257899 }
+    exec: "test \"$(stat -c %G /etc/group)\" = root"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257899") }}
+
+  V-257900:
+    title: "RHEL 9 /etc/group- file must be owned by root."
+    meta: { stig_id: V-257900 }
+    exec: "test -e /etc/group- && test \"$(stat -c %U /etc/group-)\" = root"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257900") }}
+
+  V-257901:
+    title: "RHEL 9 /etc/group- file must be group-owned by root."
+    meta: { stig_id: V-257901 }
+    exec: "test -e /etc/group- && test \"$(stat -c %G /etc/group-)\" = root"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257901") }}
+
+  V-257902:
+    title: "RHEL 9 /etc/gshadow file must be owned by root."
+    meta: { stig_id: V-257902 }
+    exec: "test \"$(stat -c %U /etc/gshadow)\" = root"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257902") }}
+
+  V-257903:
+    title: "RHEL 9 /etc/gshadow file must be group-owned by root."
+    meta: { stig_id: V-257903 }
+    exec: "test \"$(stat -c %G /etc/gshadow)\" = root"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257903") }}
+
+  V-257904:
+    title: "RHEL 9 /etc/gshadow- file must be owned by root."
+    meta: { stig_id: V-257904 }
+    exec: "test -e /etc/gshadow- && test \"$(stat -c %U /etc/gshadow-)\" = root"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257904") }}
+
+  V-257905:
+    title: "RHEL 9 /etc/gshadow- file must be group-owned by root."
+    meta: { stig_id: V-257905 }
+    exec: "test -e /etc/gshadow- && test \"$(stat -c %G /etc/gshadow-)\" = root"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257905") }}
+
+  V-257906:
+    title: "RHEL 9 /etc/passwd file must be owned by root."
+    meta: { stig_id: V-257906 }
+    exec: "test \"$(stat -c %U /etc/passwd)\" = root"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257906") }}
+
+  V-257907:
+    title: "RHEL 9 /etc/passwd file must be group-owned by root."
+    meta: { stig_id: V-257907 }
+    exec: "test \"$(stat -c %G /etc/passwd)\" = root"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257907") }}
+
+  V-257908:
+    title: "RHEL 9 /etc/passwd- file must be owned by root."
+    meta: { stig_id: V-257908 }
+    exec: "test -e /etc/passwd- && test \"$(stat -c %U /etc/passwd-)\" = root"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257908") }}
+
+  V-257909:
+    title: "RHEL 9 /etc/passwd- file must be group-owned by root."
+    meta: { stig_id: V-257909 }
+    exec: "test -e /etc/passwd- && test \"$(stat -c %G /etc/passwd-)\" = root"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257909") }}
+
+  V-257910:
+    title: "RHEL 9 /etc/shadow file must be owned by root."
+    meta: { stig_id: V-257910 }
+    exec: "test \"$(stat -c %U /etc/shadow)\" = root"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257910") }}
+
+  V-257911:
+    title: "RHEL 9 /etc/shadow file must be group-owned by root."
+    meta: { stig_id: V-257911 }
+    exec: "test \"$(stat -c %G /etc/shadow)\" = root"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257911") }}
+
+  V-257912:
+    title: "RHEL 9 /etc/shadow- file must be owned by root."
+    meta: { stig_id: V-257912 }
+    exec: "test -e /etc/shadow- && test \"$(stat -c %U /etc/shadow-)\" = root"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257912") }}
+
+  V-257913:
+    title: "RHEL 9 /etc/shadow- file must be group-owned by root."
+    meta: { stig_id: V-257913 }
+    exec: "test -e /etc/shadow- && test \"$(stat -c %G /etc/shadow-)\" = root"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257913") }}
+
+  V-257914:
+    title: "RHEL 9 /var/log directory must be owned by root."
+    meta: { stig_id: V-257914 }
+    exec: "test \"$(stat -c %U /var/log)\" = root"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257914") }}
+
+  V-257915:
+    title: "RHEL 9 /var/log directory must be group-owned by root."
+    meta: { stig_id: V-257915 }
+    exec: "test \"$(stat -c %G /var/log)\" = root"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257915") }}
+
+  V-257916:
+    title: "RHEL 9 /var/log/messages file must be owned by root."
+    meta: { stig_id: V-257916 }
+    exec: "test -e /var/log/messages && test \"$(stat -c %U /var/log/messages)\" = root"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257916") }}
+
+  V-257917:
+    title: "RHEL 9 /var/log/messages file must be group-owned by root."
+    meta: { stig_id: V-257917 }
+    exec: "test -e /var/log/messages && test \"$(stat -c %G /var/log/messages)\" = root"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257917") }}
