@@ -204,6 +204,9 @@ jobs:
           unzip -j -o /tmp/U_RHEL_9_V2R9_STIG.zip '*xccdf.xml' -d stig/rhel9/v2r9/source
           test -f stig/rhel9/v2r9/source/U_RHEL_9_STIG_V2R9_Manual-xccdf.xml
 
+      - name: Verify baseline implementation mappings
+        run: ./bin/stigctl baseline verify rhel9:v2r9
+
       - name: Apply and validate STIG in Rocky Linux 9 container
         run: |
           docker run --rm \
