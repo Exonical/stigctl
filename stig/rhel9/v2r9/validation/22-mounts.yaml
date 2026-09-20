@@ -1,0 +1,463 @@
+command:
+  V-257843:
+    title: "A separate RHEL 9 file system must be used for user home directories (such as /home or an equivalent)."
+    meta: { stig_id: V-257843 }
+    exec: |
+      actual="$(findmnt -n -o TARGET --target '/home' 2>/dev/null || true)"
+      echo "evidence=required_mount=/home actual=${actual:-none}"
+      test "$actual" = '/home'
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257843") }}
+
+  V-257844:
+    title: "RHEL 9 must use a separate file system for /tmp."
+    meta: { stig_id: V-257844 }
+    exec: |
+      actual="$(findmnt -n -o TARGET --target '/tmp' 2>/dev/null || true)"
+      echo "evidence=required_mount=/tmp actual=${actual:-none}"
+      test "$actual" = '/tmp'
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257844") }}
+
+  V-257845:
+    title: "RHEL 9 must use a separate file system for /var."
+    meta: { stig_id: V-257845 }
+    exec: |
+      actual="$(findmnt -n -o TARGET --target '/var' 2>/dev/null || true)"
+      echo "evidence=required_mount=/var actual=${actual:-none}"
+      test "$actual" = '/var'
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257845") }}
+
+  V-257846:
+    title: "RHEL 9 must use a separate file system for /var/log."
+    meta: { stig_id: V-257846 }
+    exec: |
+      actual="$(findmnt -n -o TARGET --target '/var/log' 2>/dev/null || true)"
+      echo "evidence=required_mount=/var/log actual=${actual:-none}"
+      test "$actual" = '/var/log'
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257846") }}
+
+  V-257847:
+    title: "RHEL 9 must use a separate file system for the system audit data path."
+    meta: { stig_id: V-257847 }
+    exec: |
+      actual="$(findmnt -n -o TARGET --target '/var/log/audit' 2>/dev/null || true)"
+      echo "evidence=required_mount=/var/log/audit actual=${actual:-none}"
+      test "$actual" = '/var/log/audit'
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257847") }}
+
+  V-257848:
+    title: "RHEL 9 must use a separate file system for /var/tmp."
+    meta: { stig_id: V-257848 }
+    exec: |
+      actual="$(findmnt -n -o TARGET --target '/var/tmp' 2>/dev/null || true)"
+      echo "evidence=required_mount=/var/tmp actual=${actual:-none}"
+      test "$actual" = '/var/tmp'
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257848") }}
+
+  V-257849:
+    title: "RHEL 9 file system automount function must be disabled unless required."
+    meta: { stig_id: V-257849 }
+    exec: |
+      if ! rpm -q autofs >/dev/null 2>&1; then echo "evidence=autofs_installed=false"; exit 0; fi
+      state="$(systemctl is-enabled autofs.service 2>/dev/null || true)"
+      echo "evidence=autofs_state=$state"
+      test "$state" != enabled
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257849") }}
+
+  V-257850:
+    title: "RHEL 9 must prevent device files from being interpreted on file systems that contain user home directories."
+    meta: { stig_id: V-257850 }
+    exec: |
+      opts="$(findmnt -n -o OPTIONS --target '/home' 2>/dev/null || true)"
+      echo "evidence=mount=/home options=${opts:-none}"
+      test -n "$opts"
+      printf ',%s,' "$opts" | grep -q ',nodev,'
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257850") }}
+
+  V-257851:
+    title: "RHEL 9 must prevent files with the setuid and setgid bit set from being executed on file systems that contain user home directories."
+    meta: { stig_id: V-257851 }
+    exec: |
+      opts="$(findmnt -n -o OPTIONS --target '/home' 2>/dev/null || true)"
+      echo "evidence=mount=/home options=${opts:-none}"
+      test -n "$opts"
+      printf ',%s,' "$opts" | grep -q ',nosuid,'
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257851") }}
+
+  V-257852:
+    title: "RHEL 9 must prevent code from being executed on file systems that contain user home directories."
+    meta: { stig_id: V-257852 }
+    exec: |
+      opts="$(findmnt -n -o OPTIONS --target '/home' 2>/dev/null || true)"
+      echo "evidence=mount=/home options=${opts:-none}"
+      test -n "$opts"
+      printf ',%s,' "$opts" | grep -q ',noexec,'
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257852") }}
+
+  V-257860:
+    title: "RHEL 9 must mount /boot with the nodev option."
+    meta: { stig_id: V-257860 }
+    exec: |
+      opts="$(findmnt -n -o OPTIONS --target '/boot' 2>/dev/null || true)"
+      echo "evidence=mount=/boot options=${opts:-none}"
+      test -n "$opts"
+      printf ',%s,' "$opts" | grep -q ',nodev,'
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257860") }}
+
+  V-257861:
+    title: "RHEL 9 must prevent files with the setuid and setgid bit set from being executed on the /boot directory."
+    meta: { stig_id: V-257861 }
+    exec: |
+      opts="$(findmnt -n -o OPTIONS --target '/boot' 2>/dev/null || true)"
+      echo "evidence=mount=/boot options=${opts:-none}"
+      test -n "$opts"
+      printf ',%s,' "$opts" | grep -q ',nosuid,'
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257861") }}
+
+  V-257862:
+    title: "RHEL 9 must prevent files with the setuid and setgid bit set from being executed on the /boot/efi directory."
+    meta: { stig_id: V-257862 }
+    exec: |
+      opts="$(findmnt -n -o OPTIONS --target '/boot/efi' 2>/dev/null || true)"
+      echo "evidence=mount=/boot/efi options=${opts:-none}"
+      test -n "$opts"
+      printf ',%s,' "$opts" | grep -q ',nosuid,'
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257862") }}
+
+  V-257863:
+    title: "RHEL 9 must mount /dev/shm with the nodev option."
+    meta: { stig_id: V-257863 }
+    exec: |
+      opts="$(findmnt -n -o OPTIONS --target '/dev/shm' 2>/dev/null || true)"
+      echo "evidence=mount=/dev/shm options=${opts:-none}"
+      test -n "$opts"
+      printf ',%s,' "$opts" | grep -q ',nodev,'
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257863") }}
+
+  V-257864:
+    title: "RHEL 9 must mount /dev/shm with the noexec option."
+    meta: { stig_id: V-257864 }
+    exec: |
+      opts="$(findmnt -n -o OPTIONS --target '/dev/shm' 2>/dev/null || true)"
+      echo "evidence=mount=/dev/shm options=${opts:-none}"
+      test -n "$opts"
+      printf ',%s,' "$opts" | grep -q ',noexec,'
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257864") }}
+
+  V-257865:
+    title: "RHEL 9 must mount /dev/shm with the nosuid option."
+    meta: { stig_id: V-257865 }
+    exec: |
+      opts="$(findmnt -n -o OPTIONS --target '/dev/shm' 2>/dev/null || true)"
+      echo "evidence=mount=/dev/shm options=${opts:-none}"
+      test -n "$opts"
+      printf ',%s,' "$opts" | grep -q ',nosuid,'
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257865") }}
+
+  V-257866:
+    title: "RHEL 9 must mount /tmp with the nodev option."
+    meta: { stig_id: V-257866 }
+    exec: |
+      opts="$(findmnt -n -o OPTIONS --target '/tmp' 2>/dev/null || true)"
+      echo "evidence=mount=/tmp options=${opts:-none}"
+      test -n "$opts"
+      printf ',%s,' "$opts" | grep -q ',nodev,'
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257866") }}
+
+  V-257867:
+    title: "RHEL 9 must mount /tmp with the noexec option."
+    meta: { stig_id: V-257867 }
+    exec: |
+      opts="$(findmnt -n -o OPTIONS --target '/tmp' 2>/dev/null || true)"
+      echo "evidence=mount=/tmp options=${opts:-none}"
+      test -n "$opts"
+      printf ',%s,' "$opts" | grep -q ',noexec,'
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257867") }}
+
+  V-257868:
+    title: "RHEL 9 must mount /tmp with the nosuid option."
+    meta: { stig_id: V-257868 }
+    exec: |
+      opts="$(findmnt -n -o OPTIONS --target '/tmp' 2>/dev/null || true)"
+      echo "evidence=mount=/tmp options=${opts:-none}"
+      test -n "$opts"
+      printf ',%s,' "$opts" | grep -q ',nosuid,'
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257868") }}
+
+  V-257869:
+    title: "RHEL 9 must mount /var with the nodev option."
+    meta: { stig_id: V-257869 }
+    exec: |
+      opts="$(findmnt -n -o OPTIONS --target '/var' 2>/dev/null || true)"
+      echo "evidence=mount=/var options=${opts:-none}"
+      test -n "$opts"
+      printf ',%s,' "$opts" | grep -q ',nodev,'
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257869") }}
+
+  V-257870:
+    title: "RHEL 9 must mount /var/log with the nodev option."
+    meta: { stig_id: V-257870 }
+    exec: |
+      opts="$(findmnt -n -o OPTIONS --target '/var/log' 2>/dev/null || true)"
+      echo "evidence=mount=/var/log options=${opts:-none}"
+      test -n "$opts"
+      printf ',%s,' "$opts" | grep -q ',nodev,'
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257870") }}
+
+  V-257871:
+    title: "RHEL 9 must mount /var/log with the noexec option."
+    meta: { stig_id: V-257871 }
+    exec: |
+      opts="$(findmnt -n -o OPTIONS --target '/var/log' 2>/dev/null || true)"
+      echo "evidence=mount=/var/log options=${opts:-none}"
+      test -n "$opts"
+      printf ',%s,' "$opts" | grep -q ',noexec,'
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257871") }}
+
+  V-257872:
+    title: "RHEL 9 must mount /var/log with the nosuid option."
+    meta: { stig_id: V-257872 }
+    exec: |
+      opts="$(findmnt -n -o OPTIONS --target '/var/log' 2>/dev/null || true)"
+      echo "evidence=mount=/var/log options=${opts:-none}"
+      test -n "$opts"
+      printf ',%s,' "$opts" | grep -q ',nosuid,'
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257872") }}
+
+  V-257873:
+    title: "RHEL 9 must mount /var/log/audit with the nodev option."
+    meta: { stig_id: V-257873 }
+    exec: |
+      opts="$(findmnt -n -o OPTIONS --target '/var/log/audit' 2>/dev/null || true)"
+      echo "evidence=mount=/var/log/audit options=${opts:-none}"
+      test -n "$opts"
+      printf ',%s,' "$opts" | grep -q ',nodev,'
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257873") }}
+
+  V-257874:
+    title: "RHEL 9 must mount /var/log/audit with the noexec option."
+    meta: { stig_id: V-257874 }
+    exec: |
+      opts="$(findmnt -n -o OPTIONS --target '/var/log/audit' 2>/dev/null || true)"
+      echo "evidence=mount=/var/log/audit options=${opts:-none}"
+      test -n "$opts"
+      printf ',%s,' "$opts" | grep -q ',noexec,'
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257874") }}
+
+  V-257875:
+    title: "RHEL 9 must mount /var/log/audit with the nosuid option."
+    meta: { stig_id: V-257875 }
+    exec: |
+      opts="$(findmnt -n -o OPTIONS --target '/var/log/audit' 2>/dev/null || true)"
+      echo "evidence=mount=/var/log/audit options=${opts:-none}"
+      test -n "$opts"
+      printf ',%s,' "$opts" | grep -q ',nosuid,'
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257875") }}
+
+  V-257876:
+    title: "RHEL 9 must mount /var/tmp with the nodev option."
+    meta: { stig_id: V-257876 }
+    exec: |
+      opts="$(findmnt -n -o OPTIONS --target '/var/tmp' 2>/dev/null || true)"
+      echo "evidence=mount=/var/tmp options=${opts:-none}"
+      test -n "$opts"
+      printf ',%s,' "$opts" | grep -q ',nodev,'
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257876") }}
+
+  V-257877:
+    title: "RHEL 9 must mount /var/tmp with the noexec option."
+    meta: { stig_id: V-257877 }
+    exec: |
+      opts="$(findmnt -n -o OPTIONS --target '/var/tmp' 2>/dev/null || true)"
+      echo "evidence=mount=/var/tmp options=${opts:-none}"
+      test -n "$opts"
+      printf ',%s,' "$opts" | grep -q ',noexec,'
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257877") }}
+
+  V-257878:
+    title: "RHEL 9 must mount /var/tmp with the nosuid option."
+    meta: { stig_id: V-257878 }
+    exec: |
+      opts="$(findmnt -n -o OPTIONS --target '/var/tmp' 2>/dev/null || true)"
+      echo "evidence=mount=/var/tmp options=${opts:-none}"
+      test -n "$opts"
+      printf ',%s,' "$opts" | grep -q ',nosuid,'
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257878") }}
+
+  V-257854:
+    title: "RHEL 9 must prevent special devices on file systems that are imported via Network File System (NFS)."
+    meta: { stig_id: V-257854 }
+    exec: |
+      bad=""
+      while read -r target opts; do test -n "$target" || continue; printf ',%s,' "$opts" | grep -q ',nodev,' || { bad="$target:$opts"; break; }; done < <(findmnt -rn -t nfs,nfs4 -o TARGET,OPTIONS 2>/dev/null)
+      echo "evidence=nfs_nodev_violation=${bad:-none}"
+      test -z "$bad"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257854") }}
+
+  V-257855:
+    title: "RHEL 9  must prevent code from being executed on file systems that are imported via Network File System (NFS)."
+    meta: { stig_id: V-257855 }
+    exec: |
+      bad=""
+      while read -r target opts; do test -n "$target" || continue; printf ',%s,' "$opts" | grep -q ',noexec,' || { bad="$target:$opts"; break; }; done < <(findmnt -rn -t nfs,nfs4 -o TARGET,OPTIONS 2>/dev/null)
+      echo "evidence=nfs_noexec_violation=${bad:-none}"
+      test -z "$bad"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257855") }}
+
+  V-257856:
+    title: "RHEL 9 must prevent files with the setuid and setgid bit set from being executed on file systems that are imported via Network File System (NFS)."
+    meta: { stig_id: V-257856 }
+    exec: |
+      bad=""
+      while read -r target opts; do test -n "$target" || continue; printf ',%s,' "$opts" | grep -q ',nosuid,' || { bad="$target:$opts"; break; }; done < <(findmnt -rn -t nfs,nfs4 -o TARGET,OPTIONS 2>/dev/null)
+      echo "evidence=nfs_nosuid_violation=${bad:-none}"
+      test -z "$bad"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257856") }}
+
+  V-257857:
+    title: "RHEL 9 must prevent code from being executed on file systems that are used with removable media."
+    meta: { stig_id: V-257857 }
+    exec: |
+      bad=""
+      while read -r name rm mnt; do test "$rm" = 1 || continue; test -n "$mnt" || continue; opts="$(findmnt -n -o OPTIONS --target "$mnt" 2>/dev/null || true)"; printf ',%s,' "$opts" | grep -q ',noexec,' || { bad="$name:$mnt:$opts"; break; }; done < <(lsblk -nrpo NAME,RM,MOUNTPOINT 2>/dev/null)
+      echo "evidence=removable_noexec_violation=${bad:-none}"
+      test -z "$bad"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257857") }}
+
+  V-257858:
+    title: "RHEL 9 must prevent special devices on file systems that are used with removable media."
+    meta: { stig_id: V-257858 }
+    exec: |
+      bad=""
+      while read -r name rm mnt; do test "$rm" = 1 || continue; test -n "$mnt" || continue; opts="$(findmnt -n -o OPTIONS --target "$mnt" 2>/dev/null || true)"; printf ',%s,' "$opts" | grep -q ',nodev,' || { bad="$name:$mnt:$opts"; break; }; done < <(lsblk -nrpo NAME,RM,MOUNTPOINT 2>/dev/null)
+      echo "evidence=removable_nodev_violation=${bad:-none}"
+      test -z "$bad"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257858") }}
+
+  V-257859:
+    title: "RHEL 9 must prevent files with the setuid and setgid bit set from being executed on file systems that are used with removable media."
+    meta: { stig_id: V-257859 }
+    exec: |
+      bad=""
+      while read -r name rm mnt; do test "$rm" = 1 || continue; test -n "$mnt" || continue; opts="$(findmnt -n -o OPTIONS --target "$mnt" 2>/dev/null || true)"; printf ',%s,' "$opts" | grep -q ',nosuid,' || { bad="$name:$mnt:$opts"; break; }; done < <(lsblk -nrpo NAME,RM,MOUNTPOINT 2>/dev/null)
+      echo "evidence=removable_nosuid_violation=${bad:-none}"
+      test -z "$bad"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257859") }}
+
+  V-257881:
+    title: "RHEL 9 must prevent special devices on non-root local partitions."
+    meta: { stig_id: V-257881 }
+    exec: |
+      bad=""
+      while read -r target opts; do test "$target" = / && continue; printf ',%s,' "$opts" | grep -q ',nodev,' || { bad="$target:$opts"; break; }; done < <(findmnt -rn -t ext2,ext3,ext4,xfs,btrfs -o TARGET,OPTIONS 2>/dev/null)
+      echo "evidence=nonroot_local_nodev_violation=${bad:-none}"
+      test -z "$bad"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257881") }}
+
