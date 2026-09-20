@@ -122,3 +122,7 @@ stages:
       packages:
         remove:
           - vsftpd
+    - name: V-258141
+      packages:
+        install:
+          - rsyslog-gnutls
