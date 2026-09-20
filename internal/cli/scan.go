@@ -1,3 +1,5 @@
+//go:build linux
+
 package cli
 
 import (
@@ -39,6 +41,7 @@ func newScanCommand() *cobra.Command {
 		inventoryFile  string
 		concurrency    int
 		junitOutput    string
+		remoteBinary   string
 	)
 
 	cmd := &cobra.Command{
@@ -58,7 +61,7 @@ func newScanCommand() *cobra.Command {
 				return runRemoteScans(cmd, remoteScanOptions{
 					Baseline: args[0], InventoryFile: inventoryFile, Format: format,
 					OutputDir: output, JUnitOutputDir: junitOutput, Profile: profile,
-					FailOnFindings: failOnFindings, Concurrency: concurrency,
+					RemoteBinary: remoteBinary, FailOnFindings: failOnFindings, Concurrency: concurrency,
 				})
 			}
 			if junitOutput != "" && output != "" && filepath.Clean(junitOutput) == filepath.Clean(output) {
@@ -241,6 +244,7 @@ func newScanCommand() *cobra.Command {
 	cmd.Flags().StringVar(&inventoryFile, "inventory", "", "scan hosts from a YAML SSH inventory; output is treated as a directory")
 	cmd.Flags().IntVar(&concurrency, "concurrency", 4, "maximum concurrent inventory scans")
 	cmd.Flags().StringVar(&junitOutput, "junit-output", "", "also write JUnit XML; with --inventory, this is an output directory")
+	cmd.Flags().StringVar(&remoteBinary, "remote-binary", "", "stigctl executable to stage on inventory targets; defaults to the current binary")
 	return cmd
 }
 

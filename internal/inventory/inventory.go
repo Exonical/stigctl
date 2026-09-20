@@ -89,10 +89,11 @@ func Load(path string) ([]Target, error) {
 		if err := validateTarget(target); err != nil {
 			return nil, fmt.Errorf("inventory host %d: %w", i+1, err)
 		}
-		if _, ok := seen[target.Name]; ok {
+		nameKey := strings.ToLower(target.Name)
+		if _, ok := seen[nameKey]; ok {
 			return nil, fmt.Errorf("inventory host %d: duplicate name %q", i+1, target.Name)
 		}
-		seen[target.Name] = struct{}{}
+		seen[nameKey] = struct{}{}
 		targets = append(targets, target)
 	}
 	return targets, nil

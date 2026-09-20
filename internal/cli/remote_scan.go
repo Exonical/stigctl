@@ -1,9 +1,11 @@
 package cli
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 	"sync"
 
@@ -20,8 +22,17 @@ type remoteScanOptions struct {
 	OutputDir      string
 	JUnitOutputDir string
 	Profile        string
+	RemoteBinary   string
 	FailOnFindings bool
 	Concurrency    int
+}
+
+type remoteScanner interface {
+	Scan(context.Context, remote.ScanRequest) (remote.ScanResult, error)
+}
+
+var newRemoteScanner = func() remoteScanner {
+	return remote.NewScanner()
 }
 
 func runRemoteScans(cmd *cobra.Command, options remoteScanOptions) error {
@@ -56,9 +67,24 @@ func runRemoteScans(cmd *cobra.Command, options remoteScanOptions) error {
 		return err
 	}
 	defer cleanup()
-	binary, err := os.Executable()
-	if err != nil {
-		return fmt.Errorf("locate stigctl executable: %w", err)
+	binary := options.RemoteBinary
+	if binary == "" {
+		binary, err = os.Executable()
+		if err != nil {
+			return fmt.Errorf("locate stigctl executable: %w", err)
+		}
+	} else {
+		binary, err = filepath.Abs(binary)
+		if err != nil {
+			return fmt.Errorf("resolve remote binary: %w", err)
+		}
+		info, statErr := os.Stat(binary)
+		if statErr != nil {
+			return fmt.Errorf("remote binary %q: %w", binary, statErr)
+		}
+		if !info.Mode().IsRegular() {
+			return fmt.Errorf("remote binary %q is not a regular file", binary)
+		}
 	}
 	outputDir := options.OutputDir
 	if outputDir == "" {
@@ -80,7 +106,7 @@ func runRemoteScans(cmd *cobra.Command, options remoteScanOptions) error {
 			defer wg.Done()
 			limit <- struct{}{}
 			defer func() { <-limit }()
-			scanner := remote.NewScanner()
+			scanner := newRemoteScanner()
 			result, scanErr := scanner.Scan(cmd.Context(), remote.ScanRequest{
 				Baseline: options.Baseline, Format: format, OutputDir: outputDir,
 				JUnitOutputDir: options.JUnitOutputDir,
