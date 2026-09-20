@@ -1,0 +1,21 @@
+version: 1
+
+defaults:
+  user: stigscanner
+  port: 22
+  identity_file: ~/.ssh/stigscanner_ed25519
+  known_hosts_file: ~/.ssh/known_hosts
+  profile: server
+  sudo: true
+
+hosts:
+  - name: server-01
+    address: 192.0.2.10
+    hostname: server-01.example.internal
+    ip_address: 192.0.2.10
+
+  - name: server-02
+    address: 192.0.2.11
+    hostname: server-02.example.internal
+    ip_address: 192.0.2.11
+    profile: hpc-compute

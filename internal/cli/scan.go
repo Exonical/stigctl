@@ -9,9 +9,9 @@ import (
 	"time"
 
 	"github.com/Exonical/stigctl/internal/baseline"
+	"github.com/Exonical/stigctl/internal/exceptions"
 	stigexport "github.com/Exonical/stigctl/internal/export"
 	"github.com/Exonical/stigctl/internal/export/cklb"
-	"github.com/Exonical/stigctl/internal/exceptions"
 	"github.com/Exonical/stigctl/internal/host"
 	"github.com/Exonical/stigctl/internal/policy"
 	"github.com/Exonical/stigctl/internal/rules"
@@ -33,7 +33,9 @@ func newScanCommand() *cobra.Command {
 		fqdn           string
 		role           string
 		targetComments string
-		cklbTemplate  string
+		cklbTemplate   string
+		inventoryFile  string
+		concurrency    int
 	)
 
 	cmd := &cobra.Command{
@@ -41,6 +43,17 @@ func newScanCommand() *cobra.Command {
 		Short: "Validate and export STIG results",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
+			if inventoryFile != "" {
+				for _, flag := range []string{"hostname", "ip-address", "mac-address", "fqdn", "role", "target-comments", "cklb-template"} {
+					if cmd.Flags().Changed(flag) {
+						return fmt.Errorf("--%s cannot be used with --inventory; set per-host metadata in the inventory", flag)
+					}
+				}
+				return runRemoteScans(cmd, remoteScanOptions{
+					Baseline: args[0], InventoryFile: inventoryFile, Format: format,
+					OutputDir: output, Profile: profile, FailOnFindings: failOnFindings, Concurrency: concurrency,
+				})
+			}
 			if err := validateProfile(profile); err != nil {
 				return err
 			}
@@ -187,7 +200,7 @@ func newScanCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&profile, "profile", "default", "system profile")
 	cmd.Flags().StringVar(&format, "format", "cklb", "output format: cklb or json")
-	cmd.Flags().StringVarP(&output, "output", "o", "", "output file")
+	cmd.Flags().StringVarP(&output, "output", "o", "", "output file, or directory with --inventory")
 	cmd.Flags().BoolVar(&failOnFindings, "fail-on-findings", false, "exit non-zero after writing results when findings exist")
 	cmd.Flags().StringVar(&hostname, "hostname", "", "target hostname; defaults to the local hostname")
 	cmd.Flags().StringVar(&ipAddress, "ip-address", "", "target IP address for CKLB metadata")
@@ -196,5 +209,7 @@ func newScanCommand() *cobra.Command {
 	cmd.Flags().StringVar(&role, "role", "None", "STIG Viewer target role")
 	cmd.Flags().StringVar(&targetComments, "target-comments", "", "comments stored in CKLB target metadata")
 	cmd.Flags().StringVar(&cklbTemplate, "cklb-template", "", "STIG Viewer 3 CKLB template; preserves official checklist metadata and UUIDs")
+	cmd.Flags().StringVar(&inventoryFile, "inventory", "", "scan hosts from a YAML SSH inventory; output is treated as a directory")
+	cmd.Flags().IntVar(&concurrency, "concurrency", 4, "maximum concurrent inventory scans")
 	return cmd
 }
