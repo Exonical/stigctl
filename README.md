@@ -58,6 +58,14 @@ stigctl scan rhel9:v2r9 \
   --output results.xml \
   --fail-on-findings
 
+# Produce CKLB and JUnit from the same scan
+stigctl scan rhel9:v2r9 \
+  --profile server \
+  --format cklb \
+  --output results.cklb \
+  --junit-output results.xml \
+  --fail-on-findings
+
 # Scan an SSH inventory in parallel
 stigctl scan rhel9:v2r9 \
   --inventory inventory.yaml \
@@ -128,6 +136,18 @@ errors are errors, and manual/not-applicable/exception/skipped rules are marked
 skipped. For example, `compute-01-rhel9-v2r9.xml` can be published directly as
 a GitLab `artifacts:reports:junit` report or consumed by another JUnit-aware CI
 test reporter.
+
+To collect both formats from an SSH inventory without running validation twice,
+keep CKLB as the primary format and provide a JUnit output directory:
+
+```bash
+stigctl scan rhel9:v2r9 \
+  --inventory inventory.yaml \
+  --format cklb \
+  --output ./cklb-results \
+  --junit-output ./junit-results \
+  --fail-on-findings
+```
 
 For GitLab CI, retain the report even when findings make the scan job fail:
 
