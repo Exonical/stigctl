@@ -2,7 +2,8 @@ command:
   V-258041:
     title: "RHEL 9 must enforce a 60-day maximum password lifetime for new users."
     meta: { stig_id: V-258041 }
-    exec: "awk '$1=="PASS_MAX_DAYS" {exit !($2 <= 60)} END {if (NR==0) exit 1}' /etc/login.defs"
+    exec: |
+      awk '$1=="PASS_MAX_DAYS" {exit !($2 <= 60)} END {if (NR==0) exit 1}' /etc/login.defs
     exit-status: 0
     skip: {{ not (index .Vars.enabled_rules "V-258041") }}
 
@@ -72,7 +73,8 @@ command:
   V-258107:
     title: "RHEL 9 passwords must be created with a minimum of 15 characters."
     meta: { stig_id: V-258107 }
-    exec: "awk -F= '/^[[:space:]]*minlen[[:space:]]*=/{gsub(/[[:space:]]/,"",$2); if ($2 >= 15) ok=1} END{exit !ok}' /etc/security/pwquality.conf /etc/security/pwquality.conf.d/*.conf 2>/dev/null"
+    exec: |
+      awk -F= '/^[[:space:]]*minlen[[:space:]]*=/{gsub(/[[:space:]]/,"",$2); if ($2 >= 15) ok=1} END{exit !ok}' /etc/security/pwquality.conf /etc/security/pwquality.conf.d/*.conf 2>/dev/null
     exit-status: 0
     skip: {{ not (index .Vars.enabled_rules "V-258107") }}
 
