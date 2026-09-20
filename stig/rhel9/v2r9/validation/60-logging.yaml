@@ -22,3 +22,52 @@ command:
       grep -REiq '^[[:space:]]*cron\.\*[[:space:]]+' /etc/rsyslog.conf /etc/rsyslog.d 2>/dev/null
     exit-status: 0
     skip: {{ not (index .Vars.enabled_rules "V-258150") }}
+
+  V-258146:
+    title: "RHEL 9 must authenticate the remote logging server for offloading audit logs via rsyslog."
+    meta: { stig_id: V-258146 }
+    exec: |
+      line="$(grep -REhis '\$ActionSendStreamDriverAuthMode[[:space:]]+x509/name|StreamDriver\.AuthMode[[:space:]]*=[[:space:]]*"x509/name"' /etc/rsyslog.conf /etc/rsyslog.d 2>/dev/null | head -n1)"
+      echo "evidence=stream_driver_auth_mode=${line:-missing}"
+      test -n "$line"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258146") }}
+
+  V-258147:
+    title: "RHEL 9 must encrypt the transfer of audit records offloaded via rsyslog."
+    meta: { stig_id: V-258147 }
+    exec: |
+      line="$(grep -REhis '\$ActionSendStreamDriverMode[[:space:]]+1([[:space:]]|$)|StreamDriver\.Mode[[:space:]]*=[[:space:]]*"1"' /etc/rsyslog.conf /etc/rsyslog.d 2>/dev/null | head -n1)"
+      echo "evidence=stream_driver_mode=${line:-missing}"
+      test -n "$line"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258147") }}
+
+  V-258148:
+    title: "RHEL 9 must use the gtls driver for encrypted rsyslog transfer."
+    meta: { stig_id: V-258148 }
+    exec: |
+      line="$(grep -REhis '\$DefaultNetstreamDriver[[:space:]]+gtls([[:space:]]|$)|DefaultNetstreamDriver[[:space:]]*=[[:space:]]*"gtls"' /etc/rsyslog.conf /etc/rsyslog.d 2>/dev/null | head -n1)"
+      echo "evidence=default_netstream_driver=${line:-missing}"
+      test -n "$line"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258148") }}
+
+  V-258149:
+    title: "RHEL 9 must forward audit records via TCP to a different system or media."
+    meta: { stig_id: V-258149 }
+    exec: |
+      line="$(grep -REhis '^[[:space:]]*[^#].*@@[^[:space:]]+|type[[:space:]]*=[[:space:]]*"omfwd".*protocol[[:space:]]*=[[:space:]]*"tcp"' /etc/rsyslog.conf /etc/rsyslog.d 2>/dev/null | head -n1)"
+      echo "evidence=remote_tcp_forward=${line:-missing}"
+      test -n "$line"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258149") }}
+
