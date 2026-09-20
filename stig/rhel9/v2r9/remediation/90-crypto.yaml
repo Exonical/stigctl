@@ -17,3 +17,13 @@ stages:
             mac@SSH=HMAC-SHA2-512 HMAC-SHA2-256
       commands:
         - update-crypto-policies --set FIPS:STIG
+
+    - name: V-270177
+      commands:
+        - dnf -y reinstall crypto-policies
+        - update-crypto-policies --set FIPS
+
+    - name: V-270178
+      commands:
+        - dnf -y reinstall crypto-policies
+        - update-crypto-policies --set FIPS
