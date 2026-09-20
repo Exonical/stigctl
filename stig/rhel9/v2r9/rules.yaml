@@ -1217,3 +1217,71 @@ rules:
       file: validation/90-crypto.yaml
       resource: command
       test: V-270178
+  V-257989:
+    title: The RHEL 9 SSH server must be configured to use only DOD-approved encryption ciphers employing FIPS 140-3 validated cryptographic hash algorithms to protect the confidentiality of SSH server connections.
+    rule_id: SV-257989r1184309
+    severity: high
+    status: automated
+    remediation:
+      file: remediation/90-crypto.yaml
+      step: V-257989
+    validation:
+      type: goss
+      file: validation/90-crypto.yaml
+      resource: command
+      test: V-257989
+  V-257991:
+    title: The RHEL 9 SSH server must be configured to use only Message Authentication Codes (MACs) employing FIPS 140-3 validated cryptographic hash algorithms to protect the confidentiality of SSH server connections.
+    rule_id: SV-257991r1184311
+    severity: high
+    status: automated
+    remediation:
+      file: remediation/90-crypto.yaml
+      step: V-257991
+    validation:
+      type: goss
+      file: validation/90-crypto.yaml
+      resource: command
+      test: V-257991
+  V-257789:
+    title: RHEL 9 must require a unique superusers name upon booting into single-user and maintenance modes.
+    rule_id: SV-257789r1137691
+    severity: high
+    status: manual
+    remediation: {}
+    validation: {}
+  V-257835:
+    title: The Trivial File Transfer Protocol (TFTP) server must not be installed unless it is required, and if required, the RHEL 9 TFTP daemon must be configured to operate in secure mode.
+    rule_id: SV-257835r1155679
+    severity: high
+    status: manual
+    remediation: {}
+    validation: {}
+  V-257879:
+    title: RHEL 9 local disk partitions must implement cryptographic mechanisms to prevent unauthorized disclosure or modification of all information that requires at rest protection.
+    rule_id: SV-257879r1045454
+    severity: high
+    status: manual
+    remediation: {}
+    validation: {}
+  V-258018:
+    title: RHEL 9 must not allow unattended or automatic logon via the graphical user interface.
+    rule_id: SV-258018r1045090
+    severity: high
+    status: manual
+    remediation: {}
+    validation: {}
+  V-258232:
+    title: RHEL 9 IP tunnels must use FIPS 140-3 approved cryptographic algorithms.
+    rule_id: SV-258232r1184335
+    severity: high
+    status: manual
+    remediation: {}
+    validation: {}
+  V-258242:
+    title: RHEL 9 must implement DOD-approved encryption in the bind package.
+    rule_id: SV-258242r1184336
+    severity: high
+    status: manual
+    remediation: {}
+    validation: {}
