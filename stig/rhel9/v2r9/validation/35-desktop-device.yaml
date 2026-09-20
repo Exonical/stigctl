@@ -1,0 +1,271 @@
+command:
+  V-258012:
+    title: "RHEL 9 must display the Standard Mandatory DOD Notice and Consent Banner before granting local or remote access to the system via a graphical user logon."
+    meta: { stig_id: V-258012 }
+    exec: |
+      if ! rpm -q gdm >/dev/null 2>&1; then echo 'evidence=gdm_installed=false'; exit 0; fi; v="$(gsettings get org.gnome.login-screen banner-message-enable 2>/dev/null || true)"; echo "evidence=banner_message_enable=$v"; test "$v" = true
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258012") }}
+
+  V-258013:
+    title: "RHEL 9 must prevent a user from overriding the banner-message-enable setting for the graphical user interface."
+    meta: { stig_id: V-258013 }
+    exec: |
+      if ! rpm -q gdm >/dev/null 2>&1; then echo 'evidence=gdm_installed=false'; exit 0; fi; line="$(grep -RhsFx '/org/gnome/login-screen/banner-message-enable' /etc/dconf/db/*/locks 2>/dev/null | head -n1)"; echo "evidence=banner_lock=${line:-missing}"; test -n "$line"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258013") }}
+
+  V-258014:
+    title: "RHEL 9 must disable the graphical user interface automount function unless required."
+    meta: { stig_id: V-258014 }
+    exec: |
+      if ! rpm -q gdm >/dev/null 2>&1; then echo 'evidence=gdm_installed=false'; exit 0; fi; v="$(gsettings get org.gnome.desktop.media-handling automount 2>/dev/null || true)"; echo "evidence=automount=$v"; test "$v" = false
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258014") }}
+
+  V-258015:
+    title: "RHEL 9 must prevent a user from overriding the disabling of the graphical user interface automount function."
+    meta: { stig_id: V-258015 }
+    exec: |
+      if ! rpm -q gdm >/dev/null 2>&1; then echo 'evidence=gdm_installed=false'; exit 0; fi; line="$(grep -RhsFx '/org/gnome/desktop/media-handling/automount' /etc/dconf/db/*/locks 2>/dev/null | head -n1)"; echo "evidence=automount_lock=${line:-missing}"; test -n "$line"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258015") }}
+
+  V-258016:
+    title: "RHEL 9 must disable the graphical user interface autorun function unless required."
+    meta: { stig_id: V-258016 }
+    exec: |
+      if ! rpm -q gdm >/dev/null 2>&1; then echo 'evidence=gdm_installed=false'; exit 0; fi; v="$(gsettings get org.gnome.desktop.media-handling autorun-never 2>/dev/null || true)"; echo "evidence=autorun_never=$v"; test "$v" = true
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258016") }}
+
+  V-258017:
+    title: "RHEL 9 must prevent a user from overriding the disabling of the graphical user interface autorun function."
+    meta: { stig_id: V-258017 }
+    exec: |
+      if ! rpm -q gdm >/dev/null 2>&1; then echo 'evidence=gdm_installed=false'; exit 0; fi; line="$(grep -RhsFx '/org/gnome/desktop/media-handling/autorun-never' /etc/dconf/db/*/locks 2>/dev/null | head -n1)"; echo "evidence=autorun_lock=${line:-missing}"; test -n "$line"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258017") }}
+
+  V-258019:
+    title: "RHEL 9 must be able to initiate directly a session lock for all connection types using smart card when the smart card is removed."
+    meta: { stig_id: V-258019 }
+    exec: |
+      if ! rpm -q gdm >/dev/null 2>&1; then echo 'evidence=gdm_installed=false'; exit 0; fi; v="$(gsettings get org.gnome.settings-daemon.peripherals.smartcard removal-action 2>/dev/null || true)"; echo "evidence=smartcard_removal_action=$v"; printf '%s\n' "$v" | grep -q 'lock-screen'
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258019") }}
+
+  V-258020:
+    title: "RHEL 9 must prevent a user from overriding the disabling of the graphical user smart card removal action."
+    meta: { stig_id: V-258020 }
+    exec: |
+      if ! rpm -q gdm >/dev/null 2>&1; then echo 'evidence=gdm_installed=false'; exit 0; fi; line="$(grep -RhsFx '/org/gnome/settings-daemon/peripherals/smartcard/removal-action' /etc/dconf/db/*/locks 2>/dev/null | head -n1)"; echo "evidence=smartcard_lock=${line:-missing}"; test -n "$line"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258020") }}
+
+  V-258021:
+    title: "RHEL 9 must enable a user session lock until that user re-establishes access using established identification and authentication procedures for graphical user sessions."
+    meta: { stig_id: V-258021 }
+    exec: |
+      if ! rpm -q gdm >/dev/null 2>&1; then echo 'evidence=gdm_installed=false'; exit 0; fi; v="$(gsettings get org.gnome.desktop.screensaver lock-enabled 2>/dev/null || true)"; echo "evidence=lock_enabled=$v"; test "$v" = true
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258021") }}
+
+  V-258022:
+    title: "RHEL 9 must prevent a user from overriding the screensaver lock-enabled setting for the graphical user interface."
+    meta: { stig_id: V-258022 }
+    exec: |
+      if ! rpm -q gdm >/dev/null 2>&1; then echo 'evidence=gdm_installed=false'; exit 0; fi; line="$(grep -RhsFx '/org/gnome/desktop/screensaver/lock-enabled' /etc/dconf/db/*/locks 2>/dev/null | head -n1)"; echo "evidence=lock_enabled_lock=${line:-missing}"; test -n "$line"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258022") }}
+
+  V-258023:
+    title: "RHEL 9 must automatically lock graphical user sessions after 10 minutes of inactivity."
+    meta: { stig_id: V-258023 }
+    exec: |
+      if ! rpm -q gdm >/dev/null 2>&1; then echo 'evidence=gdm_installed=false'; exit 0; fi; v="$(gsettings get org.gnome.desktop.session idle-delay 2>/dev/null | awk '{print $NF}')"; echo "evidence=idle_delay=${v:-missing}"; test -n "$v" && test "$v" -gt 0 && test "$v" -le 600
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258023") }}
+
+  V-258024:
+    title: "RHEL 9 must prevent a user from overriding the session idle-delay setting for the graphical user interface."
+    meta: { stig_id: V-258024 }
+    exec: |
+      if ! rpm -q gdm >/dev/null 2>&1; then echo 'evidence=gdm_installed=false'; exit 0; fi; line="$(grep -RhsFx '/org/gnome/desktop/session/idle-delay' /etc/dconf/db/*/locks 2>/dev/null | head -n1)"; echo "evidence=idle_delay_lock=${line:-missing}"; test -n "$line"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258024") }}
+
+  V-258025:
+    title: "RHEL 9 must initiate a session lock for graphical user interfaces when the screensaver is activated."
+    meta: { stig_id: V-258025 }
+    exec: |
+      if ! rpm -q gdm >/dev/null 2>&1; then echo 'evidence=gdm_installed=false'; exit 0; fi; v="$(gsettings get org.gnome.desktop.screensaver lock-delay 2>/dev/null | awk '{print $NF}')"; echo "evidence=lock_delay=${v:-missing}"; test "$v" = 0
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258025") }}
+
+  V-258026:
+    title: "RHEL 9 must prevent a user from overriding the session lock-delay setting for the graphical user interface."
+    meta: { stig_id: V-258026 }
+    exec: |
+      if ! rpm -q gdm >/dev/null 2>&1; then echo 'evidence=gdm_installed=false'; exit 0; fi; line="$(grep -RhsFx '/org/gnome/desktop/screensaver/lock-delay' /etc/dconf/db/*/locks 2>/dev/null | head -n1)"; echo "evidence=lock_delay_lock=${line:-missing}"; test -n "$line"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258026") }}
+
+  V-258027:
+    title: "RHEL 9 must conceal, via the session lock, information previously visible on the display with a publicly viewable image."
+    meta: { stig_id: V-258027 }
+    exec: |
+      if ! rpm -q gdm >/dev/null 2>&1; then echo 'evidence=gdm_installed=false'; exit 0; fi; v="$(gsettings writable org.gnome.desktop.screensaver picture-uri 2>/dev/null || true)"; echo "evidence=picture_uri_writable=$v"; test "$v" = false
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258027") }}
+
+  V-258028:
+    title: "RHEL 9 effective dconf policy must match the policy keyfiles."
+    meta: { stig_id: V-258028 }
+    exec: |
+      if ! rpm -q gdm >/dev/null 2>&1; then echo 'evidence=gdm_installed=false'; exit 0; fi; bad=""; for db in /etc/dconf/db/*; do test -f "$db" || continue; m="$(stat -c %Y "$db")"; k="$(stat -c %Y "$db".d/* 2>/dev/null | sort -n | tail -1)"; test -z "$k" || test "$m" -ge "$k" || { bad="$db"; break; }; done; echo "evidence=stale_dconf_db=${bad:-none}"; test -z "$bad"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258028") }}
+
+  V-258029:
+    title: "RHEL 9 must disable the ability of a user to restart the system from the login screen."
+    meta: { stig_id: V-258029 }
+    exec: |
+      if ! rpm -q gdm >/dev/null 2>&1; then echo 'evidence=gdm_installed=false'; exit 0; fi; v="$(gsettings get org.gnome.login-screen disable-restart-buttons 2>/dev/null || true)"; echo "evidence=disable_restart_buttons=$v"; test "$v" = true
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258029") }}
+
+  V-258030:
+    title: "RHEL 9 must prevent a user from overriding the disable-restart-buttons setting for the graphical user interface."
+    meta: { stig_id: V-258030 }
+    exec: |
+      if ! rpm -q gdm >/dev/null 2>&1; then echo 'evidence=gdm_installed=false'; exit 0; fi; line="$(grep -RhsFx '/org/gnome/login-screen/disable-restart-buttons' /etc/dconf/db/*/locks 2>/dev/null | head -n1)"; echo "evidence=restart_lock=${line:-missing}"; test -n "$line"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258030") }}
+
+  V-258031:
+    title: "RHEL 9 must disable the ability of a user to accidentally press Ctrl-Alt-Del and cause a system to shut down or reboot."
+    meta: { stig_id: V-258031 }
+    exec: |
+      if ! rpm -q gdm >/dev/null 2>&1; then echo 'evidence=gdm_installed=false'; exit 0; fi; v="$(gsettings get org.gnome.settings-daemon.plugins.media-keys logout 2>/dev/null || true)"; echo "evidence=logout_key=$v"; printf '%s\n' "$v" | grep -Eq "^\[''\]$|^@as \[\]$"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258031") }}
+
+  V-258032:
+    title: "RHEL 9 must prevent a user from overriding the Ctrl-Alt-Del sequence settings for the graphical user interface."
+    meta: { stig_id: V-258032 }
+    exec: |
+      if ! rpm -q gdm >/dev/null 2>&1; then echo 'evidence=gdm_installed=false'; exit 0; fi; v="$(gsettings writable org.gnome.settings-daemon.plugins.media-keys logout 2>/dev/null || true)"; echo "evidence=logout_writable=$v"; test "$v" = false
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258032") }}
+
+  V-258033:
+    title: "RHEL 9 must disable the user list at logon for graphical user interfaces."
+    meta: { stig_id: V-258033 }
+    exec: |
+      if ! rpm -q gdm >/dev/null 2>&1; then echo 'evidence=gdm_installed=false'; exit 0; fi; v="$(gsettings get org.gnome.login-screen disable-user-list 2>/dev/null || true)"; echo "evidence=disable_user_list=$v"; test "$v" = true
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258033") }}
+
+  V-258034:
+    title: "RHEL 9 must be configured to disable USB mass storage."
+    meta: { stig_id: V-258034 }
+    exec: |
+      install="$(grep -RhsE '^[[:space:]]*install[[:space:]]+usb-storage[[:space:]]+/bin/(true|false)' /etc/modprobe.d /etc/modprobe.conf 2>/dev/null | head -n1)"; black="$(grep -RhsE '^[[:space:]]*blacklist[[:space:]]+usb-storage([[:space:]]|$)' /etc/modprobe.d /etc/modprobe.conf 2>/dev/null | head -n1)"; echo "evidence=usb_storage_install=${install:-missing} blacklist=${black:-missing}"; test -n "$install" && test -n "$black"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258034") }}
+
+  V-258036:
+    title: "RHEL 9 must have the USBGuard package enabled."
+    meta: { stig_id: V-258036 }
+    exec: |
+      s="$(systemctl is-active usbguard 2>/dev/null || true)"; echo "evidence=usbguard_state=$s"; test "$s" = active
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258036") }}
+
+  V-258037:
+    title: "RHEL 9 must enable Linux audit logging for the USBGuard daemon."
+    meta: { stig_id: V-258037 }
+    exec: |
+      v="$(awk -F= '$1 ~ /^[[:space:]]*AuditBackend[[:space:]]*$/{gsub(/[[:space:]]/,"",$2);print $2;exit}' /etc/usbguard/usbguard-daemon.conf 2>/dev/null)"; echo "evidence=AuditBackend=${v:-missing}"; test "$v" = LinuxAudit
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258037") }}
+
+  V-258038:
+    title: "RHEL 9 must block unauthorized peripherals before establishing a connection."
+    meta: { stig_id: V-258038 }
+    exec: |
+      rules="$(usbguard list-rules 2>/dev/null | head -n20)"; echo "evidence=usbguard_rules=${rules:-none}"; test -n "$rules"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258038") }}
+
+  V-258039:
+    title: "RHEL 9 Bluetooth must be disabled."
+    meta: { stig_id: V-258039 }
+    exec: |
+      install="$(grep -RhsE '^[[:space:]]*install[[:space:]]+bluetooth[[:space:]]+/bin/(true|false)' /etc/modprobe.d /etc/modprobe.conf 2>/dev/null | head -n1)"; black="$(grep -RhsE '^[[:space:]]*blacklist[[:space:]]+bluetooth([[:space:]]|$)' /etc/modprobe.d /etc/modprobe.conf 2>/dev/null | head -n1)"; echo "evidence=bluetooth_install=${install:-missing} blacklist=${black:-missing}"; test -n "$install" && test -n "$black"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258039") }}
+
+  V-258040:
+    title: "RHEL 9 wireless network adapters must be disabled."
+    meta: { stig_id: V-258040 }
+    exec: |
+      bad="$(nmcli -t -f DEVICE,TYPE,STATE device status 2>/dev/null | awk -F: '$2=="wifi" || $2=="wifi-p2p"{print}' | head -n20)"; echo "evidence=wireless_interfaces=${bad:-none}"; test -z "$bad"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258040") }}
+
