@@ -1,3 +1,37 @@
-# Goss validation resources for crypto controls.
-# Use DISA V-IDs as resource IDs where possible and add meta.stig_id.
-{}
+command:
+  V-258230:
+    title: "RHEL 9 must enable FIPS mode."
+    meta:
+      stig_id: V-258230
+    exec: "test \"$(cat /proc/sys/crypto/fips_enabled 2>/dev/null)\" = 1"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-258230") }}
+
+  V-258236:
+    title: "RHEL 9 cryptographic policy must not be overridden."
+    meta:
+      stig_id: V-258236
+    exec: "update-crypto-policies --check"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-258236") }}
+
+  V-258241:
+    title: "RHEL 9 must implement a FIPS 140-3-compliant systemwide cryptographic policy."
+    meta:
+      stig_id: V-258241
+    exec: |
+      policy="$(update-crypto-policies --show 2>/dev/null)" &&
+      case "$policy" in FIPS|FIPS:*) ;; *) exit 1 ;; esac &&
+      state=/etc/crypto-policies/state/CURRENT.pol &&
+      test -r "$state" &&
+      hash_line="$(grep -E '^[[:space:]]*hash[[:space:]]*=' "$state" | head -n1)" &&
+      test -n "$hash_line" &&
+      for alg in SHA2-224 SHA2-256 SHA2-384 SHA2-512 SHA3-256 SHA3-384 SHA3-512 SHAKE-256; do
+        printf '%s\n' "$hash_line" | grep -qw "$alg" || exit 1
+      done &&
+      ! printf '%s\n' "$hash_line" | grep -Eq 'SHA1|MD5' &&
+      rsa="$(awk -F= '/^[[:space:]]*min_rsa_size[[:space:]]*=/{gsub(/[[:space:]]/,"",$2); print $2; exit}' "$state")" &&
+      test -n "$rsa" &&
+      test "$rsa" -ge 2048
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-258241") }}
