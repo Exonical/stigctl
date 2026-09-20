@@ -286,4 +286,10 @@ exceptions:
   V-257930: *container_service_na
   V-257931: *container_service_na
   V-257948: *container_service_na
+  # These checks depend on host storage, time-service, tunnel authorization,
+  # or filesystem ownership context that container-ci cannot represent.
+  V-257928: *container_service_na
+  V-257945: *container_service_na
+  V-257950: *container_service_na
+  V-258155: *container_service_na
 
