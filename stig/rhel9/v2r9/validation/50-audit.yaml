@@ -32,21 +32,24 @@ command:
   V-258166:
     title: "RHEL 9 audit log directory must be owned by root."
     meta: { stig_id: V-258166 }
-    exec: "test \"$(stat -c %U /var/log/audit)\" = root"
+    exec: |
+      test "$(stat -c %U /var/log/audit)" = root
     exit-status: 0
     skip: {{ not (index .Vars.enabled_rules "V-258166") }}
 
   V-258167:
     title: "RHEL 9 audit log files must have mode 0600 or less permissive."
     meta: { stig_id: V-258167 }
-    exec: "test -z \"$(find /var/log/audit -type f -perm /077 -print -quit)\""
+    exec: |
+      test -z "$(find /var/log/audit -type f -perm /077 -print -quit)"
     exit-status: 0
     skip: {{ not (index .Vars.enabled_rules "V-258167") }}
 
   V-258168:
     title: "RHEL 9 must periodically flush audit records to disk."
     meta: { stig_id: V-258168 }
-    exec: "awk -F= '/^[[:space:]]*freq[[:space:]]*=/{gsub(/[[:space:]]/,"",$2); if ($2 >= 1 && $2 <= 100) ok=1} END{exit !ok}' /etc/audit/auditd.conf"
+    exec: |
+      awk -F= '/^[[:space:]]*freq[[:space:]]*=/{gsub(/[[:space:]]/,"",$2); if ($2 >= 1 && $2 <= 100) ok=1} END{exit !ok}' /etc/audit/auditd.conf
     exit-status: 0
     skip: {{ not (index .Vars.enabled_rules "V-258168") }}
 
