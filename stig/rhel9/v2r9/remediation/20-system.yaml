@@ -1,0 +1,36 @@
+name: RHEL 9 STIG - System
+
+stages:
+  stig:
+    - name: V-257784
+      files:
+        - path: /etc/systemd/system.conf.d/55-CtrlAltDel-BurstAction.conf
+          permissions: "0644"
+          content: |
+            [Manager]
+            CtrlAltDelBurstAction=none
+      commands:
+        - systemctl daemon-reload
+
+    - name: V-257785
+      only_service_manager: systemd
+      commands:
+        - systemctl disable --now ctrl-alt-del.target
+        - systemctl mask --now ctrl-alt-del.target
+
+    - name: V-257955
+      commands:
+        - find / -name shosts.equiv -type f -delete 2>/dev/null || true
+
+    - name: V-257956
+      commands:
+        - find / -name .shosts -type f -delete 2>/dev/null || true
+
+    - name: V-258094
+      commands:
+        - |
+          if command -v authselect >/dev/null 2>&1 && authselect current >/dev/null 2>&1; then
+            authselect enable-feature without-nullok
+          else
+            sed -ri 's/(^|[[:space:]])nullok([[:space:]]|$)/ /g' /etc/pam.d/system-auth /etc/pam.d/password-auth 2>/dev/null || true
+          fi
