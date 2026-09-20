@@ -1,0 +1,59 @@
+command:
+  V-257777:
+    title: "RHEL 9 must be a vendor-supported release."
+    meta:
+      stig_id: V-257777
+    exec: |
+      test -r /etc/redhat-release &&
+      grep -Eq '^Red Hat Enterprise Linux release 9([.][0-9]+)?([[:space:]]|$)' /etc/redhat-release
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257777") }}
+
+  V-257784:
+    title: "The systemd Ctrl-Alt-Delete burst key sequence in RHEL 9 must be disabled."
+    meta:
+      stig_id: V-257784
+    exec: |
+      grep -RhsEi '^[[:space:]]*CtrlAltDelBurstAction[[:space:]]*=[[:space:]]*none[[:space:]]*$'         /etc/systemd/system.conf /etc/systemd/system.conf.d 2>/dev/null | grep -q .
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257784") }}
+
+  V-257785:
+    title: "The x86 Ctrl-Alt-Delete key sequence must be disabled on RHEL 9."
+    meta:
+      stig_id: V-257785
+    exec: "test \"$(systemctl show ctrl-alt-del.target -p LoadState --value)\" = masked"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257785") }}
+
+  V-257955:
+    title: "There must be no shosts.equiv files on RHEL 9."
+    meta:
+      stig_id: V-257955
+    exec: "test -z \"$(find / -name shosts.equiv -type f -print -quit 2>/dev/null)\""
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257955") }}
+
+  V-257956:
+    title: "There must be no .shosts files on RHEL 9."
+    meta:
+      stig_id: V-257956
+    exec: "test -z \"$(find / -name .shosts -type f -print -quit 2>/dev/null)\""
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257956") }}
+
+  V-258059:
+    title: "The root account must be the only account having unrestricted access to RHEL 9 system."
+    meta:
+      stig_id: V-258059
+    exec: "test \"$(awk -F: '$3 == 0 {print $1}' /etc/passwd)\" = root"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-258059") }}
+
+  V-258094:
+    title: "RHEL 9 must not allow blank or null passwords."
+    meta:
+      stig_id: V-258094
+    exec: "! grep -Eisq '(^|[[:space:]])nullok([[:space:]]|$)' /etc/pam.d/system-auth /etc/pam.d/password-auth"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-258094") }}
