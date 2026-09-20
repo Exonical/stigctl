@@ -68,7 +68,7 @@ func newScanCommand() *cobra.Command {
 				hostname = facts.Hostname
 			}
 
-			varsFile, cleanup, err := writeEffectiveGossVars(ruleDoc, exceptionDoc, profile, hostname, filepath.Join(filepath.Dir(gossFile), "stig-check.sh"))
+			varsFile, cleanup, err := writeEffectiveGossVars(ruleDoc, exceptionDoc, profile, hostname)
 			if err != nil {
 				return err
 			}
