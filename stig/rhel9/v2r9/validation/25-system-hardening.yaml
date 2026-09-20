@@ -1,0 +1,321 @@
+command:
+  V-257812:
+    title: "RHEL 9 must disable core dump backtraces."
+    meta: { stig_id: V-257812 }
+    exec: |
+      v="$(grep -RhsE '^[[:space:]]*ProcessSizeMax[[:space:]]*=' /etc/systemd/coredump.conf /etc/systemd/coredump.conf.d 2>/dev/null | tail -n1 | cut -d= -f2- | tr -d '[:space:]')"; echo "evidence=ProcessSizeMax=${v:-missing}"; test "$v" = 0
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257812") }}
+
+  V-257813:
+    title: "RHEL 9 must disable storing core dumps."
+    meta: { stig_id: V-257813 }
+    exec: |
+      v="$(grep -RhsE '^[[:space:]]*Storage[[:space:]]*=' /etc/systemd/coredump.conf /etc/systemd/coredump.conf.d 2>/dev/null | tail -n1 | cut -d= -f2- | tr -d '[:space:]')"; echo "evidence=Storage=${v:-missing}"; test "$v" = none
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257813") }}
+
+  V-257814:
+    title: "RHEL 9 must disable core dumps for all users."
+    meta: { stig_id: V-257814 }
+    exec: |
+      line="$(grep -RhsE '^[[:space:]]*\*[[:space:]]+hard[[:space:]]+core[[:space:]]+0([[:space:]]|$)' /etc/security/limits.conf /etc/security/limits.d 2>/dev/null | head -n1)"; echo "evidence=core_limit=${line:-missing}"; test -n "$line"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257814") }}
+
+  V-257815:
+    title: "RHEL 9 must disable acquiring, saving, and processing core dumps."
+    meta: { stig_id: V-257815 }
+    exec: |
+      s="$(systemctl is-enabled systemd-coredump.socket 2>/dev/null || true)"; echo "evidence=systemd_coredump_socket=$s"; test "$s" = masked || test "$s" = disabled || test "$s" = not-found
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257815") }}
+
+  V-257817:
+    title: "RHEL 9 must implement nonexecutable data to protect its memory from unauthorized code execution."
+    meta: { stig_id: V-257817 }
+    exec: |
+      grep -qw nx /proc/cpuinfo 2>/dev/null; rc=$?; echo "evidence=cpu_nx_feature=$([ "$rc" -eq 0 ] && echo present || echo missing)"; exit "$rc"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257817") }}
+
+  V-257819:
+    title: "RHEL 9 must ensure cryptographic verification of vendor software packages."
+    meta: { stig_id: V-257819 }
+    exec: |
+      bad="$(rpm -qa --qf '%{NAME} %{SIGPGP:pgpsig}\n' 2>/dev/null | awk '/\(none\)/{print $1}' | head -n20)"; echo "evidence=unsigned_packages=${bad:-none}"; test -z "$bad"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257819") }}
+
+  V-257823:
+    title: "RHEL 9 must be configured so that the cryptographic hashes of system files match vendor values."
+    meta: { stig_id: V-257823 }
+    exec: |
+      bad="$(rpm -Va 2>/dev/null | awk 'length($1)>=8 && substr($1,3,1)=="5"{print $NF}' | head -n20)"; echo "evidence=digest_mismatches=${bad:-none}"; test -z "$bad"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257823") }}
+
+  V-257824:
+    title: "RHEL 9 must remove all software components after updated versions have been installed."
+    meta: { stig_id: V-257824 }
+    exec: |
+      old="$(dnf repoquery --installonly --latest-limit=-2 -q 2>/dev/null | head -n20 || true)"; echo "evidence=obsolete_installonly=${old:-none}"; test -z "$old"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257824") }}
+
+  V-257830:
+    title: "RHEL 9 must not install packages from the Extra Packages for Enterprise Linux (EPEL) repository."
+    meta: { stig_id: V-257830 }
+    exec: |
+      bad="$(dnf -q repolist --enabled 2>/dev/null | grep -Ei '(^|[[:space:]])epel([[:space:]-]|$)' | head -n20)"; echo "evidence=enabled_epel=${bad:-none}"; test -z "$bad"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257830") }}
+
+  V-257837:
+    title: "A graphical display manager must not be installed on RHEL 9 unless approved."
+    meta: { stig_id: V-257837 }
+    exec: |
+      if rpm -q gdm >/dev/null 2>&1; then echo 'evidence=gdm_installed=true'; exit 1; fi; echo 'evidence=gdm_installed=false'
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257837") }}
+
+  V-257880:
+    title: "RHEL 9 must disable mounting of cramfs."
+    meta: { stig_id: V-257880 }
+    exec: |
+      loaded="$(lsmod | awk '$1=="cramfs"{print $1}')"; rule="$(grep -RhsE '^[[:space:]]*install[[:space:]]+cramfs[[:space:]]+/bin/(true|false)' /etc/modprobe.d 2>/dev/null | head -n1)"; echo "evidence=cramfs_loaded=${loaded:-false} rule=${rule:-missing}"; test -z "$loaded" && test -n "$rule"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257880") }}
+
+  V-257882:
+    title: "RHEL 9 system commands must have mode 755 or less permissive."
+    meta: { stig_id: V-257882 }
+    exec: |
+      bad="$(find /bin /sbin /usr/bin /usr/sbin -xdev -type f -perm /022 -print 2>/dev/null | head -n20)"; echo "evidence=writable_system_commands=${bad:-none}"; test -z "$bad"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257882") }}
+
+  V-257883:
+    title: "RHEL 9 library directories must have mode 755 or less permissive."
+    meta: { stig_id: V-257883 }
+    exec: |
+      bad="$(find /lib /lib64 /usr/lib /usr/lib64 -xdev -type d -perm /022 -print 2>/dev/null | head -n20)"; echo "evidence=writable_library_dirs=${bad:-none}"; test -z "$bad"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257883") }}
+
+  V-257884:
+    title: "RHEL 9 library files must have mode 755 or less permissive."
+    meta: { stig_id: V-257884 }
+    exec: |
+      bad="$(find /lib /lib64 /usr/lib /usr/lib64 -xdev -type f -perm /022 -print 2>/dev/null | head -n20)"; echo "evidence=writable_library_files=${bad:-none}"; test -z "$bad"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257884") }}
+
+  V-257889:
+    title: "All RHEL 9 local initialization files must have mode 0740 or less permissive."
+    meta: { stig_id: V-257889 }
+    exec: |
+      bad=""; while IFS=: read -r u _ uid _ _ home shell; do test "$uid" -ge 1000 || continue; case "$shell" in */nologin|*/false) continue;; esac; test -d "$home" || continue; f="$(find "$home" -maxdepth 1 -type f -name '.*' -perm /0037 -print 2>/dev/null | head -n1)"; test -z "$f" || { bad="$u:$f"; break; }; done < /etc/passwd; echo "evidence=insecure_init_file=${bad:-none}"; test -z "$bad"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257889") }}
+
+  V-257890:
+    title: "All RHEL 9 local interactive user home directories must have mode 0750 or less permissive."
+    meta: { stig_id: V-257890 }
+    exec: |
+      bad=""; while IFS=: read -r u _ uid _ _ home shell; do test "$uid" -ge 1000 || continue; case "$shell" in */nologin|*/false) continue;; esac; test -d "$home" || continue; mode="$(stat -c %a "$home")"; test $((8#$mode & 8#0027)) -eq 0 || { bad="$u:$home:$mode"; break; }; done < /etc/passwd; echo "evidence=insecure_home=${bad:-none}"; test -z "$bad"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257890") }}
+
+  V-257918:
+    title: "RHEL 9 system commands must be owned by root."
+    meta: { stig_id: V-257918 }
+    exec: |
+      bad="$(find /bin /sbin /usr/bin /usr/sbin -xdev -type f ! -user root -print 2>/dev/null | head -n20)"; echo "evidence=nonroot_system_commands=${bad:-none}"; test -z "$bad"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257918") }}
+
+  V-257920:
+    title: "RHEL 9 library files must be owned by root."
+    meta: { stig_id: V-257920 }
+    exec: |
+      bad="$(find /lib /lib64 /usr/lib /usr/lib64 -xdev -type f ! -user root -print 2>/dev/null | head -n20)"; echo "evidence=nonroot_library_files=${bad:-none}"; test -z "$bad"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257920") }}
+
+  V-257922:
+    title: "RHEL 9 library directories must be owned by root."
+    meta: { stig_id: V-257922 }
+    exec: |
+      bad="$(find /lib /lib64 /usr/lib /usr/lib64 -xdev -type d ! -user root -print 2>/dev/null | head -n20)"; echo "evidence=nonroot_library_dirs=${bad:-none}"; test -z "$bad"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257922") }}
+
+  V-257929:
+    title: "A sticky bit must be set on all RHEL 9 public directories."
+    meta: { stig_id: V-257929 }
+    exec: |
+      bad="$(find / -xdev -type d -perm -0002 ! -perm -1000 -print 2>/dev/null | head -n20)"; echo "evidence=world_writable_without_sticky=${bad:-none}"; test -z "$bad"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257929") }}
+
+  V-257930:
+    title: "All RHEL 9 local files and directories must have a valid group owner."
+    meta: { stig_id: V-257930 }
+    exec: |
+      bad="$(find / -xdev -nogroup -print 2>/dev/null | head -n20)"; echo "evidence=invalid_group_objects=${bad:-none}"; test -z "$bad"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257930") }}
+
+  V-257931:
+    title: "All RHEL 9 local files and directories must have a valid owner."
+    meta: { stig_id: V-257931 }
+    exec: |
+      bad="$(find / -xdev -nouser -print 2>/dev/null | head -n20)"; echo "evidence=invalid_owner_objects=${bad:-none}"; test -z "$bad"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257931") }}
+
+  V-257932:
+    title: "RHEL 9 must be configured so that all system device files are correctly labeled to prevent unauthorized modification."
+    meta: { stig_id: V-257932 }
+    exec: |
+      bad="$(restorecon -nRv /dev 2>&1 | head -n20)"; echo "evidence=device_label_drift=${bad:-none}"; test -z "$bad"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257932") }}
+
+  V-257934:
+    title: "RHEL 9 /etc/shadow file must have mode 0000 to prevent unauthorized access."
+    meta: { stig_id: V-257934 }
+    exec: |
+      mode="$(stat -c %a /etc/shadow)"; echo "evidence=shadow_mode=$mode"; test "$mode" = 0
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257934") }}
+
+  V-257941:
+    title: "RHEL 9 network interfaces must not be in promiscuous mode."
+    meta: { stig_id: V-257941 }
+    exec: |
+      bad="$(ip -o link show 2>/dev/null | grep -E '<[^>]*PROMISC[^>]*>' | head -n20)"; echo "evidence=promiscuous_interfaces=${bad:-none}"; test -z "$bad"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257941") }}
+
+  V-257946:
+    title: "RHEL 9 must disable the chrony daemon from acting as a server."
+    meta: { stig_id: V-257946 }
+    exec: |
+      bad="$(grep -RhsE '^[[:space:]]*allow([[:space:]]|$)' /etc/chrony.conf /etc/chrony.d 2>/dev/null | head -n20)"; echo "evidence=chrony_allow=${bad:-none}"; test -z "$bad"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257946") }}
+
+  V-257947:
+    title: "RHEL 9 must disable network management of the chrony daemon."
+    meta: { stig_id: V-257947 }
+    exec: |
+      bad="$(grep -RhsE '^[[:space:]]*cmdallow([[:space:]]|$)' /etc/chrony.conf /etc/chrony.d 2>/dev/null | head -n20)"; echo "evidence=chrony_cmdallow=${bad:-none}"; test -z "$bad"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257947") }}
+
+  V-257948:
+    title: "RHEL 9 systems using Domain Name Servers (DNS) resolution must have at least two name servers configured."
+    meta: { stig_id: V-257948 }
+    exec: |
+      n="$(grep -Ec '^[[:space:]]*nameserver[[:space:]]+' /etc/resolv.conf 2>/dev/null || true)"; echo "evidence=nameserver_count=$n"; test "$n" -ge 2
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257948") }}
+
+  V-257949:
+    title: "RHEL 9 must configure a DNS processing mode in Network Manager."
+    meta: { stig_id: V-257949 }
+    exec: |
+      v="$(NetworkManager --print-config 2>/dev/null | awk -F= '/^[[:space:]]*dns[[:space:]]*=/{gsub(/[[:space:]]/,"",$2);print $2;exit}')"; echo "evidence=NetworkManager_dns=${v:-missing}"; case "$v" in default|none|systemd-resolved) exit 0;; *) exit 1;; esac
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257949") }}
+
+  V-257951:
+    title: "RHEL 9 must be configured to prevent unrestricted mail relaying."
+    meta: { stig_id: V-257951 }
+    exec: |
+      if ! rpm -q postfix >/dev/null 2>&1; then echo 'evidence=postfix_installed=false'; exit 0; fi; v="$(postconf -h smtpd_client_restrictions 2>/dev/null | tr -d '[:space:]')"; echo "evidence=smtpd_client_restrictions=$v"; test "$v" = permit_mynetworks,reject
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257951") }}
+
+  V-257953:
+    title: "RHEL 9 must forward mail from postmaster to the root account using a postfix alias."
+    meta: { stig_id: V-257953 }
+    exec: |
+      line="$(grep -E '^[[:space:]]*postmaster:[[:space:]]*root[[:space:]]*$' /etc/aliases 2>/dev/null | head -n1)"; echo "evidence=postmaster_alias=${line:-missing}"; test -n "$line"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257953") }}
+
+  V-257981:
+    title: "RHEL 9 must display the Standard Mandatory DOD Notice and Consent Banner before granting local or remote access to the system via a SSH logon."
+    meta: { stig_id: V-257981 }
+    exec: |
+      banner="$(/usr/sbin/sshd -T 2>/dev/null | awk '$1=="banner"{print $2;exit}')"; echo "evidence=sshd_banner=${banner:-none}"; test -n "$banner" && test "$banner" != none && test -r "$banner"; grep -Fq 'You are accessing a U.S. Government (USG) Information System (IS)' "$banner"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257981") }}
+
