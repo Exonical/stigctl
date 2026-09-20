@@ -190,3 +190,15 @@ command:
     exec: "! grep -REiq '^[[:space:]]*[^#].*NOPASSWD' /etc/sudoers /etc/sudoers.d 2>/dev/null"
     exit-status: 0
     skip: {{ not (index .Vars.enabled_rules "V-258106") }}
+
+  V-272496:
+    title: "RHEL 9 must elevate the SELinux context when an administrator calls the sudo command."
+    meta: { stig_id: V-272496 }
+    exec: |
+      grep -REhs '^[[:space:]]*%[^[:space:]]+[[:space:]]+ALL[[:space:]]*=[[:space:]]*\(ALL(:ALL)?\)[[:space:]]+TYPE=sysadm_t[[:space:]]+ROLE=sysadm_r[[:space:]]+ALL[[:space:]]*$' /etc/sudoers /etc/sudoers.d 2>/dev/null
+    exit-status: 0
+    stdout:
+      - "TYPE=sysadm_t"
+      - "ROLE=sysadm_r"
+    skip: {{ not (index .Vars.enabled_rules "V-272496") }}
+
