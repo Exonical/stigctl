@@ -51,6 +51,12 @@ stigctl scan rhel9:v2r9 \
   --format json \
   --output results.json
 
+# Scan an SSH inventory in parallel
+stigctl scan rhel9:v2r9 \
+  --inventory inventory.yaml \
+  --format cklb \
+  --output ./results
+
 # Inspect approved exceptions
 stigctl exceptions list rhel9:v2r9
 stigctl exceptions show rhel9:v2r9 V-XXXXXX
@@ -61,6 +67,70 @@ Use `--content-root` when the baseline tree is not in the current directory:
 ```bash
 stigctl --content-root /usr/share/stigctl validate rhel9:v2r9
 ```
+
+## Remote inventory scanning
+
+`scan --inventory` scans Linux hosts over SSH without requiring `stigctl`, Goss,
+or baseline content to already be installed on them. The controller stages the
+current `stigctl` executable and the selected baseline in a temporary directory,
+runs the scan on the target, downloads the CKLB or JSON result, and removes the
+temporary files.
+
+```yaml
+version: 1
+
+defaults:
+  user: stigscanner
+  port: 22
+  identity_file: ~/.ssh/stigscanner_ed25519
+  known_hosts_file: ~/.ssh/known_hosts
+  profile: server
+  sudo: true
+
+hosts:
+  - name: compute-01
+    address: 10.20.30.41
+    hostname: compute-01.example.internal
+    ip_address: 10.20.30.41
+
+  - name: compute-02
+    address: 10.20.30.42
+    sudo: false
+    role: Member Server
+    comments: Scanned by the infrastructure compliance pipeline
+```
+
+Run the inventory with up to eight concurrent SSH sessions:
+
+```bash
+stigctl scan rhel9:v2r9 \
+  --inventory inventory.yaml \
+  --concurrency 8 \
+  --format cklb \
+  --output ./results \
+  --fail-on-findings
+```
+
+The output directory receives one artifact per inventory name, such as
+`results/compute-01-rhel9-v2r9.cklb`. A result is still downloaded when
+`--fail-on-findings` makes the remote scan exit nonzero.
+
+Remote scanning uses the system OpenSSH `ssh` and `scp` clients. Authentication
+is noninteractive (`BatchMode=yes`) and uses the specified private key, the SSH
+agent, or normal OpenSSH configuration. Host-key verification is always enabled;
+unknown hosts must be enrolled in `known_hosts` before scanning.
+
+When `sudo: true`, the remote command is prefixed with `sudo -n --`. This avoids
+root SSH login and prevents a CI job from waiting for an interactive password.
+The SSH account must therefore already be trusted for noninteractive sudo. Since
+the account can upload and run the transient executable, granting sudo for that
+path is equivalent to granting root execution; do not treat a wildcard sudoers
+rule for `/var/tmp/stigctl-remote.*` as narrowly scoped access. If `sudo: false`,
+checks that need privileged access may fail.
+
+The staged executable must be compatible with the target operating system and
+CPU architecture. Temporary data is created under `/var/tmp` and removed after
+the result is collected.
 
 ## Architecture
 
