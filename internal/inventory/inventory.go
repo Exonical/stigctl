@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+	"time"
 
 	"gopkg.in/yaml.v3"
 )
@@ -28,6 +29,8 @@ type Defaults struct {
 	KnownHostsFile string `yaml:"known_hosts_file"`
 	Sudo           bool   `yaml:"sudo"`
 	Profile        string `yaml:"profile"`
+	ConnectTimeout string `yaml:"connect_timeout"`
+	ScanTimeout    string `yaml:"scan_timeout"`
 }
 
 type Host struct {
@@ -45,6 +48,8 @@ type Host struct {
 	FQDN           string `yaml:"fqdn"`
 	Role           string `yaml:"role"`
 	Comments       string `yaml:"comments"`
+	ConnectTimeout string `yaml:"connect_timeout"`
+	ScanTimeout    string `yaml:"scan_timeout"`
 }
 
 type Target struct {
@@ -62,6 +67,8 @@ type Target struct {
 	FQDN           string
 	Role           string
 	Comments       string
+	ConnectTimeout time.Duration
+	ScanTimeout    time.Duration
 }
 
 func Load(path string) ([]Target, error) {
@@ -85,7 +92,10 @@ func Load(path string) ([]Target, error) {
 	seen := make(map[string]struct{}, len(doc.Hosts))
 	targets := make([]Target, 0, len(doc.Hosts))
 	for i, host := range doc.Hosts {
-		target := merge(doc.Defaults, host)
+		target, err := merge(doc.Defaults, host)
+		if err != nil {
+			return nil, err
+		}
 		if err := validateTarget(target); err != nil {
 			return nil, fmt.Errorf("inventory host %d: %w", i+1, err)
 		}
@@ -99,7 +109,16 @@ func Load(path string) ([]Target, error) {
 	return targets, nil
 }
 
-func merge(defaults Defaults, host Host) Target {
+func merge(defaults Defaults, host Host) (Target, error) {
+	connectTimeout, err := parseTimeout(host.Name, "connect_timeout", first(host.ConnectTimeout, defaults.ConnectTimeout))
+	if err != nil {
+		return Target{}, err
+	}
+	scanTimeout, err := parseTimeout(host.Name, "scan_timeout", first(host.ScanTimeout, defaults.ScanTimeout))
+	if err != nil {
+		return Target{}, err
+	}
+
 	port := host.Port
 	if port == 0 {
 		port = defaults.Port
@@ -124,7 +143,19 @@ func merge(defaults Defaults, host Host) Target {
 		Sudo:           sudo, Profile: profile, Hostname: host.Hostname,
 		IPAddress: host.IPAddress, MACAddress: host.MACAddress, FQDN: host.FQDN,
 		Role: role, Comments: host.Comments,
+		ConnectTimeout: connectTimeout, ScanTimeout: scanTimeout,
+	}, nil
+}
+
+func parseTimeout(host, field, value string) (time.Duration, error) {
+	if value == "" {
+		return 0, nil
 	}
+	duration, err := time.ParseDuration(value)
+	if err != nil || duration < 0 {
+		return 0, fmt.Errorf("host %s: invalid %s %q", host, field, value)
+	}
+	return duration, nil
 }
 
 func validateTarget(target Target) error {

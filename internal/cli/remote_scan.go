@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/Exonical/stigctl/internal/baseline"
 	"github.com/Exonical/stigctl/internal/inventory"
@@ -25,14 +26,18 @@ type remoteScanOptions struct {
 	RemoteBinary   string
 	FailOnFindings bool
 	Concurrency    int
+	ConnectTimeout time.Duration
+	HostTimeout    time.Duration
+	SSHBinary      string
+	SCPBinary      string
 }
 
 type remoteScanner interface {
 	Scan(context.Context, remote.ScanRequest) (remote.ScanResult, error)
 }
 
-var newRemoteScanner = func() remoteScanner {
-	return remote.NewScanner()
+var newRemoteScanner = func(options remote.Options) remoteScanner {
+	return remote.NewScanner(options)
 }
 
 func runRemoteScans(cmd *cobra.Command, options remoteScanOptions) error {
@@ -51,6 +56,12 @@ func runRemoteScans(cmd *cobra.Command, options remoteScanOptions) error {
 	for i := range targets {
 		if targets[i].Profile == "" {
 			targets[i].Profile = options.Profile
+		}
+		if targets[i].ConnectTimeout == 0 {
+			targets[i].ConnectTimeout = options.ConnectTimeout
+		}
+		if targets[i].ScanTimeout == 0 {
+			targets[i].ScanTimeout = options.HostTimeout
 		}
 		target := targets[i]
 		if err := validateProfile(target.Profile); err != nil {
@@ -106,7 +117,7 @@ func runRemoteScans(cmd *cobra.Command, options remoteScanOptions) error {
 			defer wg.Done()
 			limit <- struct{}{}
 			defer func() { <-limit }()
-			scanner := newRemoteScanner()
+			scanner := newRemoteScanner(remote.Options{SSH: options.SSHBinary, SCP: options.SCPBinary})
 			result, scanErr := scanner.Scan(cmd.Context(), remote.ScanRequest{
 				Baseline: options.Baseline, Format: format, OutputDir: outputDir,
 				JUnitOutputDir: options.JUnitOutputDir,

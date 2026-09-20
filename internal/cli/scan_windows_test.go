@@ -13,15 +13,19 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/Exonical/stigctl/internal/remote"
 )
 
 type windowsControllerScanner struct {
 	payloadPath string
+	target      remote.ScanRequest
+	options     remote.Options
 }
 
 func (s *windowsControllerScanner) Scan(_ context.Context, req remote.ScanRequest) (remote.ScanResult, error) {
+	s.target = req
 	binary, err := os.ReadFile(req.Binary)
 	if err != nil {
 		return remote.ScanResult{Target: req.Target}, fmt.Errorf("read staged binary: %w", err)
@@ -96,7 +100,10 @@ hosts:
 
 	fake := &windowsControllerScanner{}
 	previousFactory := newRemoteScanner
-	newRemoteScanner = func() remoteScanner { return fake }
+	newRemoteScanner = func(options remote.Options) remoteScanner {
+		fake.options = options
+		return fake
+	}
 	defer func() { newRemoteScanner = previousFactory }()
 
 	outputDir := filepath.Join(tempDir, "cklb")
@@ -112,6 +119,10 @@ hosts:
 		"--format", "cklb",
 		"--output", outputDir,
 		"--junit-output", junitDir,
+		"--connect-timeout", "45s",
+		"--host-timeout", "2m",
+		"--ssh-binary", "custom-ssh",
+		"--scp-binary", "custom-scp",
 	})
 	if err := cmd.Execute(); err != nil {
 		t.Fatalf("Windows controller scan failed: %v\nstderr: %s", err, stderr.String())
@@ -130,6 +141,12 @@ hosts:
 	}
 	if fake.payloadPath == "" {
 		t.Fatal("scanner did not receive a payload")
+	}
+	if fake.target.Target.ConnectTimeout != 45*time.Second || fake.target.Target.ScanTimeout != 2*time.Minute {
+		t.Fatalf("target timeouts = connect %s scan %s", fake.target.Target.ConnectTimeout, fake.target.Target.ScanTimeout)
+	}
+	if fake.options.SSH != "custom-ssh" || fake.options.SCP != "custom-scp" {
+		t.Fatalf("scanner options = %#v", fake.options)
 	}
 	if _, err := os.Stat(fake.payloadPath); !os.IsNotExist(err) {
 		t.Fatalf("temporary payload was not removed: %v", err)

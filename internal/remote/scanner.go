@@ -7,6 +7,7 @@ import (
 	"encoding/xml"
 	"errors"
 	"fmt"
+	"math"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -52,17 +53,30 @@ func (execRunner) Run(ctx context.Context, name string, args []string, stdout, s
 	return cmd.Run()
 }
 
+type Options struct {
+	SSH string
+	SCP string
+}
+
 type Scanner struct {
 	runner commandRunner
+	ssh    string
+	scp    string
 }
 
 const cleanupTimeout = 30 * time.Second
 
-func NewScanner() Scanner {
-	return Scanner{runner: execRunner{}}
+func NewScanner(options Options) Scanner {
+	return Scanner{runner: execRunner{}, ssh: options.SSH, scp: options.SCP}
 }
 
 func (s Scanner) Scan(ctx context.Context, req ScanRequest) (result ScanResult, retErr error) {
+	if req.Target.ScanTimeout > 0 {
+		var cancel context.CancelFunc
+		ctx, cancel = context.WithTimeout(ctx, req.Target.ScanTimeout)
+		defer cancel()
+	}
+
 	result.Target = req.Target
 	if err := os.MkdirAll(req.OutputDir, 0o755); err != nil {
 		return result, fmt.Errorf("create remote scan output directory: %w", err)
@@ -103,7 +117,7 @@ func (s Scanner) Scan(ctx context.Context, req ScanRequest) (result ScanResult, 
 	}
 	command := buildScanCommand(req, remoteDir, remoteOutput, remoteJUnitOutput)
 	var stdout, stderr bytes.Buffer
-	runErr := s.runner.Run(ctx, "ssh", append(sshArgs(req.Target), destination(req.Target), command), &stdout, &stderr)
+	runErr := s.runner.Run(ctx, s.sshBinary(), append(sshArgs(req.Target), destination(req.Target), command), &stdout, &stderr)
 	result.Stdout = stdout.String()
 	result.Stderr = stderr.String()
 	result.ExitCode = exitCode(runErr)
@@ -120,7 +134,11 @@ func (s Scanner) Scan(ctx context.Context, req ScanRequest) (result ScanResult, 
 		}
 	}
 	if runErr != nil {
-		artifactErrs = append([]error{fmt.Errorf("scan %s exited with status %d: %s", req.Target.Name, result.ExitCode, strings.TrimSpace(result.Stderr))}, artifactErrs...)
+		runError := fmt.Errorf("scan %s exited with status %d: %s", req.Target.Name, result.ExitCode, strings.TrimSpace(result.Stderr))
+		if errors.Is(ctx.Err(), context.DeadlineExceeded) {
+			runError = fmt.Errorf("scan %s timed out after %s", req.Target.Name, req.Target.ScanTimeout)
+		}
+		artifactErrs = append([]error{runError}, artifactErrs...)
 	}
 	if len(artifactErrs) > 0 {
 		return result, errors.Join(artifactErrs...)
@@ -194,7 +212,7 @@ func artifactExtension(format string) string {
 
 func (s Scanner) makeRemoteDir(ctx context.Context, target inventory.Target) (string, error) {
 	var stdout, stderr bytes.Buffer
-	err := s.runner.Run(ctx, "ssh", append(sshArgs(target), destination(target), "mktemp -d /var/tmp/stigctl-remote.XXXXXX"), &stdout, &stderr)
+	err := s.runner.Run(ctx, s.sshBinary(), append(sshArgs(target), destination(target), "mktemp -d /var/tmp/stigctl-remote.XXXXXX"), &stdout, &stderr)
 	if err != nil {
 		return "", fmt.Errorf("create remote workspace on %s: %w: %s", target.Name, err, strings.TrimSpace(stderr.String()))
 	}
@@ -208,7 +226,7 @@ func (s Scanner) makeRemoteDir(ctx context.Context, target inventory.Target) (st
 func (s Scanner) cleanup(ctx context.Context, target inventory.Target, remoteDir string) error {
 	var stdout, stderr bytes.Buffer
 	command := "rm -rf -- " + shellQuote(remoteDir)
-	if err := s.runner.Run(ctx, "ssh", append(sshArgs(target), destination(target), command), &stdout, &stderr); err != nil {
+	if err := s.runner.Run(ctx, s.sshBinary(), append(sshArgs(target), destination(target), command), &stdout, &stderr); err != nil {
 		return fmt.Errorf("clean remote workspace on %s: %w: %s", target.Name, err, strings.TrimSpace(stderr.String()))
 	}
 	return nil
@@ -217,7 +235,7 @@ func (s Scanner) cleanup(ctx context.Context, target inventory.Target, remoteDir
 func (s Scanner) copyTo(ctx context.Context, target inventory.Target, source, remotePath string) error {
 	var stdout, stderr bytes.Buffer
 	args := append(scpArgs(target), source, scpDestination(target, remotePath))
-	if err := s.runner.Run(ctx, "scp", args, &stdout, &stderr); err != nil {
+	if err := s.runner.Run(ctx, s.scpBinary(), args, &stdout, &stderr); err != nil {
 		return fmt.Errorf("scp: %w: %s", err, strings.TrimSpace(stderr.String()))
 	}
 	return nil
@@ -226,7 +244,7 @@ func (s Scanner) copyTo(ctx context.Context, target inventory.Target, source, re
 func (s Scanner) copyFrom(ctx context.Context, target inventory.Target, remotePath, destinationPath string) error {
 	var stdout, stderr bytes.Buffer
 	args := append(scpArgs(target), scpDestination(target, remotePath), destinationPath)
-	if err := s.runner.Run(ctx, "scp", args, &stdout, &stderr); err != nil {
+	if err := s.runner.Run(ctx, s.scpBinary(), args, &stdout, &stderr); err != nil {
 		return fmt.Errorf("scp: %w: %s", err, strings.TrimSpace(stderr.String()))
 	}
 	return nil
@@ -277,6 +295,10 @@ func buildScanCommand(req ScanRequest, remoteDir, output, junitOutput string) st
 
 func sshArgs(target inventory.Target) []string {
 	args := []string{"-o", "BatchMode=yes", "-o", "StrictHostKeyChecking=yes", "-p", strconv.Itoa(target.Port)}
+	if target.ConnectTimeout > 0 {
+		seconds := max(int64(math.Ceil(target.ConnectTimeout.Seconds())), 1)
+		args = append(args, "-o", "ConnectTimeout="+strconv.FormatInt(seconds, 10))
+	}
 	if target.IdentityFile != "" {
 		args = append(args, "-i", target.IdentityFile, "-o", "IdentitiesOnly=yes")
 	}
@@ -288,6 +310,10 @@ func sshArgs(target inventory.Target) []string {
 
 func scpArgs(target inventory.Target) []string {
 	args := []string{"-q", "-o", "BatchMode=yes", "-o", "StrictHostKeyChecking=yes", "-P", strconv.Itoa(target.Port)}
+	if target.ConnectTimeout > 0 {
+		seconds := max(int64(math.Ceil(target.ConnectTimeout.Seconds())), 1)
+		args = append(args, "-o", "ConnectTimeout="+strconv.FormatInt(seconds, 10))
+	}
 	if target.IdentityFile != "" {
 		args = append(args, "-i", target.IdentityFile, "-o", "IdentitiesOnly=yes")
 	}
@@ -295,6 +321,20 @@ func scpArgs(target inventory.Target) []string {
 		args = append(args, "-o", "UserKnownHostsFile="+target.KnownHostsFile)
 	}
 	return args
+}
+
+func (s Scanner) sshBinary() string {
+	if s.ssh == "" {
+		return "ssh"
+	}
+	return s.ssh
+}
+
+func (s Scanner) scpBinary() string {
+	if s.scp == "" {
+		return "scp"
+	}
+	return s.scp
 }
 
 func destination(target inventory.Target) string {

@@ -43,6 +43,10 @@ func newScanCommand() *cobra.Command {
 		concurrency    int
 		junitOutput    string
 		remoteBinary   string
+		connectTimeout time.Duration
+		hostTimeout    time.Duration
+		sshBinary      string
+		scpBinary      string
 	)
 
 	cmd := &cobra.Command{
@@ -63,6 +67,8 @@ func newScanCommand() *cobra.Command {
 					Baseline: args[0], InventoryFile: inventoryFile, Format: format,
 					OutputDir: output, JUnitOutputDir: junitOutput, Profile: profile,
 					RemoteBinary: remoteBinary, FailOnFindings: failOnFindings, Concurrency: concurrency,
+					ConnectTimeout: connectTimeout, HostTimeout: hostTimeout,
+					SSHBinary: sshBinary, SCPBinary: scpBinary,
 				})
 			}
 			if junitOutput != "" && output != "" && filepath.Clean(junitOutput) == filepath.Clean(output) {
@@ -249,6 +255,10 @@ func newScanCommand() *cobra.Command {
 	cmd.Flags().IntVar(&concurrency, "concurrency", 4, "maximum concurrent inventory scans")
 	cmd.Flags().StringVar(&junitOutput, "junit-output", "", "also write JUnit XML; with --inventory, this is an output directory")
 	cmd.Flags().StringVar(&remoteBinary, "remote-binary", "", "stigctl executable to stage on inventory targets; defaults to the current binary")
+	cmd.Flags().DurationVar(&connectTimeout, "connect-timeout", 30*time.Second, "fallback SSH connection timeout for inventory targets")
+	cmd.Flags().DurationVar(&hostTimeout, "host-timeout", 0, "fallback whole-scan timeout for inventory targets")
+	cmd.Flags().StringVar(&sshBinary, "ssh-binary", "ssh", "SSH client binary")
+	cmd.Flags().StringVar(&scpBinary, "scp-binary", "scp", "SCP client binary")
 	return cmd
 }
 

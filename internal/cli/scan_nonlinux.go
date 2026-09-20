@@ -5,6 +5,7 @@ package cli
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/spf13/cobra"
 )
@@ -19,6 +20,10 @@ func newScanCommand() *cobra.Command {
 		inventoryFile  string
 		remoteBinary   string
 		concurrency    int
+		connectTimeout time.Duration
+		hostTimeout    time.Duration
+		sshBinary      string
+		scpBinary      string
 	)
 
 	cmd := &cobra.Command{
@@ -39,6 +44,8 @@ func newScanCommand() *cobra.Command {
 				Baseline: args[0], InventoryFile: inventoryFile, Format: format,
 				OutputDir: output, JUnitOutputDir: junitOutput, Profile: profile,
 				RemoteBinary: remoteBinary, FailOnFindings: failOnFindings, Concurrency: concurrency,
+				ConnectTimeout: connectTimeout, HostTimeout: hostTimeout,
+				SSHBinary: sshBinary, SCPBinary: scpBinary,
 			})
 		},
 	}
@@ -51,5 +58,9 @@ func newScanCommand() *cobra.Command {
 	cmd.Flags().StringVar(&inventoryFile, "inventory", "", "scan hosts from a YAML SSH inventory")
 	cmd.Flags().StringVar(&remoteBinary, "remote-binary", "", "Linux stigctl executable to stage on inventory targets")
 	cmd.Flags().IntVar(&concurrency, "concurrency", 4, "maximum concurrent inventory scans")
+	cmd.Flags().DurationVar(&connectTimeout, "connect-timeout", 30*time.Second, "fallback SSH connection timeout for inventory targets")
+	cmd.Flags().DurationVar(&hostTimeout, "host-timeout", 0, "fallback whole-scan timeout for inventory targets")
+	cmd.Flags().StringVar(&sshBinary, "ssh-binary", "ssh", "SSH client binary")
+	cmd.Flags().StringVar(&scpBinary, "scp-binary", "scp", "SCP client binary")
 	return cmd
 }

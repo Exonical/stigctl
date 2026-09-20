@@ -13,10 +13,14 @@ type Facts struct {
 }
 
 func Detect() Facts {
+	return detect("/etc/os-release")
+}
+
+func detect(path string) Facts {
 	hostname, _ := os.Hostname()
 	facts := Facts{Hostname: hostname}
 
-	file, err := os.Open("/etc/os-release")
+	file, err := os.Open(path)
 	if err != nil {
 		return facts
 	}

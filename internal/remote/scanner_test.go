@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/Exonical/stigctl/internal/inventory"
 )
@@ -20,20 +21,37 @@ type fakeRunner struct {
 	cancel        context.CancelFunc
 	cleanupCalled bool
 	cleanupCtxErr error
+	blockScan     bool
+	sshName       string
+	scpName       string
+	names         []string
 }
 
 func (f *fakeRunner) Run(ctx context.Context, name string, args []string, stdout, _ *bytes.Buffer) error {
+	f.names = append(f.names, name)
+	sshName := f.sshName
+	if sshName == "" {
+		sshName = "ssh"
+	}
+	scpName := f.scpName
+	if scpName == "" {
+		scpName = "scp"
+	}
 	last := args[len(args)-1]
-	if name == "ssh" && strings.Contains(last, "mktemp -d") {
+	if name == sshName && strings.Contains(last, "mktemp -d") {
 		stdout.WriteString("/var/tmp/stigctl-remote.abc123\n")
 		return nil
 	}
-	if name == "ssh" && strings.Contains(last, "rm -rf --") {
+	if name == sshName && strings.Contains(last, "rm -rf --") {
 		f.cleanupCalled = true
 		f.cleanupCtxErr = ctx.Err()
 		return f.cleanupErr
 	}
-	if name == "ssh" {
+	if name == sshName {
+		if f.blockScan {
+			<-ctx.Done()
+			return ctx.Err()
+		}
 		if f.cancel != nil {
 			f.cancel()
 		}
@@ -42,7 +60,7 @@ func (f *fakeRunner) Run(ctx context.Context, name string, args []string, stdout
 		}
 		return f.scanErr
 	}
-	if name == "scp" && !strings.Contains(last, ":/var/tmp/") {
+	if name == scpName && !strings.Contains(last, ":/var/tmp/") {
 		if err := ctx.Err(); err != nil {
 			return err
 		}
@@ -129,12 +147,31 @@ func TestScanCollectsPrimaryAndJUnitArtifacts(t *testing.T) {
 	}
 }
 
-func TestSSHArgsEnforceBatchAndHostKeyChecking(t *testing.T) {
-	target := inventory.Target{Port: 2222, IdentityFile: "/keys/id", KnownHostsFile: "/keys/known_hosts"}
-	got := strings.Join(sshArgs(target), " ")
-	for _, expected := range []string{"BatchMode=yes", "StrictHostKeyChecking=yes", "-p 2222", "-i /keys/id", "IdentitiesOnly=yes", "UserKnownHostsFile=/keys/known_hosts"} {
-		if !strings.Contains(got, expected) {
-			t.Fatalf("SSH args %q do not contain %q", got, expected)
+func TestSSHArgsEnforceBatchHostKeyAndConnectTimeout(t *testing.T) {
+	target := inventory.Target{
+		Port: 2222, IdentityFile: "/keys/id", KnownHostsFile: "/keys/known_hosts",
+		ConnectTimeout: 1500 * time.Millisecond,
+	}
+	for name, got := range map[string]string{
+		"ssh": strings.Join(sshArgs(target), " "),
+		"scp": strings.Join(scpArgs(target), " "),
+	} {
+		for _, expected := range []string{"BatchMode=yes", "StrictHostKeyChecking=yes", "-i /keys/id", "IdentitiesOnly=yes", "UserKnownHostsFile=/keys/known_hosts", "ConnectTimeout=2"} {
+			if !strings.Contains(got, expected) {
+				t.Fatalf("%s args %q do not contain %q", name, got, expected)
+			}
+		}
+	}
+}
+
+func TestSSHArgsOmitConnectTimeoutWhenZero(t *testing.T) {
+	target := inventory.Target{Port: 22}
+	for name, got := range map[string]string{
+		"ssh": strings.Join(sshArgs(target), " "),
+		"scp": strings.Join(scpArgs(target), " "),
+	} {
+		if strings.Contains(got, "ConnectTimeout=") {
+			t.Fatalf("%s args unexpectedly contain timeout: %q", name, got)
 		}
 	}
 }
@@ -249,6 +286,42 @@ func TestScanReturnsCleanupErrorAfterPublishingArtifact(t *testing.T) {
 	}
 	if _, statErr := os.Stat(result.OutputPath); statErr != nil {
 		t.Fatalf("published artifact missing: %v", statErr)
+	}
+}
+
+func TestScanUsesConfiguredSSHAndSCPBinaries(t *testing.T) {
+	runner := &fakeRunner{
+		artifact: []byte(`{"status":"complete"}`),
+		sshName:  "custom-ssh",
+		scpName:  "custom-scp",
+	}
+	scanner := Scanner{runner: runner, ssh: runner.sshName, scp: runner.scpName}
+	if _, err := scanner.Scan(context.Background(), scanRequest(t.TempDir())); err != nil {
+		t.Fatal(err)
+	}
+	seen := strings.Join(runner.names, " ")
+	for _, name := range []string{"custom-ssh", "custom-scp"} {
+		if !strings.Contains(seen, name) {
+			t.Fatalf("runner names %q do not contain %q", seen, name)
+		}
+	}
+}
+
+func TestScanTimeoutCleansWithDetachedContext(t *testing.T) {
+	req := scanRequest(t.TempDir())
+	req.Target.ScanTimeout = 50 * time.Millisecond
+	runner := &fakeRunner{blockScan: true}
+	scanner := Scanner{runner: runner}
+
+	_, err := scanner.Scan(context.Background(), req)
+	if err == nil || !strings.Contains(err.Error(), "scan node01 timed out after 50ms") {
+		t.Fatalf("error = %v, want timeout", err)
+	}
+	if !runner.cleanupCalled {
+		t.Fatal("remote cleanup was not called")
+	}
+	if runner.cleanupCtxErr != nil {
+		t.Fatalf("cleanup received timed-out context: %v", runner.cleanupCtxErr)
 	}
 }
 

@@ -112,6 +112,8 @@ defaults:
   known_hosts_file: ~/.ssh/known_hosts
   profile: server
   sudo: true
+  connect_timeout: 30s
+  scan_timeout: 15m
 
 hosts:
   - name: compute-01
@@ -172,10 +174,11 @@ stig-scan:
       junit: stig-results.xml
 ```
 
-Remote scanning uses the system OpenSSH `ssh` and `scp` clients. Authentication
-is noninteractive (`BatchMode=yes`) and uses the specified private key, the SSH
-agent, or normal OpenSSH configuration. Host-key verification is always enabled;
-unknown hosts must be enrolled in `known_hosts` before scanning.
+Remote scanning uses the system OpenSSH `ssh` and `scp` clients; use
+`--ssh-binary` and `--scp-binary` to select alternate client executables.
+Authentication is noninteractive (`BatchMode=yes`) and uses the specified private
+key, the SSH agent, or normal OpenSSH configuration. Host-key verification is
+always enabled; unknown hosts must be enrolled in `known_hosts` before scanning.
 
 When `sudo: true`, the remote command is prefixed with `sudo -n --`. This avoids
 root SSH login and prevents a CI job from waiting for an interactive password.
