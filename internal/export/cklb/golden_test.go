@@ -59,6 +59,12 @@ func TestRHEL9V2R9GoldenCKLB(t *testing.T) {
 		t.Fatalf("export CKLB: %v", err)
 	}
 
+	if output := os.Getenv("STIGCTL_GOLDEN_OUTPUT"); output != "" {
+		if err := os.WriteFile(output, buf.Bytes(), 0o644); err != nil {
+			t.Fatalf("write generated CKLB: %v", err)
+		}
+	}
+
 	var doc map[string]any
 	if err := json.Unmarshal(buf.Bytes(), &doc); err != nil {
 		t.Fatalf("decode generated CKLB: %v", err)
