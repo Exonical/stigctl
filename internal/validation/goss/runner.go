@@ -80,6 +80,13 @@ func normalizeResults(tests []resource.TestResult) []results.Result {
 		var title string
 		var details []string
 
+		informativeCommandResult := map[string]bool{}
+		for _, test := range group {
+			if test.ResourceType == "Command" && test.Property != "exit-status" && test.Result != resource.SKIP {
+				informativeCommandResult[test.ResourceId] = true
+			}
+		}
+
 		for _, test := range group {
 			if title == "" {
 				title = test.Title
@@ -91,12 +98,18 @@ func normalizeResults(tests []resource.TestResult) []results.Result {
 				status = results.StatusFail
 			}
 			message := testMessage(test)
-			evidence = append(evidence, results.Evidence{
-				Type:    test.ResourceType + "." + test.Property,
-				Message: message,
-			})
-			if message != "" {
-				details = append(details, message)
+			suppressSuccessfulExitStatus := test.ResourceType == "Command" &&
+				test.Property == "exit-status" &&
+				test.Result == resource.SUCCESS &&
+				informativeCommandResult[test.ResourceId]
+			if !suppressSuccessfulExitStatus {
+				evidence = append(evidence, results.Evidence{
+					Type:    test.ResourceType + "." + test.Property,
+					Message: message,
+				})
+				if message != "" {
+					details = append(details, message)
+				}
 			}
 		}
 
