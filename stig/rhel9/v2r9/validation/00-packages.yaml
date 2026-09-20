@@ -209,3 +209,10 @@ package:
       stig_id: V-257826
     installed: false
     skip: {{ not (index .Vars.enabled_rules "V-257826") }}
+  V-258141:
+    name: rsyslog-gnutls
+    title: "RHEL 9 must have the packages required for encrypting offloaded audit logs installed."
+    meta:
+      stig_id: V-258141
+    installed: true
+    skip: {{ not (index .Vars.enabled_rules "V-258141") }}
