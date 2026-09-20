@@ -14,6 +14,7 @@ import (
 
 type fakeRunner struct {
 	artifact      []byte
+	junitArtifact []byte
 	scanErr       error
 	cleanupErr    error
 	cancel        context.CancelFunc
@@ -45,7 +46,12 @@ func (f *fakeRunner) Run(ctx context.Context, name string, args []string, stdout
 		if err := ctx.Err(); err != nil {
 			return err
 		}
-		return os.WriteFile(last, f.artifact, 0o600)
+		artifact := f.artifact
+		remoteSource := args[len(args)-2]
+		if strings.HasSuffix(remoteSource, "/result.xml") && f.junitArtifact != nil {
+			artifact = f.junitArtifact
+		}
+		return os.WriteFile(last, artifact, 0o600)
 	}
 	return nil
 }
@@ -66,7 +72,7 @@ func TestBuildScanCommandUsesNonInteractiveSudoAndQuotesMetadata(t *testing.T) {
 			Sudo: true, Profile: "server", Hostname: "node01", Comments: "owner's host",
 		},
 	}
-	command := buildScanCommand(req, "/var/tmp/stigctl-remote.abc123", "/var/tmp/stigctl-remote.abc123/result.cklb")
+	command := buildScanCommand(req, "/var/tmp/stigctl-remote.abc123", "/var/tmp/stigctl-remote.abc123/result.cklb", "")
 	for _, expected := range []string{
 		"sudo -n --", "'--content-root'", "'rhel9:v2r9'", "'--profile' 'server'",
 		"'--target-comments' 'owner'\\''s host'",
@@ -74,6 +80,52 @@ func TestBuildScanCommandUsesNonInteractiveSudoAndQuotesMetadata(t *testing.T) {
 		if !strings.Contains(command, expected) {
 			t.Fatalf("command does not contain %q:\n%s", expected, command)
 		}
+	}
+}
+
+func TestBuildScanCommandAddsAuxiliaryJUnitOutput(t *testing.T) {
+	req := ScanRequest{
+		Baseline: "rhel9:v2r9",
+		Format:   "cklb",
+		Target:   inventory.Target{Profile: "server"},
+	}
+	command := buildScanCommand(
+		req,
+		"/var/tmp/stigctl-remote.abc123",
+		"/var/tmp/stigctl-remote.abc123/result.cklb",
+		"/var/tmp/stigctl-remote.abc123/result.xml",
+	)
+	for _, expected := range []string{
+		"'--junit-output' '/var/tmp/stigctl-remote.abc123/result.xml'",
+		"touch '/var/tmp/stigctl-remote.abc123/result.cklb' '/var/tmp/stigctl-remote.abc123/result.xml'",
+	} {
+		if !strings.Contains(command, expected) {
+			t.Fatalf("command does not contain %q:\n%s", expected, command)
+		}
+	}
+}
+
+func TestScanCollectsPrimaryAndJUnitArtifacts(t *testing.T) {
+	dir := t.TempDir()
+	junitDir := t.TempDir()
+	req := scanRequest(dir)
+	req.Format = "cklb"
+	req.JUnitOutputDir = junitDir
+	runner := &fakeRunner{
+		artifact:      []byte(`{"checklist":"complete"}`),
+		junitArtifact: []byte(`<?xml version="1.0"?><testsuite name="rhel9:v2r9" tests="1"></testsuite>`),
+	}
+	scanner := Scanner{runner: runner}
+
+	result, err := scanner.Scan(context.Background(), req)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !result.Published || !result.JUnitPublished {
+		t.Fatalf("published primary=%t junit=%t", result.Published, result.JUnitPublished)
+	}
+	if !strings.HasSuffix(result.OutputPath, ".cklb") || !strings.HasSuffix(result.JUnitOutputPath, ".xml") {
+		t.Fatalf("unexpected output paths: primary=%q junit=%q", result.OutputPath, result.JUnitOutputPath)
 	}
 }
 
