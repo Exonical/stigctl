@@ -6,6 +6,7 @@ gossfile:
   20-system.yaml: {}
   25-system-hardening.yaml: {}
   30-ssh.yaml: {}
+  35-desktop-device.yaml: {}
   40-authentication.yaml: {}
   50-auth.yaml: {}
   50-audit.yaml: {}
