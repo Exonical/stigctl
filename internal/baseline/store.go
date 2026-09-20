@@ -110,7 +110,6 @@ func (r Resolved) XCCDFFile() (string, error) {
 	return files[0], nil
 }
 
-
 func (r Resolved) CKLBTemplateFile() (string, error) {
 	files, err := filepath.Glob(filepath.Join(r.Path, "source", "*.cklb"))
 	if err != nil {

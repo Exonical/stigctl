@@ -20,7 +20,7 @@ func Detect() Facts {
 	if err != nil {
 		return facts
 	}
-	defer file.Close()
+	defer func() { _ = file.Close() }()
 
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {

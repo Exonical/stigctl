@@ -2,12 +2,15 @@ package cli
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"sort"
 	"strings"
+	"time"
 
 	"github.com/Exonical/stigctl/internal/baseline"
 	"github.com/Exonical/stigctl/internal/exceptions"
+	"github.com/Exonical/stigctl/internal/rules"
 	"github.com/spf13/cobra"
 )
 
@@ -47,6 +50,7 @@ func newExceptionsCommand() *cobra.Command {
 
 	cmd.AddCommand(
 		listCmd,
+		newExceptionsLintCommand(),
 		&cobra.Command{
 			Use:   "show <baseline> <vuln-id>",
 			Short: "Show an exception",
@@ -71,6 +75,40 @@ func newExceptionsCommand() *cobra.Command {
 		},
 	)
 
+	return cmd
+}
+
+func newExceptionsLintCommand() *cobra.Command {
+	var strict bool
+	cmd := &cobra.Command{
+		Use:   "lint <baseline>",
+		Short: "Validate baseline exceptions",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			resolved, err := baseline.NewStore(contentRoot).Resolve(args[0])
+			if err != nil {
+				return err
+			}
+			ruleDoc, err := rules.Load(resolved.RulesFile())
+			if err != nil {
+				return err
+			}
+			doc, warnings, validationErr := exceptions.LoadWithWarnings(resolved.ExceptionsFile(), time.Now())
+			for _, warning := range warnings {
+				fmt.Fprintln(cmd.ErrOrStderr(), warning)
+			}
+			referenceErr := exceptions.CheckRuleReferences(doc, ruleDoc)
+			if err := errors.Join(validationErr, referenceErr); err != nil {
+				return err
+			}
+			if strict && len(warnings) > 0 {
+				return fmt.Errorf("exceptions lint found %d warning(s)", len(warnings))
+			}
+			fmt.Fprintf(cmd.OutOrStdout(), "exceptions ok: %d exceptions, %d warnings\n", len(doc.Exceptions), len(warnings))
+			return nil
+		},
+	}
+	cmd.Flags().BoolVar(&strict, "strict", false, "treat warnings as errors")
 	return cmd
 }
 

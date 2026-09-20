@@ -30,7 +30,7 @@ func LoadFile(path string) (Document, error) {
 	if err != nil {
 		return Document{}, fmt.Errorf("open CKLB template: %w", err)
 	}
-	defer file.Close()
+	defer func() { _ = file.Close() }()
 	return Load(file)
 }
 
@@ -96,7 +96,6 @@ func Write(w io.Writer, doc Document) error {
 	}
 	return nil
 }
-
 
 func SanitizeTemplate(doc Document, title string) (Document, error) {
 	checklistID, err := id.UUIDv4()

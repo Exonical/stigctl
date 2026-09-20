@@ -48,7 +48,7 @@ func Merge(ruleDoc rules.Document, exceptionDoc exceptions.Document, scanned []r
 			technicalDetails := result.FindingDetails
 			technicalStatus := result.Status
 			switch strings.ToLower(exception.Status) {
-			case "not_applicable", "not-applicable", "n/a":
+			case "not_applicable":
 				result.Status = results.StatusNotApplicable
 				result.Comments = exceptionComment(exception)
 				result.FindingDetails = policyFindingDetails(
@@ -56,7 +56,7 @@ func Merge(ruleDoc rules.Document, exceptionDoc exceptions.Document, scanned []r
 					technicalStatus,
 					technicalDetails,
 				)
-			default:
+			case "exception":
 				result.Status = results.StatusException
 				result.Comments = exceptionComment(exception)
 				result.FindingDetails = policyFindingDetails(
@@ -107,7 +107,7 @@ func Merge(ruleDoc rules.Document, exceptionDoc exceptions.Document, scanned []r
 
 func exceptionComment(exception exceptions.Exception) string {
 	label := "Approved exception"
-	if strings.EqualFold(exception.Status, "not_applicable") || strings.EqualFold(exception.Status, "not-applicable") {
+	if strings.EqualFold(exception.Status, "not_applicable") {
 		label = "Approved not applicable"
 	}
 	parts := []string{label}
@@ -148,7 +148,6 @@ func Summary(items []results.Result) string {
 		counts[results.StatusError],
 	)
 }
-
 
 func policyFindingDetails(prefix string, technicalStatus results.Status, technicalDetails string) string {
 	if technicalDetails == "" || technicalStatus == results.StatusSkipped {

@@ -9,32 +9,32 @@ type Benchmark struct {
 }
 
 type Rule struct {
-	VulnID                  string
-	RuleID                  string
-	RuleIDSrc               string
-	RuleVersion             string
-	Title                   string
-	GroupTitle              string
-	GroupTreeTitle          string
-	Severity                string
-	Weight                  string
-	Description             string
-	Discussion              string
-	FalsePositives          string
-	FalseNegatives          string
-	Documentable            string
-	Mitigations             string
+	VulnID                   string
+	RuleID                   string
+	RuleIDSrc                string
+	RuleVersion              string
+	Title                    string
+	GroupTitle               string
+	GroupTreeTitle           string
+	Severity                 string
+	Weight                   string
+	Description              string
+	Discussion               string
+	FalsePositives           string
+	FalseNegatives           string
+	Documentable             string
+	Mitigations              string
 	SecurityOverrideGuidance string
-	PotentialImpacts        string
-	ThirdPartyTools         string
-	MitigationControl       string
-	Responsibility          string
-	IAControls              string
-	CheckContent            string
-	FixText                 string
-	CCIs                    []string
-	LegacyIDs               []string
-	ReferenceID             string
-	CheckRefHref            string
-	CheckRefName            string
+	PotentialImpacts         string
+	ThirdPartyTools          string
+	MitigationControl        string
+	Responsibility           string
+	IAControls               string
+	CheckContent             string
+	FixText                  string
+	CCIs                     []string
+	LegacyIDs                []string
+	ReferenceID              string
+	CheckRefHref             string
+	CheckRefName             string
 }

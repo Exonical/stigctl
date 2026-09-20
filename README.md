@@ -6,7 +6,7 @@ The CLI uses Charmbracelet **Fang v2** on top of Cobra.
 
 ## Status
 
-The project is under active development. The core baseline resolver, Yip/Goss adapters, exception overlay, XCCDF parser, normalized result model, and CKLB exporter are scaffolded and wired together. STIG rule content still needs to be populated from the authoritative DISA release.
+The project is under active development. The RHEL 9 V2R9 baseline contains all 445 rules from the authoritative DISA release: 440 automated and 5 manual. The DISA XCCDF is downloaded for verification and release workflows rather than vendored in the repository.
 
 ## Runtime dependencies
 
@@ -320,7 +320,9 @@ command:
 
 ## Exceptions
 
-Exceptions are kept outside Goss. Goss still measures the technical state; the policy layer overlays the approved exception afterward.
+Exceptions are kept outside Goss. Goss still measures the technical state; the policy layer overlays the approved exception afterward. The only accepted status values are `exception` and `not_applicable`.
+
+Run `stigctl exceptions lint <baseline>` to validate exception fields and rule references; add `--strict` to treat lifecycle and approval warnings as errors. The `scan`, `validate`, and `apply` commands also fail when `exceptions.yaml` is invalid.
 
 ```yaml
 schema_version: 1

@@ -48,7 +48,6 @@ stages:
 	}
 }
 
-
 func TestFilterFilesRejectsMissingExceptedStep(t *testing.T) {
 	dir := t.TempDir()
 	source := filepath.Join(dir, "10-kernel.yaml")

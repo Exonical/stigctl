@@ -3,14 +3,17 @@ package cli
 import (
 	"archive/zip"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"os"
 	"path/filepath"
 	"sort"
 	"strings"
+	"time"
 
 	"github.com/Exonical/stigctl/internal/baseline"
+	"github.com/Exonical/stigctl/internal/exceptions"
 	"github.com/Exonical/stigctl/internal/export/cklb"
 	"github.com/Exonical/stigctl/internal/rules"
 	"github.com/Exonical/stigctl/internal/xccdf"
@@ -87,7 +90,7 @@ func newBaselineSyncCommand() *cobra.Command {
 			if err != nil {
 				return fmt.Errorf("open XCCDF source: %w", err)
 			}
-			defer file.Close()
+			defer func() { _ = file.Close() }()
 
 			benchmark, err := xccdf.Parse(file)
 			if err != nil {
@@ -131,7 +134,7 @@ func newBaselineImportCommand() *cobra.Command {
 			if err != nil {
 				return fmt.Errorf("open STIG ZIP: %w", err)
 			}
-			defer reader.Close()
+			defer func() { _ = reader.Close() }()
 
 			var source *zip.File
 			for _, entry := range reader.File {
@@ -151,7 +154,7 @@ func newBaselineImportCommand() *cobra.Command {
 			if err != nil {
 				return fmt.Errorf("open XCCDF in ZIP: %w", err)
 			}
-			defer in.Close()
+			defer func() { _ = in.Close() }()
 
 			sourceDir := filepath.Join(resolved.Path, "source")
 			if err := os.MkdirAll(sourceDir, 0o755); err != nil {
@@ -164,8 +167,11 @@ func newBaselineImportCommand() *cobra.Command {
 				return fmt.Errorf("create XCCDF destination: %w", err)
 			}
 			if _, err := io.Copy(out, in); err != nil {
-				out.Close()
-				return fmt.Errorf("copy XCCDF: %w", err)
+				copyErr := fmt.Errorf("copy XCCDF: %w", err)
+				if closeErr := out.Close(); closeErr != nil {
+					return errors.Join(copyErr, fmt.Errorf("close XCCDF destination: %w", closeErr))
+				}
+				return copyErr
 			}
 			if err := out.Close(); err != nil {
 				return fmt.Errorf("close XCCDF destination: %w", err)
@@ -175,10 +181,13 @@ func newBaselineImportCommand() *cobra.Command {
 			if err != nil {
 				return fmt.Errorf("reopen imported XCCDF: %w", err)
 			}
-			benchmark, err := xccdf.Parse(check)
-			check.Close()
-			if err != nil {
-				return fmt.Errorf("validate imported XCCDF: %w", err)
+			benchmark, parseErr := xccdf.Parse(check)
+			closeErr := check.Close()
+			if parseErr != nil {
+				return fmt.Errorf("validate imported XCCDF: %w", parseErr)
+			}
+			if closeErr != nil {
+				return fmt.Errorf("close imported XCCDF: %w", closeErr)
 			}
 			if benchmark.Version != fmt.Sprint(resolved.Manifest.Baseline.Version) {
 				return fmt.Errorf(
@@ -259,9 +268,12 @@ func newBaselineImportCKLBCommand() *cobra.Command {
 					return fmt.Errorf("open XCCDF source: %w", err)
 				}
 				benchmark, parseErr := xccdf.Parse(source)
-				source.Close()
+				closeErr := source.Close()
 				if parseErr != nil {
 					return parseErr
+				}
+				if closeErr != nil {
+					return fmt.Errorf("close XCCDF source: %w", closeErr)
 				}
 				mismatches := cklb.CompareBenchmark(template, benchmark)
 				if len(mismatches) > 0 {
@@ -285,7 +297,9 @@ func newBaselineImportCKLBCommand() *cobra.Command {
 				return fmt.Errorf("create CKLB destination: %w", err)
 			}
 			if err := cklb.Write(dst, template); err != nil {
-				dst.Close()
+				if closeErr := dst.Close(); closeErr != nil {
+					return errors.Join(err, fmt.Errorf("close CKLB destination: %w", closeErr))
+				}
 				return err
 			}
 			if err := dst.Close(); err != nil {
@@ -323,14 +337,27 @@ func newBaselineVerifyCommand() *cobra.Command {
 			if err != nil {
 				return fmt.Errorf("open XCCDF source: %w", err)
 			}
-			benchmark, err := xccdf.Parse(source)
-			source.Close()
-			if err != nil {
-				return err
+			benchmark, parseErr := xccdf.Parse(source)
+			closeErr := source.Close()
+			if parseErr != nil {
+				return parseErr
+			}
+			if closeErr != nil {
+				return fmt.Errorf("close XCCDF source: %w", closeErr)
 			}
 
 			ruleDoc, err := rules.Load(resolved.RulesFile())
 			if err != nil {
+				return err
+			}
+			exceptionDoc, warnings, err := exceptions.LoadWithWarnings(resolved.ExceptionsFile(), time.Now())
+			for _, warning := range warnings {
+				fmt.Fprintln(cmd.ErrOrStderr(), warning)
+			}
+			if err != nil {
+				return err
+			}
+			if err := exceptions.CheckRuleReferences(exceptionDoc, ruleDoc); err != nil {
 				return err
 			}
 			if len(ruleDoc.Rules) != len(benchmark.Rules) {

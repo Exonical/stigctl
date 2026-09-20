@@ -17,7 +17,9 @@ func TestEnabledRulesDisablesExceptionsAndManualRules(t *testing.T) {
 	}}
 
 	var exception exceptions.Exception
+	exception.Status = "exception"
 	exception.Scope.All = true
+	exception.Justification.Reason = "Approved exception"
 	exception.Lifecycle.Expires = "2027-01-01"
 	exceptionDoc := exceptions.Document{Exceptions: map[string]exceptions.Exception{
 		"V-1": exception,

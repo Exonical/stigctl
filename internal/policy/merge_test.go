@@ -19,6 +19,7 @@ func TestMergeExceptionOverridesTechnicalResult(t *testing.T) {
 
 	var exception exceptions.Exception
 	exception.VulnID = "V-1"
+	exception.Status = "exception"
 	exception.Scope.Profiles = []string{"hpc-compute"}
 	exception.Justification.Reason = "Required for workload"
 
@@ -41,7 +42,6 @@ func TestMergeExceptionOverridesTechnicalResult(t *testing.T) {
 		t.Fatalf("Status = %q", got[0].Status)
 	}
 }
-
 
 func TestMergeNotApplicablePolicyOverlay(t *testing.T) {
 	var rule rules.Rule

@@ -105,18 +105,17 @@ func TestOverlayPreservesTemplateMetadata(t *testing.T) {
 	}
 }
 
-
 func TestSanitizeTemplateClearsTargetAndReviewData(t *testing.T) {
 	doc := Document{
 		Title: "host-specific",
 		ID:    "old-id",
 		TargetData: TargetData{
-			HostName:      "secret-host",
-			IPAddress:     "10.0.0.1",
-			MACAddress:    "00:11:22:33:44:55",
-			FQDN:          "secret.example",
-			Comments:      "host note",
-			Role:          "Member Server",
+			HostName:       "secret-host",
+			IPAddress:      "10.0.0.1",
+			MACAddress:     "00:11:22:33:44:55",
+			FQDN:           "secret.example",
+			Comments:       "host note",
+			Role:           "Member Server",
 			Classification: func() *string { v := "CUI"; return &v }(),
 		},
 		STIGs: []STIG{{

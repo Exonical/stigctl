@@ -4,6 +4,7 @@ package cli
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -137,7 +138,7 @@ func newScanCommand() *cobra.Command {
 			if err != nil {
 				return fmt.Errorf("create output: %w", err)
 			}
-			defer file.Close()
+			defer func() { _ = file.Close() }()
 
 			switch strings.ToLower(format) {
 			case "json":
@@ -215,6 +216,9 @@ func newScanCommand() *cobra.Command {
 			default:
 				return fmt.Errorf("unsupported format %q: use cklb, json, or junit", format)
 			}
+			if err := file.Close(); err != nil {
+				return fmt.Errorf("close output: %w", err)
+			}
 
 			fmt.Fprintf(cmd.OutOrStdout(), "wrote %s (%s)\n", output, policy.Summary(merged))
 			if junitOutput != "" {
@@ -267,8 +271,7 @@ func writeJUnitReport(
 	if err != nil {
 		return fmt.Errorf("create JUnit output: %w", err)
 	}
-	defer file.Close()
-	return (junit.Exporter{}).Export(cmd.Context(), file, stigexport.Request{
+	exportErr := (junit.Exporter{}).Export(cmd.Context(), file, stigexport.Request{
 		Baseline: baselineRef,
 		Target: stigexport.Target{
 			Hostname:  hostname,
@@ -277,4 +280,15 @@ func writeJUnitReport(
 		},
 		Results: merged,
 	})
+	closeErr := file.Close()
+	if exportErr != nil && closeErr != nil {
+		return errors.Join(exportErr, fmt.Errorf("close JUnit output: %w", closeErr))
+	}
+	if exportErr != nil {
+		return exportErr
+	}
+	if closeErr != nil {
+		return fmt.Errorf("close JUnit output: %w", closeErr)
+	}
+	return nil
 }
