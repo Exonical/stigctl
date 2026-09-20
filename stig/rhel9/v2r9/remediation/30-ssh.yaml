@@ -18,7 +18,7 @@ stages:
     - name: V-257982
       files:
         - path: /etc/ssh/sshd_config.d/60-stig-security.conf
-          permissions: "0600"
+          permissions: 0600
           content: |
             LogLevel VERBOSE
             PubkeyAuthentication yes
