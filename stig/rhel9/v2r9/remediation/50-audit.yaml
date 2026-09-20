@@ -58,11 +58,6 @@ stages:
             printf '\nwrite_logs = yes\n' >> /etc/audit/auditd.conf
           fi
 
-    - name: V-258171
-      commands:
-        - chmod 0600 /etc/audit/auditd.conf
-        - test ! -e /etc/audit/audit.rules || chmod 0600 /etc/audit/audit.rules
-        - find /etc/audit/rules.d -type f -name '*.rules' -exec chmod 0600 {} +
 
     - name: V-258164
       commands:
@@ -644,4 +639,10 @@ stages:
       commands:
         - |
           chgrp root /etc/audit
+
+    - name: V-258171
+      commands:
+        - chmod 0600 /etc/audit/auditd.conf
+        - test ! -e /etc/audit/audit.rules || chmod 0600 /etc/audit/audit.rules
+        - find /etc/audit/rules.d -type f -exec chmod 0600 {} +
 
