@@ -23,7 +23,7 @@ stages:
     - name: V-258091
       files:
         - path: /etc/security/pwquality.conf.d/60-stig.conf
-          permissions: "0644"
+          permissions: 0644
           content: |
             retry = 3
             enforce_for_root
