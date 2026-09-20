@@ -10,7 +10,6 @@ import (
 type Vars struct {
 	Profile      string          `yaml:"profile"`
 	Hostname     string          `yaml:"hostname"`
-	CheckScript  string          `yaml:"check_script,omitempty"`
 	EnabledRules map[string]bool `yaml:"enabled_rules"`
 }
 
