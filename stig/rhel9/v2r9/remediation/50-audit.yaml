@@ -628,3 +628,20 @@ stages:
       commands:
         - grubby --update-kernel=ALL --args=audit_backlog_limit=8192
 
+    - name: V-258227
+      commands:
+        - |
+          cat > /etc/audit/rules.d/97-stig-failure-mode.rules <<'EOF'
+          -f 2
+          EOF
+
+    - name: V-270175
+      commands:
+        - |
+          chown root /etc/audit
+
+    - name: V-270176
+      commands:
+        - |
+          chgrp root /etc/audit
+
