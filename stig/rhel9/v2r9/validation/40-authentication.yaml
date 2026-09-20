@@ -202,3 +202,27 @@ command:
       - "ROLE=sysadm_r"
     skip: {{ not (index .Vars.enabled_rules "V-272496") }}
 
+  V-258231:
+    title: "RHEL 9 must employ FIPS 140-3-approved cryptographic hashing algorithms for all stored passwords."
+    meta: { stig_id: V-258231 }
+    exec: |
+      bad=""; while IFS=: read -r u hash _ uid _ _ _ shell; do test "$uid" -ge 1000 || continue; case "$shell" in */nologin|*/false) continue;; esac; case "$hash" in \!*|\**) continue;; \$6\$*) ;; *) bad="$u"; break;; esac; done < /etc/shadow
+      echo "evidence=non_sha512_interactive_account=${bad:-none}"
+      test -z "$bad"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258231") }}
+
+  V-258233:
+    title: "RHEL 9 pam_unix.so module must be configured in the password-auth file to use a FIPS 140-3 approved cryptographic hashing algorithm for system authentication."
+    meta: { stig_id: V-258233 }
+    exec: |
+      line="$(grep -E '^[[:space:]]*password[[:space:]]+.*pam_unix\.so.*sha512' /etc/pam.d/password-auth 2>/dev/null | head -n1)"
+      echo "evidence=pam_unix_sha512=${line:-missing}"
+      test -n "$line"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258233") }}
+
