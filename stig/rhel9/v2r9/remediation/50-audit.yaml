@@ -63,3 +63,14 @@ stages:
         - chmod 0600 /etc/audit/auditd.conf
         - test ! -e /etc/audit/audit.rules || chmod 0600 /etc/audit/audit.rules
         - find /etc/audit/rules.d -type f -name '*.rules' -exec chmod 0600 {} +
+
+    - name: V-258164
+      commands:
+        - |
+          if grep -qE '^[[:space:]]*local_events[[:space:]]*=' /etc/audit/auditd.conf; then
+            sed -ri 's/^[[:space:]]*local_events[[:space:]]*=.*/local_events = yes/' /etc/audit/auditd.conf
+          else
+            printf '\nlocal_events = yes\n' >> /etc/audit/auditd.conf
+          fi
+          service auditd restart 2>/dev/null || true
+
