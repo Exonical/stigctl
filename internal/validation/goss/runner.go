@@ -95,8 +95,10 @@ func normalizeResults(tests []resource.TestResult) []results.Result {
 				Type:    test.ResourceType + "." + test.Property,
 				Message: message,
 			})
-			if message != "" {
-				details = append(details, message)
+			if test.Result == resource.FAIL || test.Err != nil {
+				if message != "" {
+					details = append(details, message)
+				}
 			}
 		}
 
@@ -143,7 +145,7 @@ func testMessage(test resource.TestResult) string {
 	if test.Err != nil {
 		return fmt.Sprintf("%s: %s: %s: %s", test.ResourceType, test.ResourceId, test.Property, test.Err.Error())
 	}
-	if test.Successful {
+	if test.Result == resource.SUCCESS {
 		return fmt.Sprintf("%s: %s: %s: matches expectation", test.ResourceType, test.ResourceId, test.Property)
 	}
 	return fmt.Sprintf(
