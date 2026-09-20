@@ -1401,3 +1401,19 @@ command:
       - "evidence="
     skip: {{ not (index .Vars.enabled_rules "V-270176") }}
 
+  V-258155:
+    title: "RHEL 9 must allocate audit record storage capacity to store at least one week's worth of audit records."
+    meta: { stig_id: V-258155 }
+    exec: |
+      log_file="$(awk -F= '/^[[:space:]]*log_file[[:space:]]*=/{gsub(/^[[:space:]]+|[[:space:]]+$/,"",$2);print $2;exit}' /etc/audit/auditd.conf)"
+      test -n "$log_file" || log_file=/var/log/audit/audit.log
+      dir="$(dirname "$log_file")"
+      bytes="$(df -PB1 "$dir" 2>/dev/null | awk 'NR==2{print $2}')"
+      echo "evidence=audit_log_file=$log_file filesystem_bytes=${bytes:-missing}"
+      test -n "$bytes"
+      test "$bytes" -ge 10737418240
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258155") }}
+
