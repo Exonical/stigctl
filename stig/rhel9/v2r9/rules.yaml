@@ -1259,7 +1259,9 @@ rules:
     rule_id: SV-257835r1155679
     severity: high
     status: automated
-    remediation: {}
+    remediation:
+      file: remediation/20-system.yaml
+      step: V-257835
     validation:
       type: goss
       file: validation/20-system.yaml
@@ -1281,7 +1283,9 @@ rules:
     rule_id: SV-258018r1045090
     severity: high
     status: automated
-    remediation: {}
+    remediation:
+      file: remediation/20-system.yaml
+      step: V-258018
     validation:
       type: goss
       file: validation/20-system.yaml
@@ -1292,7 +1296,9 @@ rules:
     rule_id: SV-258232r1184335
     severity: high
     status: automated
-    remediation: {}
+    remediation:
+      file: remediation/90-crypto.yaml
+      step: V-258232
     validation:
       type: goss
       file: validation/90-crypto.yaml
@@ -1303,7 +1309,9 @@ rules:
     rule_id: SV-258242r1184336
     severity: high
     status: automated
-    remediation: {}
+    remediation:
+      file: remediation/90-crypto.yaml
+      step: V-258242
     validation:
       type: goss
       file: validation/90-crypto.yaml
