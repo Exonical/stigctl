@@ -226,4 +226,41 @@ exceptions:
   V-258125: *container_service_na
   V-258128: *container_service_na
   V-258129: *container_service_na
+  # Mount topology and mount-option controls belong to the host mount namespace, not the CI container.
+  V-257843: *container_service_na
+  V-257844: *container_service_na
+  V-257845: *container_service_na
+  V-257846: *container_service_na
+  V-257847: *container_service_na
+  V-257848: *container_service_na
+  V-257849: *container_service_na
+  V-257850: *container_service_na
+  V-257851: *container_service_na
+  V-257852: *container_service_na
+  V-257860: *container_service_na
+  V-257861: *container_service_na
+  V-257862: *container_service_na
+  V-257863: *container_service_na
+  V-257864: *container_service_na
+  V-257865: *container_service_na
+  V-257866: *container_service_na
+  V-257867: *container_service_na
+  V-257868: *container_service_na
+  V-257869: *container_service_na
+  V-257870: *container_service_na
+  V-257871: *container_service_na
+  V-257872: *container_service_na
+  V-257873: *container_service_na
+  V-257874: *container_service_na
+  V-257875: *container_service_na
+  V-257876: *container_service_na
+  V-257877: *container_service_na
+  V-257878: *container_service_na
+  V-257854: *container_service_na
+  V-257855: *container_service_na
+  V-257856: *container_service_na
+  V-257857: *container_service_na
+  V-257858: *container_service_na
+  V-257859: *container_service_na
+  V-257881: *container_service_na
 
