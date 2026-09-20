@@ -4177,17 +4177,29 @@ rules:
     title: The RHEL 9 firewall must employ a deny-all, allow-by-exception policy for allowing connections to other systems.
     rule_id: SV-257937r1106310
     severity: medium
-    status: manual
-    remediation: {}
-    validation: {}
+    status: automated
+    remediation:
+      file: remediation/80-network.yaml
+      step: V-257937
+    validation:
+      type: goss
+      file: validation/80-network.yaml
+      resource: command
+      test: V-257937
 
   V-257939:
     title: RHEL 9 must protect against or limit the effects of denial-of-service (DoS) attacks by ensuring rate-limiting measures on impacted network interfaces are implemented.
     rule_id: SV-257939r1044997
     severity: medium
-    status: manual
-    remediation: {}
-    validation: {}
+    status: automated
+    remediation:
+      file: remediation/80-network.yaml
+      step: V-257939
+    validation:
+      type: goss
+      file: validation/80-network.yaml
+      resource: command
+      test: V-257939
 
   V-257940:
     title: RHEL 9 must be configured to prohibit or restrict the use of functions, ports, protocols, and/or services, as defined in the Ports, Protocols, and Services Management (PPSM) Category Assignments List (CAL) and vulnerability assessments.
