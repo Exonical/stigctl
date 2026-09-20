@@ -170,3 +170,13 @@ stages:
           content: |
             %wheel ALL=(ALL) TYPE=sysadm_t ROLE=sysadm_r ALL
 
+    - name: V-258231
+      commands:
+        - |
+          while IFS=: read -r u hash _ uid _ _ _ shell; do test "$uid" -ge 1000 || continue; case "$shell" in */nologin|*/false) continue;; esac; case "$hash" in \!*|\**|\$6\$*) ;; *) passwd -l "$u";; esac; done < /etc/shadow
+
+    - name: V-258233
+      commands:
+        - |
+          sed -ri '/^[[:space:]]*password[[:space:]]+.*pam_unix\.so/ { /sha512/! s/$/ sha512/ }' /etc/pam.d/password-auth
+
