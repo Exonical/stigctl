@@ -1,0 +1,386 @@
+name: RHEL 9 STIG - Mount and Filesystem Controls
+
+stages:
+  stig:
+    - name: V-257849
+      commands:
+        - |
+          systemctl disable --now autofs.service 2>/dev/null || true
+
+    - name: V-257850
+      commands:
+        - |
+          target='/home'
+          opt='nodev'
+          src="$(findmnt -n -o SOURCE --target "$target" 2>/dev/null || true)"
+          fstype="$(findmnt -n -o FSTYPE --target "$target" 2>/dev/null || true)"
+          opts="$(findmnt -n -o OPTIONS --target "$target" 2>/dev/null || true)"
+          test -n "$src" && test -n "$fstype" || exit 0
+          tmp="$(mktemp)"
+          awk -v t="$target" -v o="$opt" 'BEGIN{OFS="\t"} /^[[:space:]]*#/ || NF<4 {print; next} $2==t {n=split($4,a,","); found=0; for(i=1;i<=n;i++) if(a[i]==o) found=1; if(!found) $4=$4 "," o} {print}' /etc/fstab > "$tmp"
+          if grep -Eq "^[^#]+[[:space:]]+$target[[:space:]]+" /etc/fstab; then cat "$tmp" > /etc/fstab; else printf "%s\t%s\t%s\t%s,%s\t0\t0\n" "$src" "$target" "$fstype" "$opts" "$opt" >> /etc/fstab; fi
+          rm -f "$tmp"
+          mount -o remount,"$opt" "$target" 2>/dev/null || true
+
+    - name: V-257851
+      commands:
+        - |
+          target='/home'
+          opt='nosuid'
+          src="$(findmnt -n -o SOURCE --target "$target" 2>/dev/null || true)"
+          fstype="$(findmnt -n -o FSTYPE --target "$target" 2>/dev/null || true)"
+          opts="$(findmnt -n -o OPTIONS --target "$target" 2>/dev/null || true)"
+          test -n "$src" && test -n "$fstype" || exit 0
+          tmp="$(mktemp)"
+          awk -v t="$target" -v o="$opt" 'BEGIN{OFS="\t"} /^[[:space:]]*#/ || NF<4 {print; next} $2==t {n=split($4,a,","); found=0; for(i=1;i<=n;i++) if(a[i]==o) found=1; if(!found) $4=$4 "," o} {print}' /etc/fstab > "$tmp"
+          if grep -Eq "^[^#]+[[:space:]]+$target[[:space:]]+" /etc/fstab; then cat "$tmp" > /etc/fstab; else printf "%s\t%s\t%s\t%s,%s\t0\t0\n" "$src" "$target" "$fstype" "$opts" "$opt" >> /etc/fstab; fi
+          rm -f "$tmp"
+          mount -o remount,"$opt" "$target" 2>/dev/null || true
+
+    - name: V-257852
+      commands:
+        - |
+          target='/home'
+          opt='noexec'
+          src="$(findmnt -n -o SOURCE --target "$target" 2>/dev/null || true)"
+          fstype="$(findmnt -n -o FSTYPE --target "$target" 2>/dev/null || true)"
+          opts="$(findmnt -n -o OPTIONS --target "$target" 2>/dev/null || true)"
+          test -n "$src" && test -n "$fstype" || exit 0
+          tmp="$(mktemp)"
+          awk -v t="$target" -v o="$opt" 'BEGIN{OFS="\t"} /^[[:space:]]*#/ || NF<4 {print; next} $2==t {n=split($4,a,","); found=0; for(i=1;i<=n;i++) if(a[i]==o) found=1; if(!found) $4=$4 "," o} {print}' /etc/fstab > "$tmp"
+          if grep -Eq "^[^#]+[[:space:]]+$target[[:space:]]+" /etc/fstab; then cat "$tmp" > /etc/fstab; else printf "%s\t%s\t%s\t%s,%s\t0\t0\n" "$src" "$target" "$fstype" "$opts" "$opt" >> /etc/fstab; fi
+          rm -f "$tmp"
+          mount -o remount,"$opt" "$target" 2>/dev/null || true
+
+    - name: V-257860
+      commands:
+        - |
+          target='/boot'
+          opt='nodev'
+          src="$(findmnt -n -o SOURCE --target "$target" 2>/dev/null || true)"
+          fstype="$(findmnt -n -o FSTYPE --target "$target" 2>/dev/null || true)"
+          opts="$(findmnt -n -o OPTIONS --target "$target" 2>/dev/null || true)"
+          test -n "$src" && test -n "$fstype" || exit 0
+          tmp="$(mktemp)"
+          awk -v t="$target" -v o="$opt" 'BEGIN{OFS="\t"} /^[[:space:]]*#/ || NF<4 {print; next} $2==t {n=split($4,a,","); found=0; for(i=1;i<=n;i++) if(a[i]==o) found=1; if(!found) $4=$4 "," o} {print}' /etc/fstab > "$tmp"
+          if grep -Eq "^[^#]+[[:space:]]+$target[[:space:]]+" /etc/fstab; then cat "$tmp" > /etc/fstab; else printf "%s\t%s\t%s\t%s,%s\t0\t0\n" "$src" "$target" "$fstype" "$opts" "$opt" >> /etc/fstab; fi
+          rm -f "$tmp"
+          mount -o remount,"$opt" "$target" 2>/dev/null || true
+
+    - name: V-257861
+      commands:
+        - |
+          target='/boot'
+          opt='nosuid'
+          src="$(findmnt -n -o SOURCE --target "$target" 2>/dev/null || true)"
+          fstype="$(findmnt -n -o FSTYPE --target "$target" 2>/dev/null || true)"
+          opts="$(findmnt -n -o OPTIONS --target "$target" 2>/dev/null || true)"
+          test -n "$src" && test -n "$fstype" || exit 0
+          tmp="$(mktemp)"
+          awk -v t="$target" -v o="$opt" 'BEGIN{OFS="\t"} /^[[:space:]]*#/ || NF<4 {print; next} $2==t {n=split($4,a,","); found=0; for(i=1;i<=n;i++) if(a[i]==o) found=1; if(!found) $4=$4 "," o} {print}' /etc/fstab > "$tmp"
+          if grep -Eq "^[^#]+[[:space:]]+$target[[:space:]]+" /etc/fstab; then cat "$tmp" > /etc/fstab; else printf "%s\t%s\t%s\t%s,%s\t0\t0\n" "$src" "$target" "$fstype" "$opts" "$opt" >> /etc/fstab; fi
+          rm -f "$tmp"
+          mount -o remount,"$opt" "$target" 2>/dev/null || true
+
+    - name: V-257862
+      commands:
+        - |
+          target='/boot/efi'
+          opt='nosuid'
+          src="$(findmnt -n -o SOURCE --target "$target" 2>/dev/null || true)"
+          fstype="$(findmnt -n -o FSTYPE --target "$target" 2>/dev/null || true)"
+          opts="$(findmnt -n -o OPTIONS --target "$target" 2>/dev/null || true)"
+          test -n "$src" && test -n "$fstype" || exit 0
+          tmp="$(mktemp)"
+          awk -v t="$target" -v o="$opt" 'BEGIN{OFS="\t"} /^[[:space:]]*#/ || NF<4 {print; next} $2==t {n=split($4,a,","); found=0; for(i=1;i<=n;i++) if(a[i]==o) found=1; if(!found) $4=$4 "," o} {print}' /etc/fstab > "$tmp"
+          if grep -Eq "^[^#]+[[:space:]]+$target[[:space:]]+" /etc/fstab; then cat "$tmp" > /etc/fstab; else printf "%s\t%s\t%s\t%s,%s\t0\t0\n" "$src" "$target" "$fstype" "$opts" "$opt" >> /etc/fstab; fi
+          rm -f "$tmp"
+          mount -o remount,"$opt" "$target" 2>/dev/null || true
+
+    - name: V-257863
+      commands:
+        - |
+          target='/dev/shm'
+          opt='nodev'
+          src="$(findmnt -n -o SOURCE --target "$target" 2>/dev/null || true)"
+          fstype="$(findmnt -n -o FSTYPE --target "$target" 2>/dev/null || true)"
+          opts="$(findmnt -n -o OPTIONS --target "$target" 2>/dev/null || true)"
+          test -n "$src" && test -n "$fstype" || exit 0
+          tmp="$(mktemp)"
+          awk -v t="$target" -v o="$opt" 'BEGIN{OFS="\t"} /^[[:space:]]*#/ || NF<4 {print; next} $2==t {n=split($4,a,","); found=0; for(i=1;i<=n;i++) if(a[i]==o) found=1; if(!found) $4=$4 "," o} {print}' /etc/fstab > "$tmp"
+          if grep -Eq "^[^#]+[[:space:]]+$target[[:space:]]+" /etc/fstab; then cat "$tmp" > /etc/fstab; else printf "%s\t%s\t%s\t%s,%s\t0\t0\n" "$src" "$target" "$fstype" "$opts" "$opt" >> /etc/fstab; fi
+          rm -f "$tmp"
+          mount -o remount,"$opt" "$target" 2>/dev/null || true
+
+    - name: V-257864
+      commands:
+        - |
+          target='/dev/shm'
+          opt='noexec'
+          src="$(findmnt -n -o SOURCE --target "$target" 2>/dev/null || true)"
+          fstype="$(findmnt -n -o FSTYPE --target "$target" 2>/dev/null || true)"
+          opts="$(findmnt -n -o OPTIONS --target "$target" 2>/dev/null || true)"
+          test -n "$src" && test -n "$fstype" || exit 0
+          tmp="$(mktemp)"
+          awk -v t="$target" -v o="$opt" 'BEGIN{OFS="\t"} /^[[:space:]]*#/ || NF<4 {print; next} $2==t {n=split($4,a,","); found=0; for(i=1;i<=n;i++) if(a[i]==o) found=1; if(!found) $4=$4 "," o} {print}' /etc/fstab > "$tmp"
+          if grep -Eq "^[^#]+[[:space:]]+$target[[:space:]]+" /etc/fstab; then cat "$tmp" > /etc/fstab; else printf "%s\t%s\t%s\t%s,%s\t0\t0\n" "$src" "$target" "$fstype" "$opts" "$opt" >> /etc/fstab; fi
+          rm -f "$tmp"
+          mount -o remount,"$opt" "$target" 2>/dev/null || true
+
+    - name: V-257865
+      commands:
+        - |
+          target='/dev/shm'
+          opt='nosuid'
+          src="$(findmnt -n -o SOURCE --target "$target" 2>/dev/null || true)"
+          fstype="$(findmnt -n -o FSTYPE --target "$target" 2>/dev/null || true)"
+          opts="$(findmnt -n -o OPTIONS --target "$target" 2>/dev/null || true)"
+          test -n "$src" && test -n "$fstype" || exit 0
+          tmp="$(mktemp)"
+          awk -v t="$target" -v o="$opt" 'BEGIN{OFS="\t"} /^[[:space:]]*#/ || NF<4 {print; next} $2==t {n=split($4,a,","); found=0; for(i=1;i<=n;i++) if(a[i]==o) found=1; if(!found) $4=$4 "," o} {print}' /etc/fstab > "$tmp"
+          if grep -Eq "^[^#]+[[:space:]]+$target[[:space:]]+" /etc/fstab; then cat "$tmp" > /etc/fstab; else printf "%s\t%s\t%s\t%s,%s\t0\t0\n" "$src" "$target" "$fstype" "$opts" "$opt" >> /etc/fstab; fi
+          rm -f "$tmp"
+          mount -o remount,"$opt" "$target" 2>/dev/null || true
+
+    - name: V-257866
+      commands:
+        - |
+          target='/tmp'
+          opt='nodev'
+          src="$(findmnt -n -o SOURCE --target "$target" 2>/dev/null || true)"
+          fstype="$(findmnt -n -o FSTYPE --target "$target" 2>/dev/null || true)"
+          opts="$(findmnt -n -o OPTIONS --target "$target" 2>/dev/null || true)"
+          test -n "$src" && test -n "$fstype" || exit 0
+          tmp="$(mktemp)"
+          awk -v t="$target" -v o="$opt" 'BEGIN{OFS="\t"} /^[[:space:]]*#/ || NF<4 {print; next} $2==t {n=split($4,a,","); found=0; for(i=1;i<=n;i++) if(a[i]==o) found=1; if(!found) $4=$4 "," o} {print}' /etc/fstab > "$tmp"
+          if grep -Eq "^[^#]+[[:space:]]+$target[[:space:]]+" /etc/fstab; then cat "$tmp" > /etc/fstab; else printf "%s\t%s\t%s\t%s,%s\t0\t0\n" "$src" "$target" "$fstype" "$opts" "$opt" >> /etc/fstab; fi
+          rm -f "$tmp"
+          mount -o remount,"$opt" "$target" 2>/dev/null || true
+
+    - name: V-257867
+      commands:
+        - |
+          target='/tmp'
+          opt='noexec'
+          src="$(findmnt -n -o SOURCE --target "$target" 2>/dev/null || true)"
+          fstype="$(findmnt -n -o FSTYPE --target "$target" 2>/dev/null || true)"
+          opts="$(findmnt -n -o OPTIONS --target "$target" 2>/dev/null || true)"
+          test -n "$src" && test -n "$fstype" || exit 0
+          tmp="$(mktemp)"
+          awk -v t="$target" -v o="$opt" 'BEGIN{OFS="\t"} /^[[:space:]]*#/ || NF<4 {print; next} $2==t {n=split($4,a,","); found=0; for(i=1;i<=n;i++) if(a[i]==o) found=1; if(!found) $4=$4 "," o} {print}' /etc/fstab > "$tmp"
+          if grep -Eq "^[^#]+[[:space:]]+$target[[:space:]]+" /etc/fstab; then cat "$tmp" > /etc/fstab; else printf "%s\t%s\t%s\t%s,%s\t0\t0\n" "$src" "$target" "$fstype" "$opts" "$opt" >> /etc/fstab; fi
+          rm -f "$tmp"
+          mount -o remount,"$opt" "$target" 2>/dev/null || true
+
+    - name: V-257868
+      commands:
+        - |
+          target='/tmp'
+          opt='nosuid'
+          src="$(findmnt -n -o SOURCE --target "$target" 2>/dev/null || true)"
+          fstype="$(findmnt -n -o FSTYPE --target "$target" 2>/dev/null || true)"
+          opts="$(findmnt -n -o OPTIONS --target "$target" 2>/dev/null || true)"
+          test -n "$src" && test -n "$fstype" || exit 0
+          tmp="$(mktemp)"
+          awk -v t="$target" -v o="$opt" 'BEGIN{OFS="\t"} /^[[:space:]]*#/ || NF<4 {print; next} $2==t {n=split($4,a,","); found=0; for(i=1;i<=n;i++) if(a[i]==o) found=1; if(!found) $4=$4 "," o} {print}' /etc/fstab > "$tmp"
+          if grep -Eq "^[^#]+[[:space:]]+$target[[:space:]]+" /etc/fstab; then cat "$tmp" > /etc/fstab; else printf "%s\t%s\t%s\t%s,%s\t0\t0\n" "$src" "$target" "$fstype" "$opts" "$opt" >> /etc/fstab; fi
+          rm -f "$tmp"
+          mount -o remount,"$opt" "$target" 2>/dev/null || true
+
+    - name: V-257869
+      commands:
+        - |
+          target='/var'
+          opt='nodev'
+          src="$(findmnt -n -o SOURCE --target "$target" 2>/dev/null || true)"
+          fstype="$(findmnt -n -o FSTYPE --target "$target" 2>/dev/null || true)"
+          opts="$(findmnt -n -o OPTIONS --target "$target" 2>/dev/null || true)"
+          test -n "$src" && test -n "$fstype" || exit 0
+          tmp="$(mktemp)"
+          awk -v t="$target" -v o="$opt" 'BEGIN{OFS="\t"} /^[[:space:]]*#/ || NF<4 {print; next} $2==t {n=split($4,a,","); found=0; for(i=1;i<=n;i++) if(a[i]==o) found=1; if(!found) $4=$4 "," o} {print}' /etc/fstab > "$tmp"
+          if grep -Eq "^[^#]+[[:space:]]+$target[[:space:]]+" /etc/fstab; then cat "$tmp" > /etc/fstab; else printf "%s\t%s\t%s\t%s,%s\t0\t0\n" "$src" "$target" "$fstype" "$opts" "$opt" >> /etc/fstab; fi
+          rm -f "$tmp"
+          mount -o remount,"$opt" "$target" 2>/dev/null || true
+
+    - name: V-257870
+      commands:
+        - |
+          target='/var/log'
+          opt='nodev'
+          src="$(findmnt -n -o SOURCE --target "$target" 2>/dev/null || true)"
+          fstype="$(findmnt -n -o FSTYPE --target "$target" 2>/dev/null || true)"
+          opts="$(findmnt -n -o OPTIONS --target "$target" 2>/dev/null || true)"
+          test -n "$src" && test -n "$fstype" || exit 0
+          tmp="$(mktemp)"
+          awk -v t="$target" -v o="$opt" 'BEGIN{OFS="\t"} /^[[:space:]]*#/ || NF<4 {print; next} $2==t {n=split($4,a,","); found=0; for(i=1;i<=n;i++) if(a[i]==o) found=1; if(!found) $4=$4 "," o} {print}' /etc/fstab > "$tmp"
+          if grep -Eq "^[^#]+[[:space:]]+$target[[:space:]]+" /etc/fstab; then cat "$tmp" > /etc/fstab; else printf "%s\t%s\t%s\t%s,%s\t0\t0\n" "$src" "$target" "$fstype" "$opts" "$opt" >> /etc/fstab; fi
+          rm -f "$tmp"
+          mount -o remount,"$opt" "$target" 2>/dev/null || true
+
+    - name: V-257871
+      commands:
+        - |
+          target='/var/log'
+          opt='noexec'
+          src="$(findmnt -n -o SOURCE --target "$target" 2>/dev/null || true)"
+          fstype="$(findmnt -n -o FSTYPE --target "$target" 2>/dev/null || true)"
+          opts="$(findmnt -n -o OPTIONS --target "$target" 2>/dev/null || true)"
+          test -n "$src" && test -n "$fstype" || exit 0
+          tmp="$(mktemp)"
+          awk -v t="$target" -v o="$opt" 'BEGIN{OFS="\t"} /^[[:space:]]*#/ || NF<4 {print; next} $2==t {n=split($4,a,","); found=0; for(i=1;i<=n;i++) if(a[i]==o) found=1; if(!found) $4=$4 "," o} {print}' /etc/fstab > "$tmp"
+          if grep -Eq "^[^#]+[[:space:]]+$target[[:space:]]+" /etc/fstab; then cat "$tmp" > /etc/fstab; else printf "%s\t%s\t%s\t%s,%s\t0\t0\n" "$src" "$target" "$fstype" "$opts" "$opt" >> /etc/fstab; fi
+          rm -f "$tmp"
+          mount -o remount,"$opt" "$target" 2>/dev/null || true
+
+    - name: V-257872
+      commands:
+        - |
+          target='/var/log'
+          opt='nosuid'
+          src="$(findmnt -n -o SOURCE --target "$target" 2>/dev/null || true)"
+          fstype="$(findmnt -n -o FSTYPE --target "$target" 2>/dev/null || true)"
+          opts="$(findmnt -n -o OPTIONS --target "$target" 2>/dev/null || true)"
+          test -n "$src" && test -n "$fstype" || exit 0
+          tmp="$(mktemp)"
+          awk -v t="$target" -v o="$opt" 'BEGIN{OFS="\t"} /^[[:space:]]*#/ || NF<4 {print; next} $2==t {n=split($4,a,","); found=0; for(i=1;i<=n;i++) if(a[i]==o) found=1; if(!found) $4=$4 "," o} {print}' /etc/fstab > "$tmp"
+          if grep -Eq "^[^#]+[[:space:]]+$target[[:space:]]+" /etc/fstab; then cat "$tmp" > /etc/fstab; else printf "%s\t%s\t%s\t%s,%s\t0\t0\n" "$src" "$target" "$fstype" "$opts" "$opt" >> /etc/fstab; fi
+          rm -f "$tmp"
+          mount -o remount,"$opt" "$target" 2>/dev/null || true
+
+    - name: V-257873
+      commands:
+        - |
+          target='/var/log/audit'
+          opt='nodev'
+          src="$(findmnt -n -o SOURCE --target "$target" 2>/dev/null || true)"
+          fstype="$(findmnt -n -o FSTYPE --target "$target" 2>/dev/null || true)"
+          opts="$(findmnt -n -o OPTIONS --target "$target" 2>/dev/null || true)"
+          test -n "$src" && test -n "$fstype" || exit 0
+          tmp="$(mktemp)"
+          awk -v t="$target" -v o="$opt" 'BEGIN{OFS="\t"} /^[[:space:]]*#/ || NF<4 {print; next} $2==t {n=split($4,a,","); found=0; for(i=1;i<=n;i++) if(a[i]==o) found=1; if(!found) $4=$4 "," o} {print}' /etc/fstab > "$tmp"
+          if grep -Eq "^[^#]+[[:space:]]+$target[[:space:]]+" /etc/fstab; then cat "$tmp" > /etc/fstab; else printf "%s\t%s\t%s\t%s,%s\t0\t0\n" "$src" "$target" "$fstype" "$opts" "$opt" >> /etc/fstab; fi
+          rm -f "$tmp"
+          mount -o remount,"$opt" "$target" 2>/dev/null || true
+
+    - name: V-257874
+      commands:
+        - |
+          target='/var/log/audit'
+          opt='noexec'
+          src="$(findmnt -n -o SOURCE --target "$target" 2>/dev/null || true)"
+          fstype="$(findmnt -n -o FSTYPE --target "$target" 2>/dev/null || true)"
+          opts="$(findmnt -n -o OPTIONS --target "$target" 2>/dev/null || true)"
+          test -n "$src" && test -n "$fstype" || exit 0
+          tmp="$(mktemp)"
+          awk -v t="$target" -v o="$opt" 'BEGIN{OFS="\t"} /^[[:space:]]*#/ || NF<4 {print; next} $2==t {n=split($4,a,","); found=0; for(i=1;i<=n;i++) if(a[i]==o) found=1; if(!found) $4=$4 "," o} {print}' /etc/fstab > "$tmp"
+          if grep -Eq "^[^#]+[[:space:]]+$target[[:space:]]+" /etc/fstab; then cat "$tmp" > /etc/fstab; else printf "%s\t%s\t%s\t%s,%s\t0\t0\n" "$src" "$target" "$fstype" "$opts" "$opt" >> /etc/fstab; fi
+          rm -f "$tmp"
+          mount -o remount,"$opt" "$target" 2>/dev/null || true
+
+    - name: V-257875
+      commands:
+        - |
+          target='/var/log/audit'
+          opt='nosuid'
+          src="$(findmnt -n -o SOURCE --target "$target" 2>/dev/null || true)"
+          fstype="$(findmnt -n -o FSTYPE --target "$target" 2>/dev/null || true)"
+          opts="$(findmnt -n -o OPTIONS --target "$target" 2>/dev/null || true)"
+          test -n "$src" && test -n "$fstype" || exit 0
+          tmp="$(mktemp)"
+          awk -v t="$target" -v o="$opt" 'BEGIN{OFS="\t"} /^[[:space:]]*#/ || NF<4 {print; next} $2==t {n=split($4,a,","); found=0; for(i=1;i<=n;i++) if(a[i]==o) found=1; if(!found) $4=$4 "," o} {print}' /etc/fstab > "$tmp"
+          if grep -Eq "^[^#]+[[:space:]]+$target[[:space:]]+" /etc/fstab; then cat "$tmp" > /etc/fstab; else printf "%s\t%s\t%s\t%s,%s\t0\t0\n" "$src" "$target" "$fstype" "$opts" "$opt" >> /etc/fstab; fi
+          rm -f "$tmp"
+          mount -o remount,"$opt" "$target" 2>/dev/null || true
+
+    - name: V-257876
+      commands:
+        - |
+          target='/var/tmp'
+          opt='nodev'
+          src="$(findmnt -n -o SOURCE --target "$target" 2>/dev/null || true)"
+          fstype="$(findmnt -n -o FSTYPE --target "$target" 2>/dev/null || true)"
+          opts="$(findmnt -n -o OPTIONS --target "$target" 2>/dev/null || true)"
+          test -n "$src" && test -n "$fstype" || exit 0
+          tmp="$(mktemp)"
+          awk -v t="$target" -v o="$opt" 'BEGIN{OFS="\t"} /^[[:space:]]*#/ || NF<4 {print; next} $2==t {n=split($4,a,","); found=0; for(i=1;i<=n;i++) if(a[i]==o) found=1; if(!found) $4=$4 "," o} {print}' /etc/fstab > "$tmp"
+          if grep -Eq "^[^#]+[[:space:]]+$target[[:space:]]+" /etc/fstab; then cat "$tmp" > /etc/fstab; else printf "%s\t%s\t%s\t%s,%s\t0\t0\n" "$src" "$target" "$fstype" "$opts" "$opt" >> /etc/fstab; fi
+          rm -f "$tmp"
+          mount -o remount,"$opt" "$target" 2>/dev/null || true
+
+    - name: V-257877
+      commands:
+        - |
+          target='/var/tmp'
+          opt='noexec'
+          src="$(findmnt -n -o SOURCE --target "$target" 2>/dev/null || true)"
+          fstype="$(findmnt -n -o FSTYPE --target "$target" 2>/dev/null || true)"
+          opts="$(findmnt -n -o OPTIONS --target "$target" 2>/dev/null || true)"
+          test -n "$src" && test -n "$fstype" || exit 0
+          tmp="$(mktemp)"
+          awk -v t="$target" -v o="$opt" 'BEGIN{OFS="\t"} /^[[:space:]]*#/ || NF<4 {print; next} $2==t {n=split($4,a,","); found=0; for(i=1;i<=n;i++) if(a[i]==o) found=1; if(!found) $4=$4 "," o} {print}' /etc/fstab > "$tmp"
+          if grep -Eq "^[^#]+[[:space:]]+$target[[:space:]]+" /etc/fstab; then cat "$tmp" > /etc/fstab; else printf "%s\t%s\t%s\t%s,%s\t0\t0\n" "$src" "$target" "$fstype" "$opts" "$opt" >> /etc/fstab; fi
+          rm -f "$tmp"
+          mount -o remount,"$opt" "$target" 2>/dev/null || true
+
+    - name: V-257878
+      commands:
+        - |
+          target='/var/tmp'
+          opt='nosuid'
+          src="$(findmnt -n -o SOURCE --target "$target" 2>/dev/null || true)"
+          fstype="$(findmnt -n -o FSTYPE --target "$target" 2>/dev/null || true)"
+          opts="$(findmnt -n -o OPTIONS --target "$target" 2>/dev/null || true)"
+          test -n "$src" && test -n "$fstype" || exit 0
+          tmp="$(mktemp)"
+          awk -v t="$target" -v o="$opt" 'BEGIN{OFS="\t"} /^[[:space:]]*#/ || NF<4 {print; next} $2==t {n=split($4,a,","); found=0; for(i=1;i<=n;i++) if(a[i]==o) found=1; if(!found) $4=$4 "," o} {print}' /etc/fstab > "$tmp"
+          if grep -Eq "^[^#]+[[:space:]]+$target[[:space:]]+" /etc/fstab; then cat "$tmp" > /etc/fstab; else printf "%s\t%s\t%s\t%s,%s\t0\t0\n" "$src" "$target" "$fstype" "$opts" "$opt" >> /etc/fstab; fi
+          rm -f "$tmp"
+          mount -o remount,"$opt" "$target" 2>/dev/null || true
+
+    - name: V-257854
+      commands:
+        - |
+          while read -r target; do test -n "$target" || continue; mount -o remount,nodev "$target" 2>/dev/null || true; done < <(findmnt -rn -t nfs,nfs4 -o TARGET 2>/dev/null)
+          tmp="$(mktemp)"
+          awk -v o='nodev' 'BEGIN{OFS="\t"} /^[[:space:]]*#/ || NF<4 {print; next} $3=="nfs" || $3=="nfs4" {n=split($4,a,","); found=0; for(i=1;i<=n;i++) if(a[i]==o) found=1; if(!found) $4=$4 "," o} {print}' /etc/fstab > "$tmp"
+          cat "$tmp" > /etc/fstab; rm -f "$tmp"
+
+    - name: V-257855
+      commands:
+        - |
+          while read -r target; do test -n "$target" || continue; mount -o remount,noexec "$target" 2>/dev/null || true; done < <(findmnt -rn -t nfs,nfs4 -o TARGET 2>/dev/null)
+          tmp="$(mktemp)"
+          awk -v o='noexec' 'BEGIN{OFS="\t"} /^[[:space:]]*#/ || NF<4 {print; next} $3=="nfs" || $3=="nfs4" {n=split($4,a,","); found=0; for(i=1;i<=n;i++) if(a[i]==o) found=1; if(!found) $4=$4 "," o} {print}' /etc/fstab > "$tmp"
+          cat "$tmp" > /etc/fstab; rm -f "$tmp"
+
+    - name: V-257856
+      commands:
+        - |
+          while read -r target; do test -n "$target" || continue; mount -o remount,nosuid "$target" 2>/dev/null || true; done < <(findmnt -rn -t nfs,nfs4 -o TARGET 2>/dev/null)
+          tmp="$(mktemp)"
+          awk -v o='nosuid' 'BEGIN{OFS="\t"} /^[[:space:]]*#/ || NF<4 {print; next} $3=="nfs" || $3=="nfs4" {n=split($4,a,","); found=0; for(i=1;i<=n;i++) if(a[i]==o) found=1; if(!found) $4=$4 "," o} {print}' /etc/fstab > "$tmp"
+          cat "$tmp" > /etc/fstab; rm -f "$tmp"
+
+    - name: V-257857
+      commands:
+        - |
+          while read -r name rm mnt; do test "$rm" = 1 || continue; test -n "$mnt" || continue; mount -o remount,noexec "$mnt" 2>/dev/null || true; done < <(lsblk -nrpo NAME,RM,MOUNTPOINT 2>/dev/null)
+
+    - name: V-257858
+      commands:
+        - |
+          while read -r name rm mnt; do test "$rm" = 1 || continue; test -n "$mnt" || continue; mount -o remount,nodev "$mnt" 2>/dev/null || true; done < <(lsblk -nrpo NAME,RM,MOUNTPOINT 2>/dev/null)
+
+    - name: V-257859
+      commands:
+        - |
+          while read -r name rm mnt; do test "$rm" = 1 || continue; test -n "$mnt" || continue; mount -o remount,nosuid "$mnt" 2>/dev/null || true; done < <(lsblk -nrpo NAME,RM,MOUNTPOINT 2>/dev/null)
+
+    - name: V-257881
+      commands:
+        - |
+          while read -r target; do test "$target" = / && continue; mount -o remount,nodev "$target" 2>/dev/null || true; done < <(findmnt -rn -t ext2,ext3,ext4,xfs,btrfs -o TARGET 2>/dev/null)
+          tmp="$(mktemp)"
+          awk 'BEGIN{OFS="\t"} /^[[:space:]]*#/ || NF<4 {print; next} $2!="/" && $3 ~ /^(ext2|ext3|ext4|xfs|btrfs)$/ {n=split($4,a,","); found=0; for(i=1;i<=n;i++) if(a[i]=="nodev") found=1; if(!found) $4=$4 ",nodev"} {print}' /etc/fstab > "$tmp"
+          cat "$tmp" > /etc/fstab; rm -f "$tmp"
+
