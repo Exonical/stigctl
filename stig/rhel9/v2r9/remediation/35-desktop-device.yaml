@@ -1,0 +1,187 @@
+name: RHEL 9 STIG - Desktop and Devices
+
+stages:
+  stig:
+    - name: V-258012
+      commands:
+        - |
+          if rpm -q gdm >/dev/null 2>&1; then install -d -m 0755 /etc/dconf/db/local.d; cat > /etc/dconf/db/local.d/00-stig-banner <<'EOF'
+          [org/gnome/login-screen]
+          banner-message-enable=true
+          EOF
+          dconf update; fi
+
+    - name: V-258013
+      commands:
+        - |
+          if rpm -q gdm >/dev/null 2>&1; then install -d -m 0755 /etc/dconf/db/local.d/locks; printf '/org/gnome/login-screen/banner-message-enable\n' > /etc/dconf/db/local.d/locks/00-stig-banner; dconf update; fi
+
+    - name: V-258014
+      commands:
+        - |
+          if rpm -q gdm >/dev/null 2>&1; then install -d -m 0755 /etc/dconf/db/local.d; cat > /etc/dconf/db/local.d/00-stig-automount <<'EOF'
+          [org/gnome/desktop/media-handling]
+          automount=false
+          EOF
+          dconf update; fi
+
+    - name: V-258015
+      commands:
+        - |
+          if rpm -q gdm >/dev/null 2>&1; then install -d -m 0755 /etc/dconf/db/local.d/locks; printf '/org/gnome/desktop/media-handling/automount\n' > /etc/dconf/db/local.d/locks/00-stig-automount; dconf update; fi
+
+    - name: V-258016
+      commands:
+        - |
+          if rpm -q gdm >/dev/null 2>&1; then install -d -m 0755 /etc/dconf/db/local.d; cat > /etc/dconf/db/local.d/00-stig-autorun <<'EOF'
+          [org/gnome/desktop/media-handling]
+          autorun-never=true
+          EOF
+          dconf update; fi
+
+    - name: V-258017
+      commands:
+        - |
+          if rpm -q gdm >/dev/null 2>&1; then install -d -m 0755 /etc/dconf/db/local.d/locks; printf '/org/gnome/desktop/media-handling/autorun-never\n' > /etc/dconf/db/local.d/locks/00-stig-autorun; dconf update; fi
+
+    - name: V-258019
+      commands:
+        - |
+          if rpm -q gdm >/dev/null 2>&1; then install -d -m 0755 /etc/dconf/db/local.d; cat > /etc/dconf/db/local.d/00-stig-smartcard <<'EOF'
+          [org/gnome/settings-daemon/peripherals/smartcard]
+          removal-action='lock-screen'
+          EOF
+          dconf update; fi
+
+    - name: V-258020
+      commands:
+        - |
+          if rpm -q gdm >/dev/null 2>&1; then install -d -m 0755 /etc/dconf/db/local.d/locks; printf '/org/gnome/settings-daemon/peripherals/smartcard/removal-action\n' > /etc/dconf/db/local.d/locks/00-stig-smartcard; dconf update; fi
+
+    - name: V-258021
+      commands:
+        - |
+          if rpm -q gdm >/dev/null 2>&1; then install -d -m 0755 /etc/dconf/db/local.d; cat > /etc/dconf/db/local.d/00-stig-lock <<'EOF'
+          [org/gnome/desktop/screensaver]
+          lock-enabled=true
+          EOF
+          dconf update; fi
+
+    - name: V-258022
+      commands:
+        - |
+          if rpm -q gdm >/dev/null 2>&1; then install -d -m 0755 /etc/dconf/db/local.d/locks; printf '/org/gnome/desktop/screensaver/lock-enabled\n' > /etc/dconf/db/local.d/locks/00-stig-lock; dconf update; fi
+
+    - name: V-258023
+      commands:
+        - |
+          if rpm -q gdm >/dev/null 2>&1; then install -d -m 0755 /etc/dconf/db/local.d; cat > /etc/dconf/db/local.d/00-stig-idle <<'EOF'
+          [org/gnome/desktop/session]
+          idle-delay=uint32 600
+          EOF
+          dconf update; fi
+
+    - name: V-258024
+      commands:
+        - |
+          if rpm -q gdm >/dev/null 2>&1; then install -d -m 0755 /etc/dconf/db/local.d/locks; printf '/org/gnome/desktop/session/idle-delay\n' > /etc/dconf/db/local.d/locks/00-stig-idle; dconf update; fi
+
+    - name: V-258025
+      commands:
+        - |
+          if rpm -q gdm >/dev/null 2>&1; then install -d -m 0755 /etc/dconf/db/local.d; cat > /etc/dconf/db/local.d/00-stig-lock-delay <<'EOF'
+          [org/gnome/desktop/screensaver]
+          lock-delay=uint32 0
+          EOF
+          dconf update; fi
+
+    - name: V-258026
+      commands:
+        - |
+          if rpm -q gdm >/dev/null 2>&1; then install -d -m 0755 /etc/dconf/db/local.d/locks; printf '/org/gnome/desktop/screensaver/lock-delay\n' > /etc/dconf/db/local.d/locks/00-stig-lock-delay; dconf update; fi
+
+    - name: V-258027
+      commands:
+        - |
+          if rpm -q gdm >/dev/null 2>&1; then install -d -m 0755 /etc/dconf/db/local.d/locks; cat > /etc/dconf/db/local.d/00-stig-picture <<'EOF'
+          [org/gnome/desktop/screensaver]
+          picture-uri=''
+          EOF
+          printf '/org/gnome/desktop/screensaver/picture-uri\n' > /etc/dconf/db/local.d/locks/00-stig-picture; dconf update; fi
+
+    - name: V-258028
+      commands:
+        - |
+          if rpm -q gdm >/dev/null 2>&1; then dconf update; fi
+
+    - name: V-258029
+      commands:
+        - |
+          if rpm -q gdm >/dev/null 2>&1; then install -d -m 0755 /etc/dconf/db/local.d; cat > /etc/dconf/db/local.d/00-stig-restart <<'EOF'
+          [org/gnome/login-screen]
+          disable-restart-buttons=true
+          EOF
+          dconf update; fi
+
+    - name: V-258030
+      commands:
+        - |
+          if rpm -q gdm >/dev/null 2>&1; then install -d -m 0755 /etc/dconf/db/local.d/locks; printf '/org/gnome/login-screen/disable-restart-buttons\n' > /etc/dconf/db/local.d/locks/00-stig-restart; dconf update; fi
+
+    - name: V-258031
+      commands:
+        - |
+          if rpm -q gdm >/dev/null 2>&1; then gsettings set org.gnome.settings-daemon.plugins.media-keys logout "['']" 2>/dev/null || true; dconf update; fi
+
+    - name: V-258032
+      commands:
+        - |
+          if rpm -q gdm >/dev/null 2>&1; then install -d -m 0755 /etc/dconf/db/local.d/locks; printf '/org/gnome/settings-daemon/plugins/media-keys/logout\n' > /etc/dconf/db/local.d/locks/session; dconf update; fi
+
+    - name: V-258033
+      commands:
+        - |
+          if rpm -q gdm >/dev/null 2>&1; then install -d -m 0755 /etc/dconf/db/local.d; cat > /etc/dconf/db/local.d/00-stig-user-list <<'EOF'
+          [org/gnome/login-screen]
+          disable-user-list=true
+          EOF
+          dconf update; fi
+
+    - name: V-258034
+      commands:
+        - |
+          cat > /etc/modprobe.d/usb-storage.conf <<'EOF'
+          install usb-storage /bin/false
+          blacklist usb-storage
+          EOF
+          modprobe -r usb-storage 2>/dev/null || true
+
+    - name: V-258036
+      commands:
+        - |
+          systemctl enable --now usbguard
+
+    - name: V-258037
+      commands:
+        - |
+          if grep -qE '^[[:space:]]*AuditBackend[[:space:]]*=' /etc/usbguard/usbguard-daemon.conf; then sed -ri 's/^[[:space:]]*AuditBackend[[:space:]]*=.*/AuditBackend=LinuxAudit/' /etc/usbguard/usbguard-daemon.conf; else printf '\nAuditBackend=LinuxAudit\n' >> /etc/usbguard/usbguard-daemon.conf; fi
+
+    - name: V-258038
+      commands:
+        - |
+          usbguard generate-policy --no-hash > /etc/usbguard/rules.conf; chmod 0600 /etc/usbguard/rules.conf
+
+    - name: V-258039
+      commands:
+        - |
+          cat > /etc/modprobe.d/bluetooth.conf <<'EOF'
+          install bluetooth /bin/false
+          blacklist bluetooth
+          EOF
+          modprobe -r bluetooth 2>/dev/null || true
+
+    - name: V-258040
+      commands:
+        - |
+          nmcli radio all off
+
