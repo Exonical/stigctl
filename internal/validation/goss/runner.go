@@ -95,10 +95,8 @@ func normalizeResults(tests []resource.TestResult) []results.Result {
 				Type:    test.ResourceType + "." + test.Property,
 				Message: message,
 			})
-			if test.Result == resource.FAIL || test.Err != nil {
-				if message != "" {
-					details = append(details, message)
-				}
+			if message != "" {
+				details = append(details, message)
 			}
 		}
 
