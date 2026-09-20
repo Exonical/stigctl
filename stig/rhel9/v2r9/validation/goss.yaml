@@ -8,6 +8,7 @@ gossfile:
   30-ssh.yaml: {}
   35-desktop-device.yaml: {}
   40-authentication.yaml: {}
+  45-account-access.yaml: {}
   50-auth.yaml: {}
   50-audit.yaml: {}
   60-logging.yaml: {}
