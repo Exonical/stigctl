@@ -1,0 +1,240 @@
+name: RHEL 9 STIG - Account and Access Controls
+
+stages:
+  stig:
+    - name: V-258042
+      commands:
+        - |
+          while IFS=: read -r u _ uid _ _ _ shell; do test "$uid" -ge 1000 || continue; case "$shell" in */nologin|*/false) continue;; esac; chage -M 60 "$u"; done < /etc/passwd
+
+    - name: V-258043
+      commands:
+        - |
+          if grep -qE '^[[:space:]]*CREATE_HOME' /etc/login.defs; then sed -ri 's/^[[:space:]]*CREATE_HOME.*/CREATE_HOME yes/' /etc/login.defs; else printf '\nCREATE_HOME yes\n' >> /etc/login.defs; fi
+
+    - name: V-258045
+      commands:
+        - |
+          echo "Duplicate UIDs require administrator review; refusing unsafe automatic reassignment."
+          test -z "$(awk -F: '$3>=1000{c[$3]++} END{for(i in c)if(c[i]>1)print i}' /etc/passwd)"
+
+    - name: V-258046
+      commands:
+        - |
+          awk -F: '$3<1000 && $1!="root" && $7 !~ /(nologin|false)$/ {print $1}' /etc/passwd | while read -r u; do usermod -s /sbin/nologin "$u"; done
+
+    - name: V-258048
+      commands:
+        - |
+          echo "Missing primary groups require administrator review."
+          test -z "$(awk -F: '$3>=1000 && $7 !~ /(nologin|false)$/ {print $1":"$4}' /etc/passwd | while IFS=: read -r u g; do getent group "$g" >/dev/null || echo "$u:$g"; done)"
+
+    - name: V-258049
+      commands:
+        - |
+          useradd -D -f 35
+
+    - name: V-258051
+      commands:
+        - |
+          echo "Invalid home directory assignments require administrator review."
+          test -z "$(awk -F: '$3>=1000 && $7 !~ /(nologin|false)$/ && ($6=="" || $6=="/") {print $1}' /etc/passwd)"
+
+    - name: V-258052
+      commands:
+        - |
+          while IFS=: read -r u _ uid gid _ home shell; do test "$uid" -ge 1000 || continue; case "$shell" in */nologin|*/false) continue;; esac; test -d "$home" || install -d -m 0750 -o "$uid" -g "$gid" "$home"; done < /etc/passwd
+
+    - name: V-258053
+      commands:
+        - |
+          while IFS=: read -r _ _ uid gid _ home shell; do test "$uid" -ge 1000 || continue; case "$shell" in */nologin|*/false) continue;; esac; test -d "$home" || continue; chgrp "$gid" "$home"; done < /etc/passwd
+
+    - name: V-258054
+      commands:
+        - |
+          if grep -qE '^[[:space:]]*deny[[:space:]]*=' /etc/security/faillock.conf; then sed -ri 's/^[[:space:]]*deny[[:space:]]*=.*/deny = 3/' /etc/security/faillock.conf; else printf '\ndeny = 3\n' >> /etc/security/faillock.conf; fi
+
+    - name: V-258056
+      commands:
+        - |
+          if grep -qE '^[[:space:]]*fail_interval[[:space:]]*=' /etc/security/faillock.conf; then sed -ri 's/^[[:space:]]*fail_interval[[:space:]]*=.*/fail_interval = 900/' /etc/security/faillock.conf; else printf '\nfail_interval = 900\n' >> /etc/security/faillock.conf; fi
+
+    - name: V-258057
+      commands:
+        - |
+          if grep -qE '^[[:space:]]*unlock_time[[:space:]]*=' /etc/security/faillock.conf; then sed -ri 's/^[[:space:]]*unlock_time[[:space:]]*=.*/unlock_time = 0/' /etc/security/faillock.conf; else printf '\nunlock_time = 0\n' >> /etc/security/faillock.conf; fi
+
+    - name: V-258055
+      commands:
+        - |
+          grep -Eq '^[[:space:]]*even_deny_root([[:space:]]|$)' /etc/security/faillock.conf || printf '\neven_deny_root\n' >> /etc/security/faillock.conf
+
+    - name: V-258060
+      commands:
+        - |
+          install -d -m 0700 -o root -g root /var/log/faillock
+          if grep -qE '^[[:space:]]*dir[[:space:]]*=' /etc/security/faillock.conf; then sed -ri 's|^[[:space:]]*dir[[:space:]]*=.*|dir = /var/log/faillock|' /etc/security/faillock.conf; else printf '\ndir = /var/log/faillock\n' >> /etc/security/faillock.conf; fi
+          command -v semanage >/dev/null 2>&1 && semanage fcontext -a -t faillog_t '/var/log/faillock(/.*)?' 2>/dev/null || true
+          restorecon -RF /var/log/faillock 2>/dev/null || true
+
+    - name: V-258061
+      commands:
+        - |
+          echo "Duplicate GIDs require administrator review; refusing unsafe automatic reassignment."
+          test -z "$(awk -F: '{c[$3]++} END{for(i in c)if(c[i]>1)print i}' /etc/group)"
+
+    - name: V-258068
+      commands:
+        - |
+          cat > /etc/profile.d/99-stig-tmout.sh <<'EOF'
+          declare -xr TMOUT=600
+          EOF
+          chmod 0644 /etc/profile.d/99-stig-tmout.sh
+
+    - name: V-258069
+      commands:
+        - |
+          cat > /etc/security/limits.d/99-stig-maxlogins.conf <<'EOF'
+          * hard maxlogins 10
+          EOF
+          chmod 0644 /etc/security/limits.d/99-stig-maxlogins.conf
+
+    - name: V-258070
+      commands:
+        - |
+          grep -Eq '^[[:space:]]*audit([[:space:]]|$)' /etc/security/faillock.conf || printf '\naudit\n' >> /etc/security/faillock.conf
+
+    - name: V-258071
+      commands:
+        - |
+          if grep -qE '^[[:space:]]*FAIL_DELAY' /etc/login.defs; then sed -ri 's/^[[:space:]]*FAIL_DELAY.*/FAIL_DELAY 4/' /etc/login.defs; else printf '\nFAIL_DELAY 4\n' >> /etc/login.defs; fi
+
+    - name: V-258077
+      commands:
+        - |
+          install -d -m 0755 /etc/systemd/logind.conf.d
+          cat > /etc/systemd/logind.conf.d/99-stig.conf <<'EOF'
+          [Login]
+          StopIdleSessionSec=600
+          EOF
+          systemctl restart systemd-logind 2>/dev/null || true
+
+    - name: V-258079
+      commands:
+        - |
+          if grep -qE '^[[:space:]]*SELINUXTYPE=' /etc/selinux/config; then sed -ri 's/^[[:space:]]*SELINUXTYPE=.*/SELINUXTYPE=targeted/' /etc/selinux/config; else printf '\nSELINUXTYPE=targeted\n' >> /etc/selinux/config; fi
+
+    - name: V-258081
+      commands:
+        - |
+          dnf -y install policycoreutils
+
+    - name: V-258086
+      commands:
+        - |
+          find /etc/sudoers /etc/sudoers.d -type f -exec sed -ri '/^[[:space:]]*Defaults.*!authenticate/ s/^/# /' {} +
+
+    - name: V-258087
+      commands:
+        - |
+          cat > /etc/sudoers.d/60-stig-wheel <<'EOF'
+          %wheel ALL=(ALL) ALL
+          EOF
+          chmod 0440 /etc/sudoers.d/60-stig-wheel
+
+    - name: V-258088
+      commands:
+        - |
+          grep -Eq '^[[:space:]]*auth[[:space:]]+required[[:space:]]+pam_wheel\.so' /etc/pam.d/su || printf '\nauth required pam_wheel.so use_uid\n' >> /etc/pam.d/su
+
+    - name: V-258089
+      commands:
+        - |
+          dnf -y install fapolicyd
+
+    - name: V-258090
+      commands:
+        - |
+          systemctl enable --now fapolicyd.service
+
+    - name: V-258099
+      commands:
+        - |
+          sed -ri '/^[[:space:]]*password[[:space:]]+.*pam_unix\.so/ { /rounds=/! s/$/ rounds=100000/; s/rounds=[0-9]+/rounds=100000/ }' /etc/pam.d/password-auth
+
+    - name: V-258100
+      commands:
+        - |
+          sed -ri '/^[[:space:]]*password[[:space:]]+.*pam_unix\.so/ { /rounds=/! s/$/ rounds=100000/; s/rounds=[0-9]+/rounds=100000/ }' /etc/pam.d/system-auth
+
+    - name: V-258105
+      commands:
+        - |
+          while IFS=: read -r u _ uid _ _ _ shell; do test "$uid" -ge 1000 || continue; case "$shell" in */nologin|*/false) continue;; esac; chage -m 1 "$u"; done < /etc/passwd
+
+    - name: V-258116
+      commands:
+        - |
+          test -f /etc/libuser.conf || touch /etc/libuser.conf
+          if grep -qE '^[[:space:]]*crypt_style[[:space:]]*=' /etc/libuser.conf; then sed -ri 's/^[[:space:]]*crypt_style[[:space:]]*=.*/crypt_style = sha512/' /etc/libuser.conf; else printf '\ncrypt_style = sha512\n' >> /etc/libuser.conf; fi
+
+    - name: V-258118
+      commands:
+        - |
+          sed -ri '/^[[:space:]]*[^#].*pam_succeed_if/ s/^/# /' /etc/pam.d/sudo
+
+    - name: V-258120
+      commands:
+        - |
+          awk -F: '$2==""{print $1}' /etc/shadow | while read -r u; do passwd -l "$u"; done
+
+    - name: V-258125
+      commands:
+        - |
+          systemctl enable --now pcscd.socket
+
+    - name: V-258128
+      commands:
+        - |
+          systemctl revert emergency.service 2>/dev/null || true
+
+    - name: V-258129
+      commands:
+        - |
+          systemctl revert rescue.service 2>/dev/null || true
+
+    - name: V-258133
+      commands:
+        - |
+          if test -f /etc/sssd/sssd.conf; then if grep -qE '^[[:space:]]*offline_credentials_expiration[[:space:]]*=' /etc/sssd/sssd.conf; then sed -ri 's/^[[:space:]]*offline_credentials_expiration[[:space:]]*=.*/offline_credentials_expiration = 1/' /etc/sssd/sssd.conf; else sed -i '/^\[pam\]/a offline_credentials_expiration = 1' /etc/sssd/sssd.conf; fi; chmod 0600 /etc/sssd/sssd.conf; fi
+
+    - name: V-258135
+      commands:
+        - |
+          cat > /etc/cron.daily/aide-stig <<'EOF'
+          #!/bin/sh
+          /usr/sbin/aide --check | /usr/bin/logger -t aide-stig
+          EOF
+          chmod 0755 /etc/cron.daily/aide-stig
+
+    - name: V-258136
+      commands:
+        - |
+          if grep -q '^All=' /etc/aide.conf; then sed -ri 's|^All=.*|All=p+i+n+u+g+s+m+S+sha512+acl+xattrs+selinux|' /etc/aide.conf; else printf '\nAll=p+i+n+u+g+s+m+S+sha512+acl+xattrs+selinux\n' >> /etc/aide.conf; fi
+
+    - name: V-258137
+      commands:
+        - |
+          for t in auditctl auditd ausearch aureport autrace augenrules; do grep -Eq "^/usr/sbin/$t[[:space:]]" /etc/aide.conf || printf '/usr/sbin/%s p+i+n+u+g+s+b+acl+xattrs+sha512\n' "$t" >> /etc/aide.conf; done
+
+    - name: V-258138
+      commands:
+        - |
+          grep -q '^All=' /etc/aide.conf && grep '^All=' /etc/aide.conf | grep -q acl || sed -ri 's|^All=(.*)|All=\1+acl|' /etc/aide.conf
+
+    - name: V-258139
+      commands:
+        - |
+          grep -q '^All=' /etc/aide.conf && grep '^All=' /etc/aide.conf | grep -q xattrs || sed -ri 's|^All=(.*)|All=\1+xattrs|' /etc/aide.conf
+
