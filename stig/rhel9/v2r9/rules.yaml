@@ -5337,4 +5337,495 @@ rules:
       file: validation/45-account-access.yaml
       resource: command
       test: V-270180
+  V-257843:
+    title: A separate RHEL 9 file system must be used for user home directories (such as /home or an equivalent).
+    rule_id: SV-257843r991589
+    severity: medium
+    status: automated
+    remediation: {}
+    validation:
+      type: goss
+      file: validation/22-mounts.yaml
+      resource: command
+      test: V-257843
+
+  V-257844:
+    title: RHEL 9 must use a separate file system for /tmp.
+    rule_id: SV-257844r1044918
+    severity: medium
+    status: automated
+    remediation: {}
+    validation:
+      type: goss
+      file: validation/22-mounts.yaml
+      resource: command
+      test: V-257844
+
+  V-257845:
+    title: RHEL 9 must use a separate file system for /var.
+    rule_id: SV-257845r1044920
+    severity: low
+    status: automated
+    remediation: {}
+    validation:
+      type: goss
+      file: validation/22-mounts.yaml
+      resource: command
+      test: V-257845
+
+  V-257846:
+    title: RHEL 9 must use a separate file system for /var/log.
+    rule_id: SV-257846r1044922
+    severity: low
+    status: automated
+    remediation: {}
+    validation:
+      type: goss
+      file: validation/22-mounts.yaml
+      resource: command
+      test: V-257846
+
+  V-257847:
+    title: RHEL 9 must use a separate file system for the system audit data path.
+    rule_id: SV-257847r1044924
+    severity: low
+    status: automated
+    remediation: {}
+    validation:
+      type: goss
+      file: validation/22-mounts.yaml
+      resource: command
+      test: V-257847
+
+  V-257848:
+    title: RHEL 9 must use a separate file system for /var/tmp.
+    rule_id: SV-257848r1044926
+    severity: medium
+    status: automated
+    remediation: {}
+    validation:
+      type: goss
+      file: validation/22-mounts.yaml
+      resource: command
+      test: V-257848
+
+  V-257849:
+    title: RHEL 9 file system automount function must be disabled unless required.
+    rule_id: SV-257849r1044928
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/22-mounts.yaml
+      step: V-257849
+    validation:
+      type: goss
+      file: validation/22-mounts.yaml
+      resource: command
+      test: V-257849
+
+  V-257850:
+    title: RHEL 9 must prevent device files from being interpreted on file systems that contain user home directories.
+    rule_id: SV-257850r1044930
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/22-mounts.yaml
+      step: V-257850
+    validation:
+      type: goss
+      file: validation/22-mounts.yaml
+      resource: command
+      test: V-257850
+
+  V-257851:
+    title: RHEL 9 must prevent files with the setuid and setgid bit set from being executed on file systems that contain user home directories.
+    rule_id: SV-257851r1044932
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/22-mounts.yaml
+      step: V-257851
+    validation:
+      type: goss
+      file: validation/22-mounts.yaml
+      resource: command
+      test: V-257851
+
+  V-257852:
+    title: RHEL 9 must prevent code from being executed on file systems that contain user home directories.
+    rule_id: SV-257852r991589
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/22-mounts.yaml
+      step: V-257852
+    validation:
+      type: goss
+      file: validation/22-mounts.yaml
+      resource: command
+      test: V-257852
+
+  V-257860:
+    title: RHEL 9 must mount /boot with the nodev option.
+    rule_id: SV-257860r1044940
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/22-mounts.yaml
+      step: V-257860
+    validation:
+      type: goss
+      file: validation/22-mounts.yaml
+      resource: command
+      test: V-257860
+
+  V-257861:
+    title: RHEL 9 must prevent files with the setuid and setgid bit set from being executed on the /boot directory.
+    rule_id: SV-257861r1044941
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/22-mounts.yaml
+      step: V-257861
+    validation:
+      type: goss
+      file: validation/22-mounts.yaml
+      resource: command
+      test: V-257861
+
+  V-257862:
+    title: RHEL 9 must prevent files with the setuid and setgid bit set from being executed on the /boot/efi directory.
+    rule_id: SV-257862r1184295
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/22-mounts.yaml
+      step: V-257862
+    validation:
+      type: goss
+      file: validation/22-mounts.yaml
+      resource: command
+      test: V-257862
+
+  V-257863:
+    title: RHEL 9 must mount /dev/shm with the nodev option.
+    rule_id: SV-257863r1155633
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/22-mounts.yaml
+      step: V-257863
+    validation:
+      type: goss
+      file: validation/22-mounts.yaml
+      resource: command
+      test: V-257863
+
+  V-257864:
+    title: RHEL 9 must mount /dev/shm with the noexec option.
+    rule_id: SV-257864r1155639
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/22-mounts.yaml
+      step: V-257864
+    validation:
+      type: goss
+      file: validation/22-mounts.yaml
+      resource: command
+      test: V-257864
+
+  V-257865:
+    title: RHEL 9 must mount /dev/shm with the nosuid option.
+    rule_id: SV-257865r1184297
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/22-mounts.yaml
+      step: V-257865
+    validation:
+      type: goss
+      file: validation/22-mounts.yaml
+      resource: command
+      test: V-257865
+
+  V-257866:
+    title: RHEL 9 must mount /tmp with the nodev option.
+    rule_id: SV-257866r958804
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/22-mounts.yaml
+      step: V-257866
+    validation:
+      type: goss
+      file: validation/22-mounts.yaml
+      resource: command
+      test: V-257866
+
+  V-257867:
+    title: RHEL 9 must mount /tmp with the noexec option.
+    rule_id: SV-257867r958804
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/22-mounts.yaml
+      step: V-257867
+    validation:
+      type: goss
+      file: validation/22-mounts.yaml
+      resource: command
+      test: V-257867
+
+  V-257868:
+    title: RHEL 9 must mount /tmp with the nosuid option.
+    rule_id: SV-257868r958804
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/22-mounts.yaml
+      step: V-257868
+    validation:
+      type: goss
+      file: validation/22-mounts.yaml
+      resource: command
+      test: V-257868
+
+  V-257869:
+    title: RHEL 9 must mount /var with the nodev option.
+    rule_id: SV-257869r1102009
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/22-mounts.yaml
+      step: V-257869
+    validation:
+      type: goss
+      file: validation/22-mounts.yaml
+      resource: command
+      test: V-257869
+
+  V-257870:
+    title: RHEL 9 must mount /var/log with the nodev option.
+    rule_id: SV-257870r958804
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/22-mounts.yaml
+      step: V-257870
+    validation:
+      type: goss
+      file: validation/22-mounts.yaml
+      resource: command
+      test: V-257870
+
+  V-257871:
+    title: RHEL 9 must mount /var/log with the noexec option.
+    rule_id: SV-257871r958804
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/22-mounts.yaml
+      step: V-257871
+    validation:
+      type: goss
+      file: validation/22-mounts.yaml
+      resource: command
+      test: V-257871
+
+  V-257872:
+    title: RHEL 9 must mount /var/log with the nosuid option.
+    rule_id: SV-257872r958804
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/22-mounts.yaml
+      step: V-257872
+    validation:
+      type: goss
+      file: validation/22-mounts.yaml
+      resource: command
+      test: V-257872
+
+  V-257873:
+    title: RHEL 9 must mount /var/log/audit with the nodev option.
+    rule_id: SV-257873r958804
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/22-mounts.yaml
+      step: V-257873
+    validation:
+      type: goss
+      file: validation/22-mounts.yaml
+      resource: command
+      test: V-257873
+
+  V-257874:
+    title: RHEL 9 must mount /var/log/audit with the noexec option.
+    rule_id: SV-257874r958804
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/22-mounts.yaml
+      step: V-257874
+    validation:
+      type: goss
+      file: validation/22-mounts.yaml
+      resource: command
+      test: V-257874
+
+  V-257875:
+    title: RHEL 9 must mount /var/log/audit with the nosuid option.
+    rule_id: SV-257875r958804
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/22-mounts.yaml
+      step: V-257875
+    validation:
+      type: goss
+      file: validation/22-mounts.yaml
+      resource: command
+      test: V-257875
+
+  V-257876:
+    title: RHEL 9 must mount /var/tmp with the nodev option.
+    rule_id: SV-257876r958804
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/22-mounts.yaml
+      step: V-257876
+    validation:
+      type: goss
+      file: validation/22-mounts.yaml
+      resource: command
+      test: V-257876
+
+  V-257877:
+    title: RHEL 9 must mount /var/tmp with the noexec option.
+    rule_id: SV-257877r958804
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/22-mounts.yaml
+      step: V-257877
+    validation:
+      type: goss
+      file: validation/22-mounts.yaml
+      resource: command
+      test: V-257877
+
+  V-257878:
+    title: RHEL 9 must mount /var/tmp with the nosuid option.
+    rule_id: SV-257878r958804
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/22-mounts.yaml
+      step: V-257878
+    validation:
+      type: goss
+      file: validation/22-mounts.yaml
+      resource: command
+      test: V-257878
+
+  V-257854:
+    title: RHEL 9 must prevent special devices on file systems that are imported via Network File System (NFS).
+    rule_id: SV-257854r1044934
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/22-mounts.yaml
+      step: V-257854
+    validation:
+      type: goss
+      file: validation/22-mounts.yaml
+      resource: command
+      test: V-257854
+
+  V-257855:
+    title: RHEL 9  must prevent code from being executed on file systems that are imported via Network File System (NFS).
+    rule_id: SV-257855r1044936
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/22-mounts.yaml
+      step: V-257855
+    validation:
+      type: goss
+      file: validation/22-mounts.yaml
+      resource: command
+      test: V-257855
+
+  V-257856:
+    title: RHEL 9 must prevent files with the setuid and setgid bit set from being executed on file systems that are imported via Network File System (NFS).
+    rule_id: SV-257856r1044938
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/22-mounts.yaml
+      step: V-257856
+    validation:
+      type: goss
+      file: validation/22-mounts.yaml
+      resource: command
+      test: V-257856
+
+  V-257857:
+    title: RHEL 9 must prevent code from being executed on file systems that are used with removable media.
+    rule_id: SV-257857r991589
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/22-mounts.yaml
+      step: V-257857
+    validation:
+      type: goss
+      file: validation/22-mounts.yaml
+      resource: command
+      test: V-257857
+
+  V-257858:
+    title: RHEL 9 must prevent special devices on file systems that are used with removable media.
+    rule_id: SV-257858r991589
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/22-mounts.yaml
+      step: V-257858
+    validation:
+      type: goss
+      file: validation/22-mounts.yaml
+      resource: command
+      test: V-257858
+
+  V-257859:
+    title: RHEL 9 must prevent files with the setuid and setgid bit set from being executed on file systems that are used with removable media.
+    rule_id: SV-257859r991589
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/22-mounts.yaml
+      step: V-257859
+    validation:
+      type: goss
+      file: validation/22-mounts.yaml
+      resource: command
+      test: V-257859
+
+  V-257881:
+    title: RHEL 9 must prevent special devices on non-root local partitions.
+    rule_id: SV-257881r1184299
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/22-mounts.yaml
+      step: V-257881
+    validation:
+      type: goss
+      file: validation/22-mounts.yaml
+      resource: command
+      test: V-257881
 
