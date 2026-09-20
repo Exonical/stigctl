@@ -113,103 +113,7 @@ jobs:
 
           status=0
           go test ./internal/export/cklb \
-            -run '^TestRHEL9V2R9GoldenCKLB
-  rocky9-stig:
-    name: Apply and validate RHEL 9 STIG on Rocky Linux 9
-    runs-on: ubuntu-latest
-    needs: test
-    steps:
-      - uses: actions/checkout@v7
-
-      - name: Download stigctl binary
-        uses: actions/download-artifact@v8
-        with:
-          name: stigctl-linux-amd64
-          path: bin
-
-      - name: Verify downloaded binary
-        run: |
-          chmod +x bin/stigctl
-          ./bin/stigctl --help >/dev/null
-
-      - name: Pull Rocky Linux 9
-        run: docker pull rockylinux/rockylinux:9
-
-      - name: Apply and validate STIG in Rocky Linux 9 container
-        run: |
-          docker run --rm \
-            --privileged \
-            --hostname stigctl-rocky9-ci \
-            -v "$PWD:/workspace" \
-            -w /workspace \
-            rockylinux/rockylinux:9 \
-            /bin/bash -euxo pipefail -c '
-              cat /etc/os-release
-
-              # Exercise the embedded Yip engine.
-              ./bin/stigctl apply rhel9:v2r9 --profile container-ci
-
-              # Verify representative remediations changed the container.
-              rpm -q firewalld
-              rpm -q chrony
-              rpm -q openssh-clients
-              rpm -q usbguard
-              rpm -q aide
-              rpm -q rsyslog
-              rpm -q audit
-              rpm -q crypto-policies
-
-              ! rpm -q sendmail
-              ! rpm -q telnet-server
-              ! rpm -q ypserv
-              ! rpm -q quagga
-
-              # Exercise the embedded Goss engine against the same remediated
-              # container filesystem.
-              ./bin/stigctl validate rhel9:v2r9 \
-                --profile container-ci \
-                --fail-on-findings
-            '
-
-  bootstrap-v0-0-1:
-    name: Bootstrap v0.0.1
-    runs-on: ubuntu-latest
-    needs:
-      - test
-      - lint
-      - release-config
-      - rocky9-stig
-      - cklb-golden
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    permissions:
-      contents: write
-      actions: write
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
-
-      - name: Create v0.0.1 tag
-        env:
-          TAG: v0.0.1
-        shell: bash
-        run: |
-          if git ls-remote --exit-code --tags origin "refs/tags/${TAG}" >/dev/null 2>&1; then
-            echo "${TAG} already exists; nothing to do."
-            exit 0
-          fi
-
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git tag -a "${TAG}" -m "stigctl ${TAG}"
-          git push origin "${TAG}"
-
-      - name: Trigger release workflow
-        env:
-          GH_TOKEN: ${{ github.token }}
-          TAG: v0.0.1
-        run: gh workflow run release.yml --ref main -f tag="${TAG}"
- \
+            -run '^TestRHEL9V2R9GoldenCKLB$' \
             -count=1 \
             -v 2>&1 | tee /tmp/cklb-artifacts/golden-test.log || status=$?
 
@@ -261,10 +165,8 @@ jobs:
             /bin/bash -euxo pipefail -c '
               cat /etc/os-release
 
-              # Exercise the embedded Yip engine.
               ./bin/stigctl apply rhel9:v2r9 --profile container-ci
 
-              # Verify representative remediations changed the container.
               rpm -q firewalld
               rpm -q chrony
               rpm -q openssh-clients
@@ -278,9 +180,8 @@ jobs:
               ! rpm -q telnet-server
               ! rpm -q ypserv
               ! rpm -q quagga
+              ! rpm -q vsftpd
 
-              # Exercise the embedded Goss engine against the same remediated
-              # container filesystem.
               ./bin/stigctl validate rhel9:v2r9 \
                 --profile container-ci \
                 --fail-on-findings
@@ -311,13 +212,12 @@ jobs:
         run: |
           if git ls-remote --exit-code --tags origin "refs/tags/${TAG}" >/dev/null 2>&1; then
             echo "${TAG} already exists; nothing to do."
-            exit 0
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git tag -a "${TAG}" -m "stigctl ${TAG}"
+            git push origin "${TAG}"
           fi
-
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git tag -a "${TAG}" -m "stigctl ${TAG}"
-          git push origin "${TAG}"
 
       - name: Trigger release workflow
         env:
