@@ -5193,9 +5193,15 @@ rules:
     title: RHEL 9 must set the umask value to 077 for all local interactive user accounts.
     rule_id: SV-258044r1184313
     severity: medium
-    status: manual
-    remediation: {}
-    validation: {}
+    status: automated
+    remediation:
+      file: remediation/45-account-access.yaml
+      step: V-258044
+    validation:
+      type: goss
+      file: validation/45-account-access.yaml
+      resource: command
+      test: V-258044
 
   V-258047:
     title: RHEL 9 must automatically expire temporary accounts within 72 hours.
@@ -5209,9 +5215,13 @@ rules:
     title: Executable search paths within the initialization files of all local interactive RHEL 9 users must only contain paths that resolve to the system default or the users home directory.
     rule_id: SV-258050r1045137
     severity: medium
-    status: manual
+    status: automated
     remediation: {}
-    validation: {}
+    validation:
+      type: goss
+      file: validation/45-account-access.yaml
+      resource: command
+      test: V-258050
 
   V-258058:
     title: RHEL 9 must not have unauthorized accounts.
@@ -5225,55 +5235,87 @@ rules:
     title: RHEL 9 must configure SELinux context type to allow the use of a nondefault faillock tally directory.
     rule_id: SV-258080r1045162
     severity: medium
-    status: manual
-    remediation: {}
-    validation: {}
+    status: automated
+    remediation:
+      file: remediation/45-account-access.yaml
+      step: V-258080
+    validation:
+      type: goss
+      file: validation/45-account-access.yaml
+      resource: command
+      test: V-258080
 
   V-258121:
     title: RHEL 9 must use the common access card (CAC) smart card driver.
     rule_id: SV-258121r1155682
     severity: medium
-    status: manual
-    remediation: {}
-    validation: {}
+    status: automated
+    remediation:
+      file: remediation/45-account-access.yaml
+      step: V-258121
+    validation:
+      type: goss
+      file: validation/45-account-access.yaml
+      resource: command
+      test: V-258121
 
   V-258122:
     title: RHEL 9 must enable certificate based smart card authentication.
     rule_id: SV-258122r1045246
     severity: medium
-    status: manual
-    remediation: {}
-    validation: {}
+    status: automated
+    remediation:
+      file: remediation/45-account-access.yaml
+      step: V-258122
+    validation:
+      type: goss
+      file: validation/45-account-access.yaml
+      resource: command
+      test: V-258122
 
   V-258123:
     title: RHEL 9 must implement certificate status checking for multifactor authentication.
     rule_id: SV-258123r1134923
     severity: medium
-    status: manual
-    remediation: {}
-    validation: {}
+    status: automated
+    remediation:
+      file: remediation/45-account-access.yaml
+      step: V-258123
+    validation:
+      type: goss
+      file: validation/45-account-access.yaml
+      resource: command
+      test: V-258123
 
   V-258127:
     title: RHEL 9, for PKI-based authentication, must enforce authorized access to the corresponding private key.
     rule_id: SV-258127r1155648
     severity: medium
-    status: manual
+    status: automated
     remediation: {}
-    validation: {}
+    validation:
+      type: goss
+      file: validation/45-account-access.yaml
+      resource: command
+      test: V-258127
 
   V-258131:
     title: RHEL 9, for PKI-based authentication, must validate certificates by constructing a certification path (which includes status information) to an accepted trust anchor.
     rule_id: SV-258131r1134927
     severity: medium
-    status: manual
+    status: automated
     remediation: {}
-    validation: {}
+    validation:
+      type: goss
+      file: validation/45-account-access.yaml
+      resource: command
+      test: V-258131
 
   V-258132:
     title: RHEL 9 must map the authenticated identity to the user or group account for PKI-based authentication.
     rule_id: SV-258132r1134929
     severity: medium
-    status: manual
+    status: automated
     remediation: {}
     validation: {}
   V-258227:
