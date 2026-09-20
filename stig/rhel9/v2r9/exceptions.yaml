@@ -131,3 +131,12 @@ exceptions:
       created: 2026-09-20
   V-257784: *container_service_na
   V-257785: *container_service_na
+
+  # The CI container has no SSH service, SELinux boot state, or independent
+  # kernel crypto mode. These controls are validated on actual system targets.
+  V-257984: *container_service_na
+  V-257986: *container_service_na
+  V-258078: *container_service_na
+  V-258230: *container_kernel_na
+  V-258236: *container_service_na
+  V-258241: *container_service_na
