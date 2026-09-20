@@ -3,6 +3,7 @@ package remote
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
@@ -10,6 +11,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/Exonical/stigctl/internal/inventory"
 )
@@ -27,6 +29,7 @@ type ScanRequest struct {
 type ScanResult struct {
 	Target     inventory.Target
 	OutputPath string
+	Published  bool
 	Stdout     string
 	Stderr     string
 	ExitCode   int
@@ -49,6 +52,8 @@ type Scanner struct {
 	runner commandRunner
 }
 
+const cleanupTimeout = 30 * time.Second
+
 func NewScanner() Scanner {
 	return Scanner{runner: execRunner{}}
 }
@@ -65,7 +70,9 @@ func (s Scanner) Scan(ctx context.Context, req ScanRequest) (result ScanResult, 
 		return result, err
 	}
 	defer func() {
-		cleanupErr := s.cleanup(ctx, req.Target, remoteDir)
+		cleanupCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), cleanupTimeout)
+		defer cancel()
+		cleanupErr := s.cleanup(cleanupCtx, req.Target, remoteDir)
 		if cleanupErr != nil {
 			retErr = errors.Join(retErr, cleanupErr)
 		}
@@ -86,18 +93,56 @@ func (s Scanner) Scan(ctx context.Context, req ScanRequest) (result ScanResult, 
 	result.Stderr = stderr.String()
 	result.ExitCode = exitCode(runErr)
 
-	copyErr := s.copyFrom(ctx, req.Target, remoteOutput, result.OutputPath)
+	tempFile, err := os.CreateTemp(req.OutputDir, "."+filepath.Base(result.OutputPath)+".tmp-*")
+	if err != nil {
+		return result, fmt.Errorf("create temporary scan artifact for %s: %w", req.Target.Name, err)
+	}
+	tempPath := tempFile.Name()
+	if err := tempFile.Close(); err != nil {
+		_ = os.Remove(tempPath)
+		return result, fmt.Errorf("close temporary scan artifact for %s: %w", req.Target.Name, err)
+	}
+	defer func() { _ = os.Remove(tempPath) }()
+
+	copyErr := s.copyFrom(ctx, req.Target, remoteOutput, tempPath)
 	if copyErr != nil {
-		_ = os.Remove(result.OutputPath)
 		if runErr != nil {
 			return result, fmt.Errorf("scan %s: %w: %s", req.Target.Name, runErr, strings.TrimSpace(result.Stderr))
 		}
 		return result, fmt.Errorf("collect scan from %s: %w", req.Target.Name, copyErr)
 	}
+	if err := validateArtifact(tempPath); err != nil {
+		artifactErr := fmt.Errorf("validate scan artifact from %s: %w", req.Target.Name, err)
+		if runErr != nil {
+			return result, errors.Join(
+				fmt.Errorf("scan %s: %w: %s", req.Target.Name, runErr, strings.TrimSpace(result.Stderr)),
+				artifactErr,
+			)
+		}
+		return result, artifactErr
+	}
+	if err := os.Rename(tempPath, result.OutputPath); err != nil {
+		return result, fmt.Errorf("publish scan artifact from %s: %w", req.Target.Name, err)
+	}
+	result.Published = true
 	if runErr != nil {
 		return result, fmt.Errorf("scan %s exited with status %d: %s", req.Target.Name, result.ExitCode, strings.TrimSpace(result.Stderr))
 	}
 	return result, nil
+}
+
+func validateArtifact(path string) error {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return err
+	}
+	if len(bytes.TrimSpace(data)) == 0 {
+		return fmt.Errorf("artifact is empty")
+	}
+	if !json.Valid(data) {
+		return fmt.Errorf("artifact is not valid JSON")
+	}
+	return nil
 }
 
 func (s Scanner) makeRemoteDir(ctx context.Context, target inventory.Target) (string, error) {
