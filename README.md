@@ -33,8 +33,14 @@ stigctl baseline import-cklb rhel9:v2r9 RHEL_9_Dev.cklb
 # Verify XCCDF, rules.yaml, and CKLB metadata stay aligned
 stigctl baseline verify rhel9:v2r9
 
-# Apply numbered Yip remediation modules
+# Preview numbered Yip remediation modules
+stigctl apply rhel9:v2r9 --profile server --dry-run
+
+# Apply all enabled remediations with an interactive terminal prompt
 stigctl apply rhel9:v2r9 --profile server
+
+# Apply selected rules non-interactively
+stigctl apply rhel9:v2r9 --profile server --rules V-257985,V-257992 --yes
 
 # Run Goss and resolve rules/exceptions
 stigctl validate rhel9:v2r9 --profile server
@@ -83,6 +89,10 @@ Use `--content-root` when the baseline tree is not in the current directory:
 ```bash
 stigctl --content-root /usr/share/stigctl validate rhel9:v2r9
 ```
+
+## Remediation safety
+
+Use `apply --dry-run` to inspect the effective remediation plan without running Yip, and use `--rules` to restrict that plan to selected V-IDs. Interactive terminals require confirmation before remediation; `--yes` skips that prompt for approved automation, while non-interactive stdin proceeds without prompting.
 
 ## Remote inventory scanning
 

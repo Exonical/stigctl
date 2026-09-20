@@ -48,6 +48,33 @@ stages:
 	}
 }
 
+func TestListStepsPreservesFileAndStepOrder(t *testing.T) {
+	dir := t.TempDir()
+	first := filepath.Join(dir, "00-first.yaml")
+	second := filepath.Join(dir, "10-second.yaml")
+	for path, content := range map[string]string{
+		first:  "stages:\n  stig:\n    - name: V-1\n    - name: V-2\n",
+		second: "stages:\n  stig:\n    - name: V-3\n",
+	} {
+		if err := os.WriteFile(path, []byte(content), 0o600); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	steps, err := ListSteps([]string{first, second}, "stig")
+	if err != nil {
+		t.Fatalf("ListSteps() error = %v", err)
+	}
+	if len(steps) != 3 {
+		t.Fatalf("len(steps) = %d, want 3", len(steps))
+	}
+	for i, want := range []Step{{Name: "V-1", File: first}, {Name: "V-2", File: first}, {Name: "V-3", File: second}} {
+		if steps[i] != want {
+			t.Errorf("steps[%d] = %#v, want %#v", i, steps[i], want)
+		}
+	}
+}
+
 func TestFilterFilesRejectsMissingExceptedStep(t *testing.T) {
 	dir := t.TempDir()
 	source := filepath.Join(dir, "10-kernel.yaml")

@@ -5,6 +5,7 @@ go 1.27.1
 require (
 	charm.land/fang/v2 v2.0.1
 	github.com/goss-org/goss v0.4.10
+	github.com/mattn/go-isatty v0.0.24
 	github.com/mudler/yip v1.26.3
 	github.com/sirupsen/logrus v1.10.2
 	github.com/spf13/cobra v1.10.2
@@ -86,7 +87,6 @@ require (
 	github.com/klauspost/cpuid/v2 v2.4.0 // indirect
 	github.com/lucasb-eyer/go-colorful v1.4.1 // indirect
 	github.com/mattn/go-colorable v0.1.15 // indirect
-	github.com/mattn/go-isatty v0.0.24 // indirect
 	github.com/mattn/go-runewidth v0.0.30 // indirect
 	github.com/mauromorales/xpasswd v0.5.0 // indirect
 	github.com/miekg/dns v1.1.73 // indirect

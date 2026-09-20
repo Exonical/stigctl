@@ -242,7 +242,7 @@ jobs:
             /bin/bash -euxo pipefail -c '
               cat /etc/os-release
 
-              ./bin/stigctl apply rhel9:v2r9 --profile container-ci
+              ./bin/stigctl apply rhel9:v2r9 --profile container-ci --yes
 
               rpm -q firewalld
               rpm -q chrony
