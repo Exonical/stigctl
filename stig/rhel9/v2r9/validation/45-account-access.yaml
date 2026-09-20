@@ -461,9 +461,37 @@ command:
     title: "RHEL 9 must use a file integrity tool that is configured to use FIPS 140-3-approved cryptographic hashes for validating file contents and directories."
     meta: { stig_id: V-258136 }
     exec: |
-      bad="$(grep -Ev '^[[:space:]]*(#|$|@@|!|=)' /etc/aide.conf 2>/dev/null | grep -v sha512 | head -n20)"
-      echo "evidence=aide_lines_without_sha512=${bad:-none}"
-      test -z "$bad" && grep -q sha512 /etc/aide.conf
+      bad="$(
+        awk '
+          FNR == NR {
+            line=$0
+            sub(/^[[:space:]]*/, "", line)
+            if (line ~ /^[A-Za-z_][A-Za-z0-9_]*[[:space:]]*=/) {
+              name=line
+              sub(/[[:space:]]*=.*/, "", name)
+              rhs=line
+              sub(/^[^=]*=[[:space:]]*/, "", rhs)
+              if (rhs ~ /(^|[+])sha512([+]|$)/) hash_group[name]=1
+            }
+            next
+          }
+          {
+            line=$0
+            sub(/^[[:space:]]*/, "", line)
+            if (line ~ /^#/ || line == "") next
+            if (line !~ /^=?\//) next
+            rule=line
+            sub(/^[^[:space:]]+[[:space:]]+/, "", rule)
+            if (rule ~ /(^|[+])sha512([+]|$)/) next
+            n=split(rule, parts, /[+]/)
+            ok=0
+            for (i=1; i<=n; i++) if (hash_group[parts[i]]) ok=1
+            if (!ok) print $0
+          }
+        ' /etc/aide.conf /etc/aide.conf | head -n20
+      )"
+      echo "evidence=aide_selection_lines_without_sha512=${bad:-none}"
+      test -z "$bad"
     exit-status: 0
     stdout:
       - "evidence="
@@ -507,10 +535,13 @@ command:
     title: "The RHEL 9 fapolicy module must be configured to employ a deny-all, permit-by-exception policy to allow the execution of authorized software programs."
     meta: { stig_id: V-270180 }
     exec: |
-      p="$(awk -F= '$1 ~ /^[[:space:]]*permissive[[:space:]]*$/{gsub(/[[:space:]]/,"",$2);print $2;exit}' /etc/fapolicyd/fapolicyd.conf 2>/dev/null)"
-      last="$(grep -RhsE '^[[:space:]]*deny(_audit|_log)?[[:space:]]+perm=any[[:space:]]+all[[:space:]]*:[[:space:]]+all[[:space:]]*$' /etc/fapolicyd/rules.d /etc/fapolicyd/compiled.rules 2>/dev/null | tail -n1)"
-      echo "evidence=permissive=${p:-missing} deny_all=${last:-missing}"
-      test "$p" = 0 && test -n "$last"
+      permissive="$(grep -E '^[[:space:]]*permissive[[:space:]]*=[[:space:]]*0([[:space:]#]|$)' /etc/fapolicyd/fapolicyd.conf 2>/dev/null | tail -n1)"
+      rules=/etc/fapolicyd/compiled.rules
+      test -r "$rules" || rules=/etc/fapolicyd/rules.d/99-stig-deny-all.rules
+      last="$(awk 'NF && $1 !~ /^#/ {line=$0} END{print line}' "$rules" 2>/dev/null)"
+      echo "evidence=permissive=${permissive:-missing} last_rule=${last:-missing}"
+      test -n "$permissive"
+      printf '%s\\n' "$last" | grep -Eq '^[[:space:]]*deny(_audit|_log)?[[:space:]]+perm=any[[:space:]]+all[[:space:]]*:[[:space:]]+all[[:space:]]*$'
     exit-status: 0
     stdout:
       - "evidence="
