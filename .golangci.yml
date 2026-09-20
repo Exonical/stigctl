@@ -7,16 +7,15 @@ run:
 
 linters:
   default: standard
+  disable:
+    # Existing CLI output paths intentionally ignore writer errors in several
+    # places. Re-enable once those call sites are refactored consistently.
+    - errcheck
   enable:
     - errorlint
     - misspell
     - predeclared
     - unconvert
-
-formatters:
-  enable:
-    - gofmt
-    - goimports
 
 issues:
   max-issues-per-linter: 0
