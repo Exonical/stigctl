@@ -3669,4 +3669,523 @@ rules:
     status: manual
     remediation: {}
     validation: {}
+  V-257812:
+    title: RHEL 9 must disable core dump backtraces.
+    rule_id: SV-257812r1134897
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/25-system-hardening.yaml
+      step: V-257812
+    validation:
+      type: goss
+      file: validation/25-system-hardening.yaml
+      resource: command
+      test: V-257812
+
+  V-257813:
+    title: RHEL 9 must disable storing core dumps.
+    rule_id: SV-257813r1134899
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/25-system-hardening.yaml
+      step: V-257813
+    validation:
+      type: goss
+      file: validation/25-system-hardening.yaml
+      resource: command
+      test: V-257813
+
+  V-257814:
+    title: RHEL 9 must disable core dumps for all users.
+    rule_id: SV-257814r1156057
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/25-system-hardening.yaml
+      step: V-257814
+    validation:
+      type: goss
+      file: validation/25-system-hardening.yaml
+      resource: command
+      test: V-257814
+
+  V-257815:
+    title: RHEL 9 must disable acquiring, saving, and processing core dumps.
+    rule_id: SV-257815r1134903
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/25-system-hardening.yaml
+      step: V-257815
+    validation:
+      type: goss
+      file: validation/25-system-hardening.yaml
+      resource: command
+      test: V-257815
+
+  V-257817:
+    title: RHEL 9 must implement nonexecutable data to protect its memory from unauthorized code execution.
+    rule_id: SV-257817r1069383
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/25-system-hardening.yaml
+      step: V-257817
+    validation:
+      type: goss
+      file: validation/25-system-hardening.yaml
+      resource: command
+      test: V-257817
+
+  V-257819:
+    title: RHEL 9 must ensure cryptographic verification of vendor software packages.
+    rule_id: SV-257819r1015075
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/25-system-hardening.yaml
+      step: V-257819
+    validation:
+      type: goss
+      file: validation/25-system-hardening.yaml
+      resource: command
+      test: V-257819
+
+  V-257823:
+    title: RHEL 9 must be configured so that the cryptographic hashes of system files match vendor values.
+    rule_id: SV-257823r1155641
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/25-system-hardening.yaml
+      step: V-257823
+    validation:
+      type: goss
+      file: validation/25-system-hardening.yaml
+      resource: command
+      test: V-257823
+
+  V-257824:
+    title: RHEL 9 must remove all software components after updated versions have been installed.
+    rule_id: SV-257824r1044886
+    severity: low
+    status: automated
+    remediation:
+      file: remediation/25-system-hardening.yaml
+      step: V-257824
+    validation:
+      type: goss
+      file: validation/25-system-hardening.yaml
+      resource: command
+      test: V-257824
+
+  V-257830:
+    title: RHEL 9 must not install packages from the Extra Packages for Enterprise Linux (EPEL) repository.
+    rule_id: SV-257830r1134906
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/25-system-hardening.yaml
+      step: V-257830
+    validation:
+      type: goss
+      file: validation/25-system-hardening.yaml
+      resource: command
+      test: V-257830
+
+  V-257837:
+    title: A graphical display manager must not be installed on RHEL 9 unless approved.
+    rule_id: SV-257837r1044910
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/25-system-hardening.yaml
+      step: V-257837
+    validation:
+      type: goss
+      file: validation/25-system-hardening.yaml
+      resource: command
+      test: V-257837
+
+  V-257880:
+    title: RHEL 9 must disable mounting of cramfs.
+    rule_id: SV-257880r1044951
+    severity: low
+    status: automated
+    remediation:
+      file: remediation/25-system-hardening.yaml
+      step: V-257880
+    validation:
+      type: goss
+      file: validation/25-system-hardening.yaml
+      resource: command
+      test: V-257880
+
+  V-257882:
+    title: RHEL 9 system commands must have mode 755 or less permissive.
+    rule_id: SV-257882r991560
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/25-system-hardening.yaml
+      step: V-257882
+    validation:
+      type: goss
+      file: validation/25-system-hardening.yaml
+      resource: command
+      test: V-257882
+
+  V-257883:
+    title: RHEL 9 library directories must have mode 755 or less permissive.
+    rule_id: SV-257883r991560
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/25-system-hardening.yaml
+      step: V-257883
+    validation:
+      type: goss
+      file: validation/25-system-hardening.yaml
+      resource: command
+      test: V-257883
+
+  V-257884:
+    title: RHEL 9 library files must have mode 755 or less permissive.
+    rule_id: SV-257884r1106306
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/25-system-hardening.yaml
+      step: V-257884
+    validation:
+      type: goss
+      file: validation/25-system-hardening.yaml
+      resource: command
+      test: V-257884
+
+  V-257889:
+    title: All RHEL 9 local initialization files must have mode 0740 or less permissive.
+    rule_id: SV-257889r1184302
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/25-system-hardening.yaml
+      step: V-257889
+    validation:
+      type: goss
+      file: validation/25-system-hardening.yaml
+      resource: command
+      test: V-257889
+
+  V-257890:
+    title: All RHEL 9 local interactive user home directories must have mode 0750 or less permissive.
+    rule_id: SV-257890r1184305
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/25-system-hardening.yaml
+      step: V-257890
+    validation:
+      type: goss
+      file: validation/25-system-hardening.yaml
+      resource: command
+      test: V-257890
+
+  V-257918:
+    title: RHEL 9 system commands must be owned by root.
+    rule_id: SV-257918r1044977
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/25-system-hardening.yaml
+      step: V-257918
+    validation:
+      type: goss
+      file: validation/25-system-hardening.yaml
+      resource: command
+      test: V-257918
+
+  V-257920:
+    title: RHEL 9 library files must be owned by root.
+    rule_id: SV-257920r1101926
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/25-system-hardening.yaml
+      step: V-257920
+    validation:
+      type: goss
+      file: validation/25-system-hardening.yaml
+      resource: command
+      test: V-257920
+
+  V-257922:
+    title: RHEL 9 library directories must be owned by root.
+    rule_id: SV-257922r1044988
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/25-system-hardening.yaml
+      step: V-257922
+    validation:
+      type: goss
+      file: validation/25-system-hardening.yaml
+      resource: command
+      test: V-257922
+
+  V-257929:
+    title: A sticky bit must be set on all RHEL 9 public directories.
+    rule_id: SV-257929r1137695
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/25-system-hardening.yaml
+      step: V-257929
+    validation:
+      type: goss
+      file: validation/25-system-hardening.yaml
+      resource: command
+      test: V-257929
+
+  V-257930:
+    title: All RHEL 9 local files and directories must have a valid group owner.
+    rule_id: SV-257930r991589
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/25-system-hardening.yaml
+      step: V-257930
+    validation:
+      type: goss
+      file: validation/25-system-hardening.yaml
+      resource: command
+      test: V-257930
+
+  V-257931:
+    title: All RHEL 9 local files and directories must have a valid owner.
+    rule_id: SV-257931r991589
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/25-system-hardening.yaml
+      step: V-257931
+    validation:
+      type: goss
+      file: validation/25-system-hardening.yaml
+      resource: command
+      test: V-257931
+
+  V-257932:
+    title: RHEL 9 must be configured so that all system device files are correctly labeled to prevent unauthorized modification.
+    rule_id: SV-257932r1014838
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/25-system-hardening.yaml
+      step: V-257932
+    validation:
+      type: goss
+      file: validation/25-system-hardening.yaml
+      resource: command
+      test: V-257932
+
+  V-257934:
+    title: RHEL 9 /etc/shadow file must have mode 0000 to prevent unauthorized access.
+    rule_id: SV-257934r991589
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/25-system-hardening.yaml
+      step: V-257934
+    validation:
+      type: goss
+      file: validation/25-system-hardening.yaml
+      resource: command
+      test: V-257934
+
+  V-257941:
+    title: RHEL 9 network interfaces must not be in promiscuous mode.
+    rule_id: SV-257941r991589
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/25-system-hardening.yaml
+      step: V-257941
+    validation:
+      type: goss
+      file: validation/25-system-hardening.yaml
+      resource: command
+      test: V-257941
+
+  V-257946:
+    title: RHEL 9 must disable the chrony daemon from acting as a server.
+    rule_id: SV-257946r1184307
+    severity: low
+    status: automated
+    remediation:
+      file: remediation/25-system-hardening.yaml
+      step: V-257946
+    validation:
+      type: goss
+      file: validation/25-system-hardening.yaml
+      resource: command
+      test: V-257946
+
+  V-257947:
+    title: RHEL 9 must disable network management of the chrony daemon.
+    rule_id: SV-257947r958480
+    severity: low
+    status: automated
+    remediation:
+      file: remediation/25-system-hardening.yaml
+      step: V-257947
+    validation:
+      type: goss
+      file: validation/25-system-hardening.yaml
+      resource: command
+      test: V-257947
+
+  V-257948:
+    title: RHEL 9 systems using Domain Name Servers (DNS) resolution must have at least two name servers configured.
+    rule_id: SV-257948r1045004
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/25-system-hardening.yaml
+      step: V-257948
+    validation:
+      type: goss
+      file: validation/25-system-hardening.yaml
+      resource: command
+      test: V-257948
+
+  V-257949:
+    title: RHEL 9 must configure a DNS processing mode in Network Manager.
+    rule_id: SV-257949r1134947
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/25-system-hardening.yaml
+      step: V-257949
+    validation:
+      type: goss
+      file: validation/25-system-hardening.yaml
+      resource: command
+      test: V-257949
+
+  V-257951:
+    title: RHEL 9 must be configured to prevent unrestricted mail relaying.
+    rule_id: SV-257951r1014843
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/25-system-hardening.yaml
+      step: V-257951
+    validation:
+      type: goss
+      file: validation/25-system-hardening.yaml
+      resource: command
+      test: V-257951
+
+  V-257953:
+    title: RHEL 9 must forward mail from postmaster to the root account using a postfix alias.
+    rule_id: SV-257953r958424
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/25-system-hardening.yaml
+      step: V-257953
+    validation:
+      type: goss
+      file: validation/25-system-hardening.yaml
+      resource: command
+      test: V-257953
+
+  V-257981:
+    title: RHEL 9 must display the Standard Mandatory DOD Notice and Consent Banner before granting local or remote access to the system via a SSH logon.
+    rule_id: SV-257981r1101970
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/25-system-hardening.yaml
+      step: V-257981
+    validation:
+      type: goss
+      file: validation/25-system-hardening.yaml
+      resource: command
+      test: V-257981
+
+  V-257919:
+    title: RHEL 9 system commands must be group-owned by root or a system account.
+    rule_id: SV-257919r1044979
+    severity: medium
+    status: manual
+    remediation: {}
+    validation: {}
+
+  V-257921:
+    title: RHEL 9 library files must be group-owned by root or a system account.
+    rule_id: SV-257921r1106308
+    severity: medium
+    status: manual
+    remediation: {}
+    validation: {}
+
+  V-257923:
+    title: RHEL 9 library directories must be group-owned by root or a system account.
+    rule_id: SV-257923r1044991
+    severity: medium
+    status: manual
+    remediation: {}
+    validation: {}
+
+  V-257928:
+    title: All RHEL 9 world-writable directories must be owned by root, sys, bin, or an application user.
+    rule_id: SV-257928r1155576
+    severity: medium
+    status: manual
+    remediation: {}
+    validation: {}
+
+  V-257937:
+    title: The RHEL 9 firewall must employ a deny-all, allow-by-exception policy for allowing connections to other systems.
+    rule_id: SV-257937r1106310
+    severity: medium
+    status: manual
+    remediation: {}
+    validation: {}
+
+  V-257939:
+    title: RHEL 9 must protect against or limit the effects of denial-of-service (DoS) attacks by ensuring rate-limiting measures on impacted network interfaces are implemented.
+    rule_id: SV-257939r1044997
+    severity: medium
+    status: manual
+    remediation: {}
+    validation: {}
+
+  V-257940:
+    title: RHEL 9 must be configured to prohibit or restrict the use of functions, ports, protocols, and/or services, as defined in the Ports, Protocols, and Services Management (PPSM) Category Assignments List (CAL) and vulnerability assessments.
+    rule_id: SV-257940r1106312
+    severity: medium
+    status: manual
+    remediation: {}
+    validation: {}
+
+  V-257945:
+    title: RHEL 9 must securely compare internal information system clocks at least every 24 hours.
+    rule_id: SV-257945r1038944
+    severity: medium
+    status: manual
+    remediation: {}
+    validation: {}
+
+  V-257950:
+    title: RHEL 9 must not have unauthorized IP tunnels configured.
+    rule_id: SV-257950r1045006
+    severity: medium
+    status: manual
+    remediation: {}
+    validation: {}
 
