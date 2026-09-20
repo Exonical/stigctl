@@ -1,0 +1,31 @@
+name: RHEL 9 STIG - Authentication and MAC
+
+stages:
+  stig:
+    - name: V-257984
+      files:
+        - path: /etc/ssh/sshd_config.d/60-stig-V-257984.conf
+          permissions: "0600"
+          content: |
+            PermitEmptyPasswords no
+      commands:
+        - systemctl restart sshd.service || true
+
+    - name: V-257986
+      files:
+        - path: /etc/ssh/sshd_config.d/60-stig-V-257986.conf
+          permissions: "0600"
+          content: |
+            UsePAM yes
+      commands:
+        - systemctl restart sshd.service || true
+
+    - name: V-258078
+      commands:
+        - |
+          if grep -qE '^[[:space:]]*SELINUX=' /etc/selinux/config; then
+            sed -ri 's/^[[:space:]]*SELINUX=.*/SELINUX=enforcing/' /etc/selinux/config
+          else
+            printf '\nSELINUX=enforcing\n' >> /etc/selinux/config
+          fi
+          setenforce 1 2>/dev/null || true
