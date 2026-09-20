@@ -1200,3 +1200,156 @@ command:
       - "verified="
     skip: {{ not (index .Vars.enabled_rules "V-279936") }}
 
+  V-258153:
+    title: "RHEL 9 audit system must take appropriate action when an error writing to the audit storage volume occurs."
+    meta: { stig_id: V-258153 }
+    exec: |
+      value="$(awk -F= '/^[[:space:]]*disk_error_action[[:space:]]*=/{gsub(/[[:space:]]/,"",$2); print $2; exit}' /etc/audit/auditd.conf)"
+      test -n "$value" || exit 1
+      printf 'disk_error_action=%s\n' "$value"
+      test "$(printf '%s' "$value" | tr '[:lower:]' '[:upper:]')" = "$(printf '%s' 'HALT' | tr '[:lower:]' '[:upper:]')"
+    exit-status: 0
+    stdout:
+      - "disk_error_action="
+    skip: {{ not (index .Vars.enabled_rules "V-258153") }}
+
+
+  V-258154:
+    title: "RHEL 9 audit system must take appropriate action when the audit storage volume is full."
+    meta: { stig_id: V-258154 }
+    exec: |
+      value="$(awk -F= '/^[[:space:]]*disk_full_action[[:space:]]*=/{gsub(/[[:space:]]/,"",$2); print $2; exit}' /etc/audit/auditd.conf)"
+      test -n "$value" || exit 1
+      printf 'disk_full_action=%s\n' "$value"
+      test "$(printf '%s' "$value" | tr '[:lower:]' '[:upper:]')" = "$(printf '%s' 'HALT' | tr '[:lower:]' '[:upper:]')"
+    exit-status: 0
+    stdout:
+      - "disk_full_action="
+    skip: {{ not (index .Vars.enabled_rules "V-258154") }}
+
+
+  V-258156:
+    title: "RHEL 9 must take action when allocated audit record storage volume reaches 75 percent of the repository maximum audit record storage capacity."
+    meta: { stig_id: V-258156 }
+    exec: |
+      value="$(awk -F= '/^[[:space:]]*space_left[[:space:]]*=/{gsub(/[[:space:]]/,"",$2); print $2; exit}' /etc/audit/auditd.conf)"
+      test -n "$value" || exit 1
+      printf 'space_left=%s\n' "$value"
+      test "$(printf '%s' "$value" | tr '[:lower:]' '[:upper:]')" = "$(printf '%s' '25%' | tr '[:lower:]' '[:upper:]')"
+    exit-status: 0
+    stdout:
+      - "space_left="
+    skip: {{ not (index .Vars.enabled_rules "V-258156") }}
+
+
+  V-258157:
+    title: "RHEL 9 must notify the system administrator (SA) and information system security officer (ISSO) (at a minimum) when allocated audit record storage volume reaches 75 percent utilization."
+    meta: { stig_id: V-258157 }
+    exec: |
+      value="$(awk -F= '/^[[:space:]]*space_left_action[[:space:]]*=/{gsub(/[[:space:]]/,"",$2); print $2; exit}' /etc/audit/auditd.conf)"
+      test -n "$value" || exit 1
+      printf 'space_left_action=%s\n' "$value"
+      test "$(printf '%s' "$value" | tr '[:lower:]' '[:upper:]')" = "$(printf '%s' 'email' | tr '[:lower:]' '[:upper:]')"
+    exit-status: 0
+    stdout:
+      - "space_left_action="
+    skip: {{ not (index .Vars.enabled_rules "V-258157") }}
+
+
+  V-258158:
+    title: "RHEL 9 must take action when allocated audit record storage volume reaches 95 percent of the audit record storage capacity."
+    meta: { stig_id: V-258158 }
+    exec: |
+      value="$(awk -F= '/^[[:space:]]*admin_space_left[[:space:]]*=/{gsub(/[[:space:]]/,"",$2); print $2; exit}' /etc/audit/auditd.conf)"
+      test -n "$value" || exit 1
+      printf 'admin_space_left=%s\n' "$value"
+      test "$(printf '%s' "$value" | tr '[:lower:]' '[:upper:]')" = "$(printf '%s' '5%' | tr '[:lower:]' '[:upper:]')"
+    exit-status: 0
+    stdout:
+      - "admin_space_left="
+    skip: {{ not (index .Vars.enabled_rules "V-258158") }}
+
+
+  V-258159:
+    title: "RHEL 9 must take action when allocated audit record storage volume reaches 95 percent of the repository maximum audit record storage capacity."
+    meta: { stig_id: V-258159 }
+    exec: |
+      value="$(awk -F= '/^[[:space:]]*admin_space_left_action[[:space:]]*=/{gsub(/[[:space:]]/,"",$2); print $2; exit}' /etc/audit/auditd.conf)"
+      test -n "$value" || exit 1
+      printf 'admin_space_left_action=%s\n' "$value"
+      test "$(printf '%s' "$value" | tr '[:lower:]' '[:upper:]')" = "$(printf '%s' 'single' | tr '[:lower:]' '[:upper:]')"
+    exit-status: 0
+    stdout:
+      - "admin_space_left_action="
+    skip: {{ not (index .Vars.enabled_rules "V-258159") }}
+
+
+  V-258160:
+    title: "RHEL 9 audit system must take appropriate action when the audit files have reached maximum size."
+    meta: { stig_id: V-258160 }
+    exec: |
+      value="$(awk -F= '/^[[:space:]]*max_log_file_action[[:space:]]*=/{gsub(/[[:space:]]/,"",$2); print $2; exit}' /etc/audit/auditd.conf)"
+      test -n "$value" || exit 1
+      printf 'max_log_file_action=%s\n' "$value"
+      test "$(printf '%s' "$value" | tr '[:lower:]' '[:upper:]')" = "$(printf '%s' 'ROTATE' | tr '[:lower:]' '[:upper:]')"
+    exit-status: 0
+    stdout:
+      - "max_log_file_action="
+    skip: {{ not (index .Vars.enabled_rules "V-258160") }}
+
+
+  V-258161:
+    title: "RHEL 9 must label all offloaded audit logs before sending them to the central log server."
+    meta: { stig_id: V-258161 }
+    exec: |
+      value="$(awk -F= '/^[[:space:]]*name_format[[:space:]]*=/{gsub(/[[:space:]]/,"",$2); print $2; exit}' /etc/audit/auditd.conf)"
+      test -n "$value" || exit 1
+      printf 'name_format=%s\n' "$value"
+      test "$(printf '%s' "$value" | tr '[:lower:]' '[:upper:]')" = "$(printf '%s' 'hostname' | tr '[:lower:]' '[:upper:]')"
+    exit-status: 0
+    stdout:
+      - "name_format="
+    skip: {{ not (index .Vars.enabled_rules "V-258161") }}
+
+
+  V-258162:
+    title: "RHEL 9 must take appropriate action when the internal event queue is full."
+    meta: { stig_id: V-258162 }
+    exec: |
+      value="$(awk -F= '/^[[:space:]]*overflow_action[[:space:]]*=/{gsub(/[[:space:]]/,"",$2); print $2; exit}' /etc/audit/auditd.conf)"
+      test -n "$value" || exit 1
+      printf 'overflow_action=%s\n' "$value"
+      test "$(printf '%s' "$value" | tr '[:lower:]' '[:upper:]')" = "$(printf '%s' 'syslog' | tr '[:lower:]' '[:upper:]')"
+    exit-status: 0
+    stdout:
+      - "overflow_action="
+    skip: {{ not (index .Vars.enabled_rules "V-258162") }}
+
+
+  V-258163:
+    title: "RHEL 9 System Administrator (SA) and/or information system security officer (ISSO) (at a minimum) must be alerted of an audit processing failure event."
+    meta: { stig_id: V-258163 }
+    exec: |
+      value="$(awk -F= '/^[[:space:]]*action_mail_acct[[:space:]]*=/{gsub(/[[:space:]]/,"",$2); print $2; exit}' /etc/audit/auditd.conf)"
+      test -n "$value" || exit 1
+      printf 'action_mail_acct=%s\n' "$value"
+      test "$(printf '%s' "$value" | tr '[:lower:]' '[:upper:]')" = "$(printf '%s' 'root' | tr '[:lower:]' '[:upper:]')"
+    exit-status: 0
+    stdout:
+      - "action_mail_acct="
+    skip: {{ not (index .Vars.enabled_rules "V-258163") }}
+
+
+  V-258173:
+    title: "RHEL 9 must allocate an audit_backlog_limit of sufficient size to capture processes that start prior to the audit daemon."
+    meta: { stig_id: V-258173 }
+    exec: |
+      value="$(grep -oE 'audit_backlog_limit=[0-9]+' /proc/cmdline 2>/dev/null | tail -n1 | cut -d= -f2)"
+      test -n "$value" || exit 1
+      printf 'audit_backlog_limit=%s\n' "$value"
+      test "$value" -ge 8192
+    exit-status: 0
+    stdout:
+      - "audit_backlog_limit="
+    skip: {{ not (index .Vars.enabled_rules "V-258173") }}
+
