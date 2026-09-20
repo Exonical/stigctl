@@ -3672,7 +3672,7 @@ rules:
     title: RHEL 9 must require a boot loader superuser password.
     rule_id: SV-257787r1184288
     severity: medium
-    status: manual
+    status: automated
     remediation: {}
     validation: {}
   V-257812:
