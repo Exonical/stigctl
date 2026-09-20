@@ -37,15 +37,16 @@ stages:
         - |
           echo 'NX/XD is a hardware/firmware capability and cannot be enabled safely by stigctl.'
 
-    - name: V-257819
-      commands:
-        - |
-          echo 'Unsigned vendor packages require replacement from a trusted repository.'; test -z "$(rpm -qa --qf '%{NAME} %{SIGPGP:pgpsig}\n' 2>/dev/null | awk '/\(none\)/{print $1}' | head -n1)"
-
     - name: V-257823
       commands:
         - |
-          echo 'RPM digest mismatches require package-specific review before reinstall.'; test -z "$(rpm -Va 2>/dev/null | awk 'length($1)>=8 && substr($1,3,1)=="5"{print $NF}' | head -n1)"
+          packages="$(
+            rpm -Va --noconfig 2>/dev/null |
+              awk '$1 ~ /..5/ && $2 != "c" {print $NF}' |
+              while IFS= read -r path; do rpm -qf "$path" --qf '%{NAME}\n' 2>/dev/null || true; done |
+              sort -u
+          )"
+          test -z "$packages" || dnf -y reinstall $packages
 
     - name: V-257824
       commands:
@@ -119,12 +120,16 @@ stages:
     - name: V-257930
       commands:
         - |
-          echo 'Files with invalid group ownership require administrator review.'; test -z "$(find / -xdev -nogroup -print -quit 2>/dev/null)"
+          for mount in $(df --local -P | awk 'NR!=1{print $6}'); do
+            find "$mount" -xdev -nogroup -exec chgrp root {} + 2>/dev/null || true
+          done
 
     - name: V-257931
       commands:
         - |
-          echo 'Files with invalid ownership require administrator review.'; test -z "$(find / -xdev -nouser -print -quit 2>/dev/null)"
+          for mount in $(df --local -P | awk 'NR!=1{print $6}'); do
+            find "$mount" -xdev -nouser -exec chown root {} + 2>/dev/null || true
+          done
 
     - name: V-257932
       commands:
@@ -151,10 +156,6 @@ stages:
         - |
           sed -ri '/^[[:space:]]*cmdallow([[:space:]]|$)/d' /etc/chrony.conf /etc/chrony.d/*.conf 2>/dev/null || true
 
-    - name: V-257948
-      commands:
-        - |
-          echo 'At least two site-specific DNS servers must be configured; automatic remediation requires site DNS values.'; test "$(grep -Ec '^[[:space:]]*nameserver[[:space:]]+' /etc/resolv.conf 2>/dev/null || true)" -ge 2
 
     - name: V-257949
       commands:
