@@ -131,3 +131,53 @@ command:
     exec: "grep -Eq '^[[:space:]]*ENCRYPT_METHOD[[:space:]]+SHA512[[:space:]]*$' /etc/login.defs"
     exit-status: 0
     skip: {{ not (index .Vars.enabled_rules "V-258117") }}
+
+  V-258072:
+    title: "RHEL 9 must define default permissions for the bash shell."
+    meta: { stig_id: V-258072 }
+    exec: "grep -Eq '^[[:space:]]*umask[[:space:]]+077[[:space:]]*$' /etc/bashrc"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-258072") }}
+
+  V-258073:
+    title: "RHEL 9 must define default permissions for the c shell."
+    meta: { stig_id: V-258073 }
+    exec: "grep -Eq '^[[:space:]]*umask[[:space:]]+077[[:space:]]*$' /etc/csh.cshrc"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-258073") }}
+
+  V-258074:
+    title: "RHEL 9 must define default permissions for all authenticated users."
+    meta: { stig_id: V-258074 }
+    exec: "grep -Eq '^[[:space:]]*UMASK[[:space:]]+077[[:space:]]*$' /etc/login.defs"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-258074") }}
+
+  V-258075:
+    title: "RHEL 9 must define default permissions for the system default profile."
+    meta: { stig_id: V-258075 }
+    exec: "grep -Eq '^[[:space:]]*umask[[:space:]]+077[[:space:]]*$' /etc/profile"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-258075") }}
+
+  V-258084:
+    title: "RHEL 9 must require reauthentication when using sudo."
+    meta: { stig_id: V-258084 }
+    exec: "grep -REiq '^[[:space:]]*Defaults[[:space:]]+.*timestamp_timeout[[:space:]]*=[[:space:]]*0([[:space:],]|$)' /etc/sudoers /etc/sudoers.d 2>/dev/null"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-258084") }}
+
+  V-258085:
+    title: "RHEL 9 must use the invoking user's password for privilege escalation."
+    meta: { stig_id: V-258085 }
+    exec: |
+      ! grep -REiq '^[[:space:]]*Defaults[[:space:]]+.*(targetpw|rootpw|runaspw)([[:space:],]|$)' /etc/sudoers /etc/sudoers.d 2>/dev/null
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-258085") }}
+
+  V-258106:
+    title: "RHEL 9 must require users to provide a password for privilege escalation."
+    meta: { stig_id: V-258106 }
+    exec: "! grep -REiq '^[[:space:]]*[^#].*NOPASSWD' /etc/sudoers /etc/sudoers.d 2>/dev/null"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-258106") }}
