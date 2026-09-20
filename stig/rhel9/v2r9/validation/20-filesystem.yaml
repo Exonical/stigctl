@@ -262,3 +262,52 @@ command:
       esac
     exit-status: 0
     skip: {{ not (index .Vars.enabled_rules "V-257879") }}
+
+  V-257919:
+    title: "RHEL 9 system commands must be group-owned by root or a system account."
+    meta: { stig_id: V-257919 }
+    exec: |
+      bad=""
+      while IFS= read -r path; do
+        gid="$(stat -Lc %g "$path" 2>/dev/null || echo 99999)"
+        if test "$gid" -ge 1000; then bad="$path gid=$gid"; break; fi
+      done < <(find -L /bin /sbin /usr/bin /usr/sbin /usr/libexec /usr/local/bin /usr/local/sbin -xdev -type f -print 2>/dev/null)
+      echo "evidence=invalid_system_command_group=${bad:-none}"
+      test -z "$bad"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257919") }}
+
+  V-257921:
+    title: "RHEL 9 library files must be group-owned by root or a system account."
+    meta: { stig_id: V-257921 }
+    exec: |
+      bad=""
+      while IFS= read -r path; do
+        gid="$(stat -c %g "$path" 2>/dev/null || echo 99999)"
+        if test "$gid" -ge 1000; then bad="$path gid=$gid"; break; fi
+      done < <(find /lib /lib64 /usr/lib /usr/lib64 -xdev -type f -name '*.so*' -print 2>/dev/null)
+      echo "evidence=invalid_library_file_group=${bad:-none}"
+      test -z "$bad"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257921") }}
+
+  V-257923:
+    title: "RHEL 9 library directories must be group-owned by root or a system account."
+    meta: { stig_id: V-257923 }
+    exec: |
+      bad=""
+      while IFS= read -r path; do
+        gid="$(stat -c %g "$path" 2>/dev/null || echo 99999)"
+        if test "$gid" -ge 1000; then bad="$path gid=$gid"; break; fi
+      done < <(find /lib /lib64 /usr/lib /usr/lib64 -xdev -type d -print 2>/dev/null)
+      echo "evidence=invalid_library_directory_group=${bad:-none}"
+      test -z "$bad"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257923") }}
+
