@@ -405,7 +405,7 @@ make test
 make build
 ```
 
-The CI workflow uses Go 1.27.1.
+The CI workflow uses Go 1.27.1. Its Rocky Linux 9 job asserts both a clean scan and a deliberately induced finding.
 
 
 ## Releases
