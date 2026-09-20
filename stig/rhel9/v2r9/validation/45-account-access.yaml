@@ -516,3 +516,157 @@ command:
       - "evidence="
     skip: {{ not (index .Vars.enabled_rules "V-270180") }}
 
+  V-258044:
+    title: "RHEL 9 must set the umask value to 077 for all local interactive user accounts."
+    meta: { stig_id: V-258044 }
+    exec: |
+      bad=""
+      while IFS=: read -r user _ uid _ _ home shell; do
+        test "$uid" -ge 1000 || continue
+        case "$shell" in */nologin|*/false) continue;; esac
+        test -d "$home" || continue
+        while IFS= read -r file; do
+          while IFS= read -r line; do
+            value="$(printf '%s
+' "$line" | sed -E 's/^[[:space:]]*umask[[:space:]]+0*([0-7]{2,4}).*/\1/I')"
+            case "$value" in *[!0-7]*|"") bad="$user:$file:$line"; break 3;; esac
+            test $((8#$value & 8#077)) -eq $((8#077)) || { bad="$user:$file:$line"; break 3; }
+          done < <(grep -Ei '^[[:space:]]*umask[[:space:]]+' "$file" 2>/dev/null || true)
+        done < <(find "$home" -maxdepth 1 -type f -name '.*' ! -name '.bash_history' -print 2>/dev/null)
+      done < /etc/passwd
+      echo "evidence=interactive_umask_violation=${bad:-none}"
+      test -z "$bad"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258044") }}
+
+  V-258050:
+    title: "Executable search paths in local interactive user initialization files must be restricted."
+    meta: { stig_id: V-258050 }
+    exec: |
+      bad=""
+      while IFS=: read -r user _ uid _ _ home shell; do
+        test "$uid" -ge 1000 || continue
+        case "$shell" in */nologin|*/false) continue;; esac
+        test -d "$home" || continue
+        while IFS= read -r file; do
+          while IFS= read -r line; do
+            value="$(printf '%s
+' "$line" | sed -E 's/^[[:space:]]*(export[[:space:]]+)?PATH[[:space:]]*=[[:space:]]*//; s/^"//; s/"$//')"
+            IFS=: read -ra parts <<< "$value"
+            for part in "${parts[@]}"; do
+              case "$part" in
+                ""|'$PATH'|"${PATH}"|'$HOME'|'$HOME/'*|"${HOME}"|"${HOME}/"*|"$home"|"$home/"*|/usr/local/sbin|/usr/local/bin|/usr/sbin|/usr/bin|/sbin|/bin) ;;
+                *) bad="$user:$file:$part"; break 4 ;;
+              esac
+            done
+          done < <(grep -Ei '^[[:space:]]*(export[[:space:]]+)?PATH[[:space:]]*=' "$file" 2>/dev/null || true)
+        done < <(find "$home" -maxdepth 1 -type f -name '.*' ! -name '.bash_history' -print 2>/dev/null)
+      done < /etc/passwd
+      echo "evidence=interactive_path_violation=${bad:-none}"
+      test -z "$bad"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258050") }}
+
+  V-258080:
+    title: "RHEL 9 must configure SELinux context type for a nondefault faillock tally directory."
+    meta: { stig_id: V-258080 }
+    exec: |
+      dir="$(awk -F= '/^[[:space:]]*dir[[:space:]]*=/{gsub(/[[:space:]]/,"",$2);print $2;exit}' /etc/security/faillock.conf 2>/dev/null)"
+      test -n "$dir"
+      ctx="$(stat -c %C "$dir" 2>/dev/null || true)"
+      echo "evidence=faillock_dir=$dir context=${ctx:-missing}"
+      printf '%s
+' "$ctx" | grep -q ':faillog_t:'
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258080") }}
+
+  V-258121:
+    title: "RHEL 9 must use the common access card (CAC) smart card driver."
+    meta: { stig_id: V-258121 }
+    exec: |
+      value="$(opensc-tool --get-conf-entry app:default:card_drivers 2>/dev/null || true)"
+      echo "evidence=card_drivers=${value:-missing}"
+      printf '%s
+' "$value" | grep -qw cac
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258121") }}
+
+  V-258122:
+    title: "RHEL 9 must enable certificate based smart card authentication."
+    meta: { stig_id: V-258122 }
+    exec: |
+      line="$(grep -RihsE '^[[:space:]]*pam_cert_auth[[:space:]]*=[[:space:]]*true[[:space:]]*$' /etc/sssd/sssd.conf /etc/sssd/conf.d 2>/dev/null | head -n1)"
+      echo "evidence=pam_cert_auth=${line:-missing}"
+      test -n "$line"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258122") }}
+
+  V-258123:
+    title: "RHEL 9 must implement certificate status checking for multifactor authentication."
+    meta: { stig_id: V-258123 }
+    exec: |
+      line="$(grep -RihsE '^[[:space:]]*certificate_verification[[:space:]]*=.*ocsp_dgst=sha512' /etc/sssd/sssd.conf /etc/sssd/conf.d 2>/dev/null | head -n1)"
+      echo "evidence=certificate_verification=${line:-missing}"
+      test -n "$line"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258123") }}
+
+  V-258127:
+    title: "RHEL 9 PKI authentication private keys must require a passphrase."
+    meta: { stig_id: V-258127 }
+    exec: |
+      bad=""
+      while IFS= read -r file; do
+        grep -Eq 'BEGIN (OPENSSH|RSA|EC|DSA) PRIVATE KEY' "$file" 2>/dev/null || continue
+        if ssh-keygen -y -P '' -f "$file" >/dev/null 2>&1; then bad="$file"; break; fi
+      done < <(find /root /home -xdev -type f -size +0c -print 2>/dev/null)
+      echo "evidence=unencrypted_private_key=${bad:-none}"
+      test -z "$bad"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258127") }}
+
+  V-258131:
+    title: "RHEL 9 PKI authentication must validate certificates to an accepted DOD trust anchor."
+    meta: { stig_id: V-258131 }
+    exec: |
+      file=/etc/sssd/pki/sssd_auth_ca_db.pem
+      test -r "$file"
+      text="$(openssl x509 -text -noout -in "$file" 2>/dev/null || true)"
+      echo "evidence=sssd_auth_ca_db_present=$(test -n "$text" && echo true || echo false)"
+      test -n "$text"
+      printf '%s
+' "$text" | grep -Eqi 'U\.S\. Government|DoD'
+      openssl x509 -checkend 0 -noout -in "$file" >/dev/null 2>&1
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258131") }}
+
+  V-258132:
+    title: "RHEL 9 must map the authenticated PKI identity to a user or group account."
+    meta: { stig_id: V-258132 }
+    exec: |
+      section="$(grep -RhsE '^\[certmap/[^]]+\]' /etc/sssd/sssd.conf /etc/sssd/conf.d 2>/dev/null | head -n1)"
+      map="$(grep -RhsE '^[[:space:]]*maprule[[:space:]]*=' /etc/sssd/sssd.conf /etc/sssd/conf.d 2>/dev/null | head -n1)"
+      echo "evidence=certmap_section=${section:-missing} maprule=${map:-missing}"
+      test -n "$section"
+      test -n "$map"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258132") }}
+
