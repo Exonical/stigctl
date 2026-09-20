@@ -211,4 +211,11 @@ exceptions:
   # The CI container does not run NetworkManager or an SSH daemon.
   V-257949: *container_service_na
   V-257981: *container_service_na
+  # Device and host-service controls are outside the CI container hardware/service boundary.
+  V-258034: *container_service_na
+  V-258036: *container_service_na
+  V-258037: *container_service_na
+  V-258038: *container_service_na
+  V-258039: *container_service_na
+  V-258040: *container_service_na
 
