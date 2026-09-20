@@ -330,3 +330,56 @@ command:
       - "evidence="
     skip: {{ not (index .Vars.enabled_rules "V-257981") }}
 
+  V-257928:
+    title: "All RHEL 9 world-writable directories must be owned by root, a system account, or an approved application account."
+    meta: { stig_id: V-257928 }
+    exec: |
+      bad="$(find / -xdev -type d -perm -0002 -uid +999 -exec stat -c '%U uid=%u path=%n' {} \; 2>/dev/null | head -n20)"
+      echo "evidence=world_writable_directories_owned_by_uid_gt_999=${bad:-none}"
+      test -z "$bad"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257928") }}
+
+  V-257945:
+    title: "RHEL 9 must securely compare internal information system clocks at least every 24 hours."
+    meta: { stig_id: V-257945 }
+    exec: |
+      bad=""
+      servers=0
+      while IFS= read -r line; do
+        test -n "$line" || continue
+        servers=$((servers + 1))
+        host="$(printf '%s\\n' "$line" | awk '{print $2}')"
+        maxpoll="$(printf '%s\\n' "$line" | sed -nE 's/.*[[:space:]]maxpoll[[:space:]]+([0-9]+).*/\1/p')"
+        test -n "$maxpoll" || maxpoll=10
+        echo "evidence=chrony_server=$host maxpoll=$maxpoll"
+        if test "$maxpoll" -gt 16; then bad="$host maxpoll=$maxpoll"; break; fi
+        printf '%s\\n' "$host" | grep -Eqi '(^|\\.)mil$' || { bad="$host not_dod_source"; break; }
+      done < <(grep -RhsE '^[[:space:]]*(server|pool)[[:space:]]+' /etc/chrony.conf /etc/chrony.d 2>/dev/null)
+      echo "evidence=chrony_server_count=$servers violation=${bad:-none}"
+      test "$servers" -gt 0
+      test -z "$bad"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257945") }}
+
+  V-257950:
+    title: "RHEL 9 must not have unauthorized IP tunnels configured."
+    meta: { stig_id: V-257950 }
+    exec: |
+      state="$(systemctl is-active ipsec 2>/dev/null || true)"
+      if test "$state" != active; then
+        echo "evidence=ipsec_state=$state tunnels=none"
+        exit 0
+      fi
+      conns="$(grep -RhsEi '^[[:space:]]*conn[[:space:]]+' /etc/ipsec.conf /etc/ipsec.d 2>/dev/null | head -n20)"
+      echo "evidence=ipsec_state=active configured_connections=${conns:-none}"
+      exit 1
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257950") }}
+
