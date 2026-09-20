@@ -177,7 +177,7 @@ command:
     title: "RHEL 9 must use the invoking user's password for privilege escalation."
     meta: { stig_id: V-258085 }
     exec: |
-      ! grep -REiq '^[[:space:]]*Defaults[[:space:]]+.*(targetpw|rootpw|runaspw)([[:space:],]|$)' /etc/sudoers /etc/sudoers.d 2>/dev/null
+      ! grep -REiq '^[[:space:]]*Defaults([[:space:]]|:|@|>).*([[:space:],]|^)(targetpw|rootpw|runaspw)([[:space:],]|$)' /etc/sudoers /etc/sudoers.d 2>/dev/null
     exit-status: 0
     skip: {{ not (index .Vars.enabled_rules "V-258085") }}
 
