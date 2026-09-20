@@ -221,7 +221,21 @@ stages:
     - name: V-258136
       commands:
         - |
-          if grep -q '^All=' /etc/aide.conf; then sed -ri 's|^All=.*|All=p+i+n+u+g+s+m+S+sha512+acl+xattrs+selinux|' /etc/aide.conf; else printf '\nAll=p+i+n+u+g+s+m+S+sha512+acl+xattrs+selinux\n' >> /etc/aide.conf; fi
+          tmp="$(mktemp)"
+          awk '
+            {
+              line=$0
+              trimmed=line
+              sub(/^[[:space:]]*/, "", trimmed)
+              if (trimmed ~ /^=?\// && trimmed !~ /(^|[+])sha512([+]|$)/) {
+                print line "+sha512"
+              } else {
+                print line
+              }
+            }
+          ' /etc/aide.conf > "$tmp"
+          cat "$tmp" > /etc/aide.conf
+          rm -f "$tmp"
 
     - name: V-258137
       commands:
@@ -241,10 +255,67 @@ stages:
     - name: V-270180
       commands:
         - |
-          if grep -qE '^[[:space:]]*permissive[[:space:]]*=' /etc/fapolicyd/fapolicyd.conf; then sed -ri 's/^[[:space:]]*permissive[[:space:]]*=.*/permissive = 0/' /etc/fapolicyd/fapolicyd.conf; else printf '\npermissive = 0\n' >> /etc/fapolicyd/fapolicyd.conf; fi
+          test -f /etc/fapolicyd/fapolicyd.conf
+          sed -ri '/^[[:space:]]*permissive[[:space:]]*=/d' /etc/fapolicyd/fapolicyd.conf
+          printf '\npermissive = 0\n' >> /etc/fapolicyd/fapolicyd.conf
           install -d -m 0755 /etc/fapolicyd/rules.d
-          grep -RhsE '^[[:space:]]*deny(_audit|_log)?[[:space:]]+perm=any[[:space:]]+all[[:space:]]*:[[:space:]]+all[[:space:]]*$' /etc/fapolicyd/rules.d 2>/dev/null | grep -q . || printf 'deny perm=any all : all\n' > /etc/fapolicyd/rules.d/99-stig-deny-all.rules
+          grep -RhsE '^[[:space:]]*deny(_audit|_log)?[[:space:]]+perm=any[[:space:]]+all[[:space:]]*:[[:space:]]+all[[:space:]]*
+    - name: V-258044
+      commands:
+        - |
+          while IFS=: read -r _ _ uid _ _ home shell; do
+            test "$uid" -ge 1000 || continue
+            case "$shell" in */nologin|*/false) continue;; esac
+            test -d "$home" || continue
+            find "$home" -maxdepth 1 -type f -name '.*' ! -name '.bash_history' -print0 2>/dev/null |
+              xargs -0 -r sed -ri '/^[[:space:]]*umask[[:space:]]+/Id'
+          done < /etc/passwd
+
+    - name: V-258080
+      commands:
+        - |
+          authselect enable-feature with-faillock 2>/dev/null || true
+          install -d -m 0700 -o root -g root /var/log/faillock
+          if grep -qE '^[[:space:]]*dir[[:space:]]*=' /etc/security/faillock.conf; then
+            sed -ri 's|^[[:space:]]*dir[[:space:]]*=.*|dir = /var/log/faillock|' /etc/security/faillock.conf
+          else
+            printf '\ndir = /var/log/faillock\n' >> /etc/security/faillock.conf
+          fi
+          semanage fcontext -a -t faillog_t '/var/log/faillock(/.*)?' 2>/dev/null || semanage fcontext -m -t faillog_t '/var/log/faillock(/.*)?' 2>/dev/null || true
+          restorecon -RF /var/log/faillock 2>/dev/null || true
+
+    - name: V-258121
+      commands:
+        - |
+          opensc-tool --set-conf-entry app:default:card_drivers:cac
+          systemctl restart pcscd.service 2>/dev/null || true
+
+    - name: V-258122
+      files:
+        - path: /etc/sssd/conf.d/60-stig-smartcard.conf
+          permissions: 0600
+          content: |
+            [pam]
+            pam_cert_auth = True
+      commands:
+        - chown root:root /etc/sssd/conf.d/60-stig-smartcard.conf
+        - systemctl restart sssd.service 2>/dev/null || true
+
+    - name: V-258123
+      files:
+        - path: /etc/sssd/conf.d/61-stig-certificate-verification.conf
+          permissions: 0600
+          content: |
+            [sssd]
+            certificate_verification = ocsp_dgst=sha512
+      commands:
+        - chown root:root /etc/sssd/conf.d/61-stig-certificate-verification.conf
+        - systemctl restart sssd.service 2>/dev/null || true
+
+ /etc/fapolicyd/rules.d 2>/dev/null | grep -q . ||
+            printf 'deny perm=any all : all\n' > /etc/fapolicyd/rules.d/99-stig-deny-all.rules
           fagenrules --load 2>/dev/null || true
+          grep -Eq '^[[:space:]]*permissive[[:space:]]*=[[:space:]]*0([[:space:]#]|$)' /etc/fapolicyd/fapolicyd.conf
           systemctl restart fapolicyd 2>/dev/null || true
 
     - name: V-258044
