@@ -1831,3 +1831,393 @@ rules:
       file: validation/40-authentication.yaml
       resource: command
       test: V-258117
+  V-257885:
+    title: RHEL 9 /var/log directory must have mode 0755 or less permissive.
+    rule_id: SV-257885r1044953
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/20-filesystem.yaml
+      step: V-257885
+    validation:
+      type: goss
+      file: validation/20-filesystem.yaml
+      resource: command
+      test: V-257885
+  V-257886:
+    title: RHEL 9 /var/log/messages file must have mode 0640 or less permissive.
+    rule_id: SV-257886r1044955
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/20-filesystem.yaml
+      step: V-257886
+    validation:
+      type: goss
+      file: validation/20-filesystem.yaml
+      resource: command
+      test: V-257886
+  V-257887:
+    title: RHEL 9 audit tools must have a mode of 0755 or less permissive.
+    rule_id: SV-257887r991557
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/20-filesystem.yaml
+      step: V-257887
+    validation:
+      type: goss
+      file: validation/20-filesystem.yaml
+      resource: command
+      test: V-257887
+  V-257891:
+    title: RHEL 9 /etc/group file must have mode 0644 or less permissive to prevent unauthorized access.
+    rule_id: SV-257891r991589
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/20-filesystem.yaml
+      step: V-257891
+    validation:
+      type: goss
+      file: validation/20-filesystem.yaml
+      resource: command
+      test: V-257891
+  V-257892:
+    title: RHEL 9 /etc/group- file must have mode 0644 or less permissive to prevent unauthorized access.
+    rule_id: SV-257892r991589
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/20-filesystem.yaml
+      step: V-257892
+    validation:
+      type: goss
+      file: validation/20-filesystem.yaml
+      resource: command
+      test: V-257892
+  V-257893:
+    title: RHEL 9 /etc/gshadow file must have mode 0000 or less permissive to prevent unauthorized access.
+    rule_id: SV-257893r991589
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/20-filesystem.yaml
+      step: V-257893
+    validation:
+      type: goss
+      file: validation/20-filesystem.yaml
+      resource: command
+      test: V-257893
+  V-257894:
+    title: RHEL 9 /etc/gshadow- file must have mode 0000 or less permissive to prevent unauthorized access.
+    rule_id: SV-257894r991589
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/20-filesystem.yaml
+      step: V-257894
+    validation:
+      type: goss
+      file: validation/20-filesystem.yaml
+      resource: command
+      test: V-257894
+  V-257895:
+    title: RHEL 9 /etc/passwd file must have mode 0644 or less permissive to prevent unauthorized access.
+    rule_id: SV-257895r991589
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/20-filesystem.yaml
+      step: V-257895
+    validation:
+      type: goss
+      file: validation/20-filesystem.yaml
+      resource: command
+      test: V-257895
+  V-257896:
+    title: RHEL 9 /etc/passwd- file must have mode 0644 or less permissive to prevent unauthorized access.
+    rule_id: SV-257896r991589
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/20-filesystem.yaml
+      step: V-257896
+    validation:
+      type: goss
+      file: validation/20-filesystem.yaml
+      resource: command
+      test: V-257896
+  V-257897:
+    title: RHEL 9 /etc/shadow- file must have mode 0000 or less permissive to prevent unauthorized access.
+    rule_id: SV-257897r991589
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/20-filesystem.yaml
+      step: V-257897
+    validation:
+      type: goss
+      file: validation/20-filesystem.yaml
+      resource: command
+      test: V-257897
+  V-257898:
+    title: RHEL 9 /etc/group file must be owned by root.
+    rule_id: SV-257898r991589
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/20-filesystem.yaml
+      step: V-257898
+    validation:
+      type: goss
+      file: validation/20-filesystem.yaml
+      resource: command
+      test: V-257898
+  V-257899:
+    title: RHEL 9 /etc/group file must be group-owned by root.
+    rule_id: SV-257899r991589
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/20-filesystem.yaml
+      step: V-257899
+    validation:
+      type: goss
+      file: validation/20-filesystem.yaml
+      resource: command
+      test: V-257899
+  V-257900:
+    title: RHEL 9 /etc/group- file must be owned by root.
+    rule_id: SV-257900r991589
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/20-filesystem.yaml
+      step: V-257900
+    validation:
+      type: goss
+      file: validation/20-filesystem.yaml
+      resource: command
+      test: V-257900
+  V-257901:
+    title: RHEL 9 /etc/group- file must be group-owned by root.
+    rule_id: SV-257901r991589
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/20-filesystem.yaml
+      step: V-257901
+    validation:
+      type: goss
+      file: validation/20-filesystem.yaml
+      resource: command
+      test: V-257901
+  V-257902:
+    title: RHEL 9 /etc/gshadow file must be owned by root.
+    rule_id: SV-257902r991589
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/20-filesystem.yaml
+      step: V-257902
+    validation:
+      type: goss
+      file: validation/20-filesystem.yaml
+      resource: command
+      test: V-257902
+  V-257903:
+    title: RHEL 9 /etc/gshadow file must be group-owned by root.
+    rule_id: SV-257903r991589
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/20-filesystem.yaml
+      step: V-257903
+    validation:
+      type: goss
+      file: validation/20-filesystem.yaml
+      resource: command
+      test: V-257903
+  V-257904:
+    title: RHEL 9 /etc/gshadow- file must be owned by root.
+    rule_id: SV-257904r991589
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/20-filesystem.yaml
+      step: V-257904
+    validation:
+      type: goss
+      file: validation/20-filesystem.yaml
+      resource: command
+      test: V-257904
+  V-257905:
+    title: RHEL 9 /etc/gshadow- file must be group-owned by root.
+    rule_id: SV-257905r991589
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/20-filesystem.yaml
+      step: V-257905
+    validation:
+      type: goss
+      file: validation/20-filesystem.yaml
+      resource: command
+      test: V-257905
+  V-257906:
+    title: RHEL 9 /etc/passwd file must be owned by root.
+    rule_id: SV-257906r991589
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/20-filesystem.yaml
+      step: V-257906
+    validation:
+      type: goss
+      file: validation/20-filesystem.yaml
+      resource: command
+      test: V-257906
+  V-257907:
+    title: RHEL 9 /etc/passwd file must be group-owned by root.
+    rule_id: SV-257907r991589
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/20-filesystem.yaml
+      step: V-257907
+    validation:
+      type: goss
+      file: validation/20-filesystem.yaml
+      resource: command
+      test: V-257907
+  V-257908:
+    title: RHEL 9 /etc/passwd- file must be owned by root.
+    rule_id: SV-257908r991589
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/20-filesystem.yaml
+      step: V-257908
+    validation:
+      type: goss
+      file: validation/20-filesystem.yaml
+      resource: command
+      test: V-257908
+  V-257909:
+    title: RHEL 9 /etc/passwd- file must be group-owned by root.
+    rule_id: SV-257909r991589
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/20-filesystem.yaml
+      step: V-257909
+    validation:
+      type: goss
+      file: validation/20-filesystem.yaml
+      resource: command
+      test: V-257909
+  V-257910:
+    title: RHEL 9 /etc/shadow file must be owned by root.
+    rule_id: SV-257910r991589
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/20-filesystem.yaml
+      step: V-257910
+    validation:
+      type: goss
+      file: validation/20-filesystem.yaml
+      resource: command
+      test: V-257910
+  V-257911:
+    title: RHEL 9 /etc/shadow file must be group-owned by root.
+    rule_id: SV-257911r991589
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/20-filesystem.yaml
+      step: V-257911
+    validation:
+      type: goss
+      file: validation/20-filesystem.yaml
+      resource: command
+      test: V-257911
+  V-257912:
+    title: RHEL 9 /etc/shadow- file must be owned by root.
+    rule_id: SV-257912r991589
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/20-filesystem.yaml
+      step: V-257912
+    validation:
+      type: goss
+      file: validation/20-filesystem.yaml
+      resource: command
+      test: V-257912
+  V-257913:
+    title: RHEL 9 /etc/shadow- file must be group-owned by root.
+    rule_id: SV-257913r991589
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/20-filesystem.yaml
+      step: V-257913
+    validation:
+      type: goss
+      file: validation/20-filesystem.yaml
+      resource: command
+      test: V-257913
+  V-257914:
+    title: RHEL 9 /var/log directory must be owned by root.
+    rule_id: SV-257914r1044969
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/20-filesystem.yaml
+      step: V-257914
+    validation:
+      type: goss
+      file: validation/20-filesystem.yaml
+      resource: command
+      test: V-257914
+  V-257915:
+    title: RHEL 9 /var/log directory must be group-owned by root.
+    rule_id: SV-257915r1044971
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/20-filesystem.yaml
+      step: V-257915
+    validation:
+      type: goss
+      file: validation/20-filesystem.yaml
+      resource: command
+      test: V-257915
+  V-257916:
+    title: RHEL 9 /var/log/messages file must be owned by root.
+    rule_id: SV-257916r1101916
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/20-filesystem.yaml
+      step: V-257916
+    validation:
+      type: goss
+      file: validation/20-filesystem.yaml
+      resource: command
+      test: V-257916
+  V-257917:
+    title: RHEL 9 /var/log/messages file must be group-owned by root.
+    rule_id: SV-257917r1101914
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/20-filesystem.yaml
+      step: V-257917
+    validation:
+      type: goss
+      file: validation/20-filesystem.yaml
+      resource: command
+      test: V-257917
