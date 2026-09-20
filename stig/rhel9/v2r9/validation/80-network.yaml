@@ -146,3 +146,39 @@ kernel-param:
       stig_id: V-257977
     value: "0"
     skip: {{ not (index .Vars.enabled_rules "V-257977") }}
+
+command:
+  V-257937:
+    title: "The RHEL 9 firewall must employ a deny-all, allow-by-exception policy."
+    meta: { stig_id: V-257937 }
+    exec: |
+      state="$(firewall-cmd --state 2>/dev/null || true)"
+      zones="$(firewall-cmd --get-active-zones 2>/dev/null | awk 'NF==1{print $1}')"
+      echo "evidence=firewalld_state=$state active_zones=${zones:-none}"
+      test "$state" = running
+      test -n "$zones"
+      for zone in $zones; do
+        runtime="$(firewall-cmd --zone="$zone" --get-target 2>/dev/null)"
+        permanent="$(firewall-cmd --permanent --zone="$zone" --get-target 2>/dev/null)"
+        echo "evidence=zone=$zone runtime_target=$runtime permanent_target=$permanent"
+        test "$runtime" = DROP
+        test "$permanent" = DROP
+      done
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257937") }}
+
+  V-257939:
+    title: "RHEL 9 must use nftables as the firewalld backend."
+    meta: { stig_id: V-257939 }
+    exec: |
+      value="$(awk -F= 'tolower($1) ~ /^[[:space:]]*firewallbackend[[:space:]]*$/{gsub(/[[:space:]]/,"",$2);print tolower($2);exit}' /etc/firewalld/firewalld.conf 2>/dev/null)"
+      test -n "$value" || value=nftables
+      echo "evidence=FirewallBackend=$value"
+      test "$value" = nftables
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257939") }}
+
