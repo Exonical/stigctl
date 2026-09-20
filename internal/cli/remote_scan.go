@@ -25,8 +25,8 @@ type remoteScanOptions struct {
 
 func runRemoteScans(cmd *cobra.Command, options remoteScanOptions) error {
 	format := strings.ToLower(options.Format)
-	if format != "cklb" && format != "json" {
-		return fmt.Errorf("unsupported format %q: use cklb or json", options.Format)
+	if format != "cklb" && format != "json" && format != "junit" {
+		return fmt.Errorf("unsupported format %q: use cklb, json, or junit", options.Format)
 	}
 	if options.Concurrency < 1 {
 		return fmt.Errorf("concurrency must be at least 1")
