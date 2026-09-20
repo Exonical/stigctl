@@ -79,6 +79,9 @@ stages:
             authselect enable-feature with-faillock || true
             authselect apply-changes || true
           fi
+          if ! grep -Eq '^[[:space:]]*(auth|account)[[:space:]]+.*pam_faillock\.so' /etc/pam.d/system-auth; then
+            printf '\nauth        required      pam_faillock.so preauth silent\nauth        [default=die] pam_faillock.so authfail\naccount     required      pam_faillock.so\n' >> /etc/pam.d/system-auth
+          fi
 
     - name: V-258096
       commands:
@@ -86,6 +89,9 @@ stages:
           if command -v authselect >/dev/null 2>&1 && authselect current >/dev/null 2>&1; then
             authselect enable-feature with-faillock || true
             authselect apply-changes || true
+          fi
+          if ! grep -Eq '^[[:space:]]*(auth|account)[[:space:]]+.*pam_faillock\.so' /etc/pam.d/password-auth; then
+            printf '\nauth        required      pam_faillock.so preauth silent\nauth        [default=die] pam_faillock.so authfail\naccount     required      pam_faillock.so\n' >> /etc/pam.d/password-auth
           fi
 
     - name: V-258097
@@ -148,7 +154,10 @@ stages:
 
     - name: V-258085
       commands:
-        - test -f /etc/sudoers.d/60-stig-auth
+        - |
+          test -f /etc/sudoers.d/60-stig-auth
+          find /etc/sudoers /etc/sudoers.d -type f ! -path /etc/sudoers.d/60-stig-auth -exec \
+            sed -ri '/^[[:space:]]*Defaults([[:space:]]|:|@|>).*([[:space:],]|^)(targetpw|rootpw|runaspw)([[:space:],]|$)/ s/^/# /' {} +
 
     - name: V-258106
       commands:
