@@ -108,3 +108,53 @@ command:
       test "$found" -eq 1
     exit-status: 0
     skip: {{ not (index .Vars.enabled_rules "V-257822") }}
+
+  V-257789:
+    title: "RHEL 9 must require a unique superusers name upon booting into single-user and maintenance modes."
+    meta:
+      stig_id: V-257789
+    exec: |
+      cfg=""
+      for candidate in /boot/grub2/grub.cfg /etc/grub2.cfg /etc/grub2-efi.cfg; do
+        test -r "$candidate" && cfg="$candidate" && break
+      done
+      test -n "$cfg" || exit 1
+      superuser="$(grep -E '^[[:space:]]*set[[:space:]]+superusers=' "$cfg" | head -n1 | sed -E 's/.*superusers=["'\'']?([^"'\'']+)["'\'']?.*/\1/')"
+      test -n "$superuser"
+      case "$superuser" in
+        root|admin|administrator) exit 1 ;;
+      esac
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257789") }}
+
+  V-257835:
+    title: "The TFTP server must be absent unless required, and if present must run in secure mode."
+    meta:
+      stig_id: V-257835
+    exec: |
+      if ! rpm -q tftp-server >/dev/null 2>&1; then
+        exit 0
+      fi
+      if systemctl cat tftp.service >/dev/null 2>&1; then
+        systemctl cat tftp.service |
+          grep -Eq 'ExecStart=.*in\.tftpd([[:space:]]+[^[:space:]]+)*[[:space:]]+-s[[:space:]]+/var/lib/tftpboot([[:space:]]|$)' &&
+          exit 0
+      fi
+      test -r /etc/xinetd.d/tftp &&
+        grep -Eq '^[[:space:]]*server_args[[:space:]]*=.*(^|[[:space:]])-s[[:space:]]+/var/lib/tftpboot([[:space:]]|$)' /etc/xinetd.d/tftp
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257835") }}
+
+  V-258018:
+    title: "RHEL 9 must not allow unattended or automatic logon via the graphical user interface."
+    meta:
+      stig_id: V-258018
+    exec: |
+      if ! rpm -q gdm >/dev/null 2>&1; then
+        exit 0
+      fi
+      test -r /etc/gdm/custom.conf || exit 1
+      grep -Eq '^[[:space:]]*AutomaticLoginEnable[[:space:]]*=[[:space:]]*false[[:space:]]*$' /etc/gdm/custom.conf &&
+      ! grep -Eq '^[[:space:]]*AutomaticLogin[[:space:]]*=' /etc/gdm/custom.conf
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-258018") }}
