@@ -4565,4 +4565,679 @@ rules:
       file: validation/35-desktop-device.yaml
       resource: command
       test: V-258040
+  V-258042:
+    title: RHEL 9 user account passwords must have a 60-day maximum password lifetime restriction.
+    rule_id: SV-258042r1045133
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/45-account-access.yaml
+      step: V-258042
+    validation:
+      type: goss
+      file: validation/45-account-access.yaml
+      resource: command
+      test: V-258042
+
+  V-258043:
+    title: All RHEL 9 local interactive user accounts must be assigned a home directory upon creation.
+    rule_id: SV-258043r991589
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/45-account-access.yaml
+      step: V-258043
+    validation:
+      type: goss
+      file: validation/45-account-access.yaml
+      resource: command
+      test: V-258043
+
+  V-258045:
+    title: RHEL 9 duplicate User IDs (UIDs) must not exist for interactive users.
+    rule_id: SV-258045r958482
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/45-account-access.yaml
+      step: V-258045
+    validation:
+      type: goss
+      file: validation/45-account-access.yaml
+      resource: command
+      test: V-258045
+
+  V-258046:
+    title: RHEL 9 system accounts must not have an interactive login shell.
+    rule_id: SV-258046r991589
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/45-account-access.yaml
+      step: V-258046
+    validation:
+      type: goss
+      file: validation/45-account-access.yaml
+      resource: command
+      test: V-258046
+
+  V-258048:
+    title: All RHEL 9 interactive users must have a primary group that exists.
+    rule_id: SV-258048r1069380
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/45-account-access.yaml
+      step: V-258048
+    validation:
+      type: goss
+      file: validation/45-account-access.yaml
+      resource: command
+      test: V-258048
+
+  V-258049:
+    title: RHEL 9 must disable account identifiers (individuals, groups, roles, and devices) after 35 days of inactivity.
+    rule_id: SV-258049r1015092
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/45-account-access.yaml
+      step: V-258049
+    validation:
+      type: goss
+      file: validation/45-account-access.yaml
+      resource: command
+      test: V-258049
+
+  V-258051:
+    title: All RHEL 9 local interactive users must have a home directory assigned in the /etc/passwd file.
+    rule_id: SV-258051r991589
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/45-account-access.yaml
+      step: V-258051
+    validation:
+      type: goss
+      file: validation/45-account-access.yaml
+      resource: command
+      test: V-258051
+
+  V-258052:
+    title: All RHEL 9 local interactive user home directories defined in the /etc/passwd file must exist.
+    rule_id: SV-258052r1184315
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/45-account-access.yaml
+      step: V-258052
+    validation:
+      type: goss
+      file: validation/45-account-access.yaml
+      resource: command
+      test: V-258052
+
+  V-258053:
+    title: All RHEL 9 local interactive user home directories must be group-owned by the home directory owner's primary group.
+    rule_id: SV-258053r1208773
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/45-account-access.yaml
+      step: V-258053
+    validation:
+      type: goss
+      file: validation/45-account-access.yaml
+      resource: command
+      test: V-258053
+
+  V-258054:
+    title: RHEL 9 must automatically lock an account when three unsuccessful logon attempts occur.
+    rule_id: SV-258054r958736
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/45-account-access.yaml
+      step: V-258054
+    validation:
+      type: goss
+      file: validation/45-account-access.yaml
+      resource: command
+      test: V-258054
+
+  V-258056:
+    title: RHEL 9 must automatically lock an account when three unsuccessful logon attempts occur during a 15-minute time period.
+    rule_id: SV-258056r1045143
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/45-account-access.yaml
+      step: V-258056
+    validation:
+      type: goss
+      file: validation/45-account-access.yaml
+      resource: command
+      test: V-258056
+
+  V-258057:
+    title: RHEL 9 must maintain an account lock until the locked account is released by an administrator.
+    rule_id: SV-258057r1045146
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/45-account-access.yaml
+      step: V-258057
+    validation:
+      type: goss
+      file: validation/45-account-access.yaml
+      resource: command
+      test: V-258057
+
+  V-258055:
+    title: RHEL 9 must automatically lock the root account until the root account is released by an administrator when three unsuccessful logon attempts occur during a 15-minute time period.
+    rule_id: SV-258055r1045140
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/45-account-access.yaml
+      step: V-258055
+    validation:
+      type: goss
+      file: validation/45-account-access.yaml
+      resource: command
+      test: V-258055
+
+  V-258060:
+    title: RHEL 9 must ensure account lockouts persist.
+    rule_id: SV-258060r1045150
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/45-account-access.yaml
+      step: V-258060
+    validation:
+      type: goss
+      file: validation/45-account-access.yaml
+      resource: command
+      test: V-258060
+
+  V-258061:
+    title: RHEL 9 groups must have unique Group ID (GID).
+    rule_id: SV-258061r958482
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/45-account-access.yaml
+      step: V-258061
+    validation:
+      type: goss
+      file: validation/45-account-access.yaml
+      resource: command
+      test: V-258061
+
+  V-258068:
+    title: RHEL 9 must automatically exit interactive command shell user sessions after 10 minutes of inactivity.
+    rule_id: SV-258068r1101950
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/45-account-access.yaml
+      step: V-258068
+    validation:
+      type: goss
+      file: validation/45-account-access.yaml
+      resource: command
+      test: V-258068
+
+  V-258069:
+    title: RHEL 9 must limit the number of concurrent sessions to ten for all accounts and/or account types.
+    rule_id: SV-258069r958398
+    severity: low
+    status: automated
+    remediation:
+      file: remediation/45-account-access.yaml
+      step: V-258069
+    validation:
+      type: goss
+      file: validation/45-account-access.yaml
+      resource: command
+      test: V-258069
+
+  V-258070:
+    title: RHEL 9 must log username information when unsuccessful logon attempts occur.
+    rule_id: SV-258070r1045153
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/45-account-access.yaml
+      step: V-258070
+    validation:
+      type: goss
+      file: validation/45-account-access.yaml
+      resource: command
+      test: V-258070
+
+  V-258071:
+    title: RHEL 9 must enforce a delay of at least four seconds between logon prompts following a failed logon attempt.
+    rule_id: SV-258071r991588
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/45-account-access.yaml
+      step: V-258071
+    validation:
+      type: goss
+      file: validation/45-account-access.yaml
+      resource: command
+      test: V-258071
+
+  V-258077:
+    title: RHEL 9 must terminate idle user sessions.
+    rule_id: SV-258077r1155659
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/45-account-access.yaml
+      step: V-258077
+    validation:
+      type: goss
+      file: validation/45-account-access.yaml
+      resource: command
+      test: V-258077
+
+  V-258079:
+    title: RHEL 9 must enable the SELinux targeted policy.
+    rule_id: SV-258079r1045159
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/45-account-access.yaml
+      step: V-258079
+    validation:
+      type: goss
+      file: validation/45-account-access.yaml
+      resource: command
+      test: V-258079
+
+  V-258081:
+    title: RHEL 9 must have policycoreutils package installed.
+    rule_id: SV-258081r1045164
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/45-account-access.yaml
+      step: V-258081
+    validation:
+      type: goss
+      file: validation/45-account-access.yaml
+      resource: command
+      test: V-258081
+
+  V-258086:
+    title: RHEL 9 must require users to reauthenticate for privilege escalation.
+    rule_id: SV-258086r1102063
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/45-account-access.yaml
+      step: V-258086
+    validation:
+      type: goss
+      file: validation/45-account-access.yaml
+      resource: command
+      test: V-258086
+
+  V-258087:
+    title: RHEL 9 must restrict privilege elevation to authorized personnel.
+    rule_id: SV-258087r1102071
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/45-account-access.yaml
+      step: V-258087
+    validation:
+      type: goss
+      file: validation/45-account-access.yaml
+      resource: command
+      test: V-258087
+
+  V-258088:
+    title: RHEL 9 must restrict the use of the "su" command.
+    rule_id: SV-258088r1155643
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/45-account-access.yaml
+      step: V-258088
+    validation:
+      type: goss
+      file: validation/45-account-access.yaml
+      resource: command
+      test: V-258088
+
+  V-258089:
+    title: RHEL 9 fapolicy module must be installed.
+    rule_id: SV-258089r1045179
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/45-account-access.yaml
+      step: V-258089
+    validation:
+      type: goss
+      file: validation/45-account-access.yaml
+      resource: command
+      test: V-258089
+
+  V-258090:
+    title: RHEL 9 fapolicy module must be enabled.
+    rule_id: SV-258090r958808
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/45-account-access.yaml
+      step: V-258090
+    validation:
+      type: goss
+      file: validation/45-account-access.yaml
+      resource: command
+      test: V-258090
+
+  V-258099:
+    title: RHEL 9 password-auth must be configured to use a sufficient number of hashing rounds.
+    rule_id: SV-258099r1045198
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/45-account-access.yaml
+      step: V-258099
+    validation:
+      type: goss
+      file: validation/45-account-access.yaml
+      resource: command
+      test: V-258099
+
+  V-258100:
+    title: RHEL 9 system-auth must be configured to use a sufficient number of hashing rounds.
+    rule_id: SV-258100r1045201
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/45-account-access.yaml
+      step: V-258100
+    validation:
+      type: goss
+      file: validation/45-account-access.yaml
+      resource: command
+      test: V-258100
+
+  V-258105:
+    title: RHEL 9 passwords must have a 24 hours minimum password lifetime restriction in /etc/shadow.
+    rule_id: SV-258105r1045212
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/45-account-access.yaml
+      step: V-258105
+    validation:
+      type: goss
+      file: validation/45-account-access.yaml
+      resource: command
+      test: V-258105
+
+  V-258116:
+    title: RHEL 9 must be configured so that user and group account administration utilities are configured to store only encrypted representations of passwords.
+    rule_id: SV-258116r1045240
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/45-account-access.yaml
+      step: V-258116
+    validation:
+      type: goss
+      file: validation/45-account-access.yaml
+      resource: command
+      test: V-258116
+
+  V-258118:
+    title: RHEL 9 must not be configured to bypass password requirements for privilege escalation.
+    rule_id: SV-258118r1050789
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/45-account-access.yaml
+      step: V-258118
+    validation:
+      type: goss
+      file: validation/45-account-access.yaml
+      resource: command
+      test: V-258118
+
+  V-258120:
+    title: RHEL 9 must not have accounts configured with blank or null passwords.
+    rule_id: SV-258120r991589
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/45-account-access.yaml
+      step: V-258120
+    validation:
+      type: goss
+      file: validation/45-account-access.yaml
+      resource: command
+      test: V-258120
+
+  V-258125:
+    title: The pcscd socket on RHEL 9 must be active.
+    rule_id: SV-258125r1208775
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/45-account-access.yaml
+      step: V-258125
+    validation:
+      type: goss
+      file: validation/45-account-access.yaml
+      resource: command
+      test: V-258125
+
+  V-258128:
+    title: RHEL 9 must require authentication to access emergency mode.
+    rule_id: SV-258128r1155626
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/45-account-access.yaml
+      step: V-258128
+    validation:
+      type: goss
+      file: validation/45-account-access.yaml
+      resource: command
+      test: V-258128
+
+  V-258129:
+    title: RHEL 9 must require authentication to access single-user mode.
+    rule_id: SV-258129r1155628
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/45-account-access.yaml
+      step: V-258129
+    validation:
+      type: goss
+      file: validation/45-account-access.yaml
+      resource: command
+      test: V-258129
+
+  V-258133:
+    title: RHEL 9 must prohibit the use of cached authenticators after one day.
+    rule_id: SV-258133r1045263
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/45-account-access.yaml
+      step: V-258133
+    validation:
+      type: goss
+      file: validation/45-account-access.yaml
+      resource: command
+      test: V-258133
+
+  V-258135:
+    title: RHEL 9 must routinely check the baseline configuration for unauthorized changes and notify the system administrator when anomalies in the operation of any security functions are discovered.
+    rule_id: SV-258135r1045267
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/45-account-access.yaml
+      step: V-258135
+    validation:
+      type: goss
+      file: validation/45-account-access.yaml
+      resource: command
+      test: V-258135
+
+  V-258136:
+    title: RHEL 9 must use a file integrity tool that is configured to use FIPS 140-3-approved cryptographic hashes for validating file contents and directories.
+    rule_id: SV-258136r1045270
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/45-account-access.yaml
+      step: V-258136
+    validation:
+      type: goss
+      file: validation/45-account-access.yaml
+      resource: command
+      test: V-258136
+
+  V-258137:
+    title: RHEL 9 must use cryptographic mechanisms to protect the integrity of audit tools.
+    rule_id: SV-258137r1102081
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/45-account-access.yaml
+      step: V-258137
+    validation:
+      type: goss
+      file: validation/45-account-access.yaml
+      resource: command
+      test: V-258137
+
+  V-258138:
+    title: RHEL 9 must be configured so that the file integrity tool verifies Access Control Lists (ACLs).
+    rule_id: SV-258138r1045274
+    severity: low
+    status: automated
+    remediation:
+      file: remediation/45-account-access.yaml
+      step: V-258138
+    validation:
+      type: goss
+      file: validation/45-account-access.yaml
+      resource: command
+      test: V-258138
+
+  V-258139:
+    title: RHEL 9 must be configured so that the file integrity tool verifies extended attributes.
+    rule_id: SV-258139r1045276
+    severity: low
+    status: automated
+    remediation:
+      file: remediation/45-account-access.yaml
+      step: V-258139
+    validation:
+      type: goss
+      file: validation/45-account-access.yaml
+      resource: command
+      test: V-258139
+
+  V-258044:
+    title: RHEL 9 must set the umask value to 077 for all local interactive user accounts.
+    rule_id: SV-258044r1184313
+    severity: medium
+    status: manual
+    remediation: {}
+    validation: {}
+
+  V-258047:
+    title: RHEL 9 must automatically expire temporary accounts within 72 hours.
+    rule_id: SV-258047r1101951
+    severity: medium
+    status: manual
+    remediation: {}
+    validation: {}
+
+  V-258050:
+    title: Executable search paths within the initialization files of all local interactive RHEL 9 users must only contain paths that resolve to the system default or the users home directory.
+    rule_id: SV-258050r1045137
+    severity: medium
+    status: manual
+    remediation: {}
+    validation: {}
+
+  V-258058:
+    title: RHEL 9 must not have unauthorized accounts.
+    rule_id: SV-258058r1045148
+    severity: medium
+    status: manual
+    remediation: {}
+    validation: {}
+
+  V-258080:
+    title: RHEL 9 must configure SELinux context type to allow the use of a nondefault faillock tally directory.
+    rule_id: SV-258080r1045162
+    severity: medium
+    status: manual
+    remediation: {}
+    validation: {}
+
+  V-258121:
+    title: RHEL 9 must use the common access card (CAC) smart card driver.
+    rule_id: SV-258121r1155682
+    severity: medium
+    status: manual
+    remediation: {}
+    validation: {}
+
+  V-258122:
+    title: RHEL 9 must enable certificate based smart card authentication.
+    rule_id: SV-258122r1045246
+    severity: medium
+    status: manual
+    remediation: {}
+    validation: {}
+
+  V-258123:
+    title: RHEL 9 must implement certificate status checking for multifactor authentication.
+    rule_id: SV-258123r1134923
+    severity: medium
+    status: manual
+    remediation: {}
+    validation: {}
+
+  V-258127:
+    title: RHEL 9, for PKI-based authentication, must enforce authorized access to the corresponding private key.
+    rule_id: SV-258127r1155648
+    severity: medium
+    status: manual
+    remediation: {}
+    validation: {}
+
+  V-258131:
+    title: RHEL 9, for PKI-based authentication, must validate certificates by constructing a certification path (which includes status information) to an accepted trust anchor.
+    rule_id: SV-258131r1134927
+    severity: medium
+    status: manual
+    remediation: {}
+    validation: {}
+
+  V-258132:
+    title: RHEL 9 must map the authenticated identity to the user or group account for PKI-based authentication.
+    rule_id: SV-258132r1134929
+    severity: medium
+    status: manual
+    remediation: {}
+    validation: {}
 
