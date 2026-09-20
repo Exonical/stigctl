@@ -299,3 +299,14 @@ jobs:
           path: ci-artifacts/
           if-no-files-found: warn
           retention-days: 30
+
+      - name: Upload intentionally noncompliant STIG reports
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: negative-control-results-rhel9-v2r9-${{ github.sha }}
+          path: |
+            ci-artifacts/stigctl-rocky9-ci-intentionally-noncompliant.cklb
+            ci-artifacts/stigctl-rocky9-ci-intentionally-noncompliant.xml
+          if-no-files-found: warn
+          retention-days: 30

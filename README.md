@@ -407,6 +407,11 @@ make build
 
 The CI workflow uses Go 1.27.1. Its Rocky Linux 9 job asserts both a clean scan and a deliberately induced finding.
 
+The Rocky Linux integration job includes a negative control. After a remediated
+container passes its scan, CI deliberately removes `openssh-clients`, requires
+`--fail-on-findings` to return nonzero for V-257980, verifies that the CKLB marks
+the rule `open` and JUnit marks it as a failure, and uploads both reports.
+
 
 ## Releases
 
