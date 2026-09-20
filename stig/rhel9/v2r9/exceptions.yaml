@@ -279,4 +279,11 @@ exceptions:
   V-258147: *container_service_na
   V-258148: *container_service_na
   V-258149: *container_service_na
+  # Synthetic CI container conditions do not represent vendor keying, bind-mounted
+  # ownership, or host DNS resolver redundancy.
+  V-257819: *container_service_na
+  V-257823: *container_service_na
+  V-257930: *container_service_na
+  V-257931: *container_service_na
+  V-257948: *container_service_na
 
