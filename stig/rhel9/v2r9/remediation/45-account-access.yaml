@@ -259,7 +259,12 @@ stages:
           sed -ri '/^[[:space:]]*permissive[[:space:]]*=/d' /etc/fapolicyd/fapolicyd.conf
           printf '\npermissive = 0\n' >> /etc/fapolicyd/fapolicyd.conf
           install -d -m 0755 /etc/fapolicyd/rules.d
-          grep -RhsE '^[[:space:]]*deny(_audit|_log)?[[:space:]]+perm=any[[:space:]]+all[[:space:]]*:[[:space:]]+all[[:space:]]*
+          grep -RhsE '^[[:space:]]*deny(_audit|_log)?[[:space:]]+perm=any[[:space:]]+all[[:space:]]*:[[:space:]]+all[[:space:]]*$' /etc/fapolicyd/rules.d 2>/dev/null | grep -q . ||
+            printf 'deny perm=any all : all\n' > /etc/fapolicyd/rules.d/99-stig-deny-all.rules
+          fagenrules --load 2>/dev/null || true
+          grep -Eq '^[[:space:]]*permissive[[:space:]]*=[[:space:]]*0([[:space:]#]|$)' /etc/fapolicyd/fapolicyd.conf
+          systemctl restart fapolicyd 2>/dev/null || true
+
     - name: V-258044
       commands:
         - |
