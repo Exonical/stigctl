@@ -74,6 +74,7 @@ stigctl scan rhel9:v2r9 \
 
 # Inspect approved exceptions
 stigctl exceptions list rhel9:v2r9
+stigctl exceptions list rhel9:v2r9 --profile server
 stigctl exceptions show rhel9:v2r9 V-XXXXXX
 ```
 
