@@ -264,3 +264,19 @@ exceptions:
   V-257859: *container_service_na
   V-257881: *container_service_na
 
+  # Remote logging, host firewall, SELinux host state, and PKI/smart-card
+  # controls require system boundaries or services that container-ci does not own.
+  V-257937: *container_service_na
+  V-257939: *container_service_na
+  V-258080: *container_service_na
+  V-258121: *container_service_na
+  V-258122: *container_service_na
+  V-258123: *container_service_na
+  V-258127: *container_service_na
+  V-258131: *container_service_na
+  V-258132: *container_service_na
+  V-258146: *container_service_na
+  V-258147: *container_service_na
+  V-258148: *container_service_na
+  V-258149: *container_service_na
+
