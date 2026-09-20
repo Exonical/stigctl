@@ -10,13 +10,15 @@ command:
   V-258144:
     title: "All RHEL 9 remote access methods must be monitored."
     meta: { stig_id: V-258144 }
-    exec: "grep -REiq '(^|[;[:space:]])(auth|authpriv|daemon)\.\*' /etc/rsyslog.conf /etc/rsyslog.d 2>/dev/null"
+    exec: |
+      grep -REiq '(^|[;[:space:]])(auth|authpriv|daemon)\.\*' /etc/rsyslog.conf /etc/rsyslog.d 2>/dev/null
     exit-status: 0
     skip: {{ not (index .Vars.enabled_rules "V-258144") }}
 
   V-258150:
     title: "RHEL 9 must use cron logging."
     meta: { stig_id: V-258150 }
-    exec: "grep -REiq '^[[:space:]]*cron\.\*[[:space:]]+' /etc/rsyslog.conf /etc/rsyslog.d 2>/dev/null"
+    exec: |
+      grep -REiq '^[[:space:]]*cron\.\*[[:space:]]+' /etc/rsyslog.conf /etc/rsyslog.d 2>/dev/null
     exit-status: 0
     skip: {{ not (index .Vars.enabled_rules "V-258150") }}
