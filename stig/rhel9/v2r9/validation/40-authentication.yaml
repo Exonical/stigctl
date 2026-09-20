@@ -24,28 +24,32 @@ command:
   V-258095:
     title: "RHEL 9 must configure pam_faillock.so in system-auth."
     meta: { stig_id: V-258095 }
-    exec: "grep -Eq '^[[:space:]]*(auth|account)[[:space:]]+.*pam_faillock\.so' /etc/pam.d/system-auth"
+    exec: |
+      grep -Eq '^[[:space:]]*(auth|account)[[:space:]]+.*pam_faillock\.so' /etc/pam.d/system-auth
     exit-status: 0
     skip: {{ not (index .Vars.enabled_rules "V-258095") }}
 
   V-258096:
     title: "RHEL 9 must configure pam_faillock.so in password-auth."
     meta: { stig_id: V-258096 }
-    exec: "grep -Eq '^[[:space:]]*(auth|account)[[:space:]]+.*pam_faillock\.so' /etc/pam.d/password-auth"
+    exec: |
+      grep -Eq '^[[:space:]]*(auth|account)[[:space:]]+.*pam_faillock\.so' /etc/pam.d/password-auth
     exit-status: 0
     skip: {{ not (index .Vars.enabled_rules "V-258096") }}
 
   V-258097:
     title: "RHEL 9 must enable the password complexity module in password-auth."
     meta: { stig_id: V-258097 }
-    exec: "grep -Eq '^[[:space:]]*password[[:space:]]+.*pam_pwquality\.so' /etc/pam.d/password-auth"
+    exec: |
+      grep -Eq '^[[:space:]]*password[[:space:]]+.*pam_pwquality\.so' /etc/pam.d/password-auth
     exit-status: 0
     skip: {{ not (index .Vars.enabled_rules "V-258097") }}
 
   V-258098:
     title: "RHEL 9 must enable the password complexity module in system-auth."
     meta: { stig_id: V-258098 }
-    exec: "grep -Eq '^[[:space:]]*password[[:space:]]+.*pam_pwquality\.so' /etc/pam.d/system-auth"
+    exec: |
+      grep -Eq '^[[:space:]]*password[[:space:]]+.*pam_pwquality\.so' /etc/pam.d/system-auth
     exit-status: 0
     skip: {{ not (index .Vars.enabled_rules "V-258098") }}
 
