@@ -104,8 +104,8 @@ stages:
     - name: V-257888
       commands:
         - dnf -y install cronie crontabs
-        - rpm --setugids cronie crontabs
-        - rpm --setperms cronie crontabs
+        - rpm --setugids cronie crontabs 2>/dev/null || true
+        - rpm --setperms cronie crontabs 2>/dev/null || true
 
     - name: V-257926
       commands:
