@@ -4,6 +4,7 @@ gossfile:
   15-boot-system.yaml: {}
   20-filesystem.yaml: {}
   20-system.yaml: {}
+  25-system-hardening.yaml: {}
   30-ssh.yaml: {}
   40-authentication.yaml: {}
   50-auth.yaml: {}
