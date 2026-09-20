@@ -20,3 +20,23 @@ stages:
           permissions: 0644
           content: |
             cron.* /var/log/cron
+
+    - name: V-258146
+      files:
+        - path: /etc/rsyslog.d/60-stig-tls.conf
+          permissions: 0644
+          content: |
+            $DefaultNetstreamDriver gtls
+            $ActionSendStreamDriverMode 1
+            $ActionSendStreamDriverAuthMode x509/name
+      commands:
+        - systemctl restart rsyslog.service 2>/dev/null || true
+
+    - name: V-258147
+      commands:
+        - test -f /etc/rsyslog.d/60-stig-tls.conf
+
+    - name: V-258148
+      commands:
+        - test -f /etc/rsyslog.d/60-stig-tls.conf
+
