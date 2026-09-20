@@ -140,3 +140,6 @@ exceptions:
   V-258230: *container_kernel_na
   V-258236: *container_service_na
   V-258241: *container_service_na
+
+  V-270177: *container_service_na
+  V-270178: *container_service_na
