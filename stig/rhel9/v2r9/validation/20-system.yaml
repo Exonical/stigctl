@@ -57,3 +57,54 @@ command:
     exec: "! grep -Eisq '(^|[[:space:]])nullok([[:space:]]|$)' /etc/pam.d/system-auth /etc/pam.d/password-auth"
     exit-status: 0
     skip: {{ not (index .Vars.enabled_rules "V-258094") }}
+
+  V-257820:
+    title: "RHEL 9 must check the GPG signature of software packages originating from external software repositories before installation."
+    meta:
+      stig_id: V-257820
+    exec: |
+      grep -Eq '^[[:space:]]*gpgcheck[[:space:]]*=[[:space:]]*1[[:space:]]*$' /etc/dnf/dnf.conf
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257820") }}
+
+  V-257821:
+    title: "RHEL 9 must check the GPG signature of locally installed software packages before installation."
+    meta:
+      stig_id: V-257821
+    exec: |
+      grep -Eq '^[[:space:]]*localpkg_gpgcheck[[:space:]]*=[[:space:]]*1[[:space:]]*$' /etc/dnf/dnf.conf
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257821") }}
+
+  V-257822:
+    title: "RHEL 9 must have GPG signature verification enabled for all software repositories."
+    meta:
+      stig_id: V-257822
+    exec: |
+      found=0
+      for repo in /etc/yum.repos.d/*.repo; do
+        test -e "$repo" || continue
+        found=1
+        awk '
+          function finish_section() {
+            if (in_section && !good) exit 1
+          }
+          /^[[:space:]]*\[[^]]+\][[:space:]]*$/ {
+            finish_section()
+            in_section=1
+            good=0
+            next
+          }
+          /^[[:space:]]*gpgcheck[[:space:]]*=/ {
+            line=$0
+            sub(/^[^=]*=/, "", line)
+            gsub(/[[:space:]]/, "", line)
+            if (line != "1") exit 1
+            good=1
+          }
+          END { finish_section() }
+        ' "$repo" || exit 1
+      done
+      test "$found" -eq 1
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257822") }}
