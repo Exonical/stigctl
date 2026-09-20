@@ -185,3 +185,12 @@ stages:
         - |
           nmcli radio all off
 
+    - name: V-270174
+      commands:
+        - |
+          if rpm -q gdm >/dev/null 2>&1; then install -d -m 0755 /etc/dconf/db/local.d; cat > /etc/dconf/db/local.d/01-banner-message <<'EOF'
+          [org/gnome/login-screen]
+          banner-message-text='You are accessing a U.S. Government (USG) Information System (IS) that is provided for USG-authorized use only.'
+          EOF
+          dconf update; fi
+
