@@ -6,7 +6,7 @@ on:
   pull_request:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   test:
@@ -18,25 +18,7 @@ jobs:
           go-version-file: go.mod
           cache: true
           cache-dependency-path: go.sum
-      - name: Update Go dependencies
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: |
-          go get -u ./...
-          go mod tidy
-
-      - name: Commit updated Go dependencies
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: |
-          if ! git diff --quiet -- go.mod go.sum; then
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add go.mod go.sum
-            git commit -m "build: update Go dependencies"
-            git push
-          fi
-
       - name: Verify modules are tidy
-        if: github.event_name == 'pull_request'
         run: |
           go mod tidy
           git diff --exit-code -- go.mod go.sum
@@ -56,6 +38,24 @@ jobs:
           path: bin/stigctl
           if-no-files-found: error
 
+
+
+  lint:
+    name: golangci-lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+          cache: true
+          cache-dependency-path: go.sum
+
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v9
+        with:
+          version: v2.13.2
 
   rocky9-stig:
     name: Apply and validate RHEL 9 STIG on Rocky Linux 9
