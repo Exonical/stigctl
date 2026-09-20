@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"os"
@@ -24,6 +25,14 @@ type remoteScanOptions struct {
 	RemoteBinary   string
 	FailOnFindings bool
 	Concurrency    int
+}
+
+type remoteScanner interface {
+	Scan(context.Context, remote.ScanRequest) (remote.ScanResult, error)
+}
+
+var newRemoteScanner = func() remoteScanner {
+	return remote.NewScanner()
 }
 
 func runRemoteScans(cmd *cobra.Command, options remoteScanOptions) error {
@@ -97,7 +106,7 @@ func runRemoteScans(cmd *cobra.Command, options remoteScanOptions) error {
 			defer wg.Done()
 			limit <- struct{}{}
 			defer func() { <-limit }()
-			scanner := remote.NewScanner()
+			scanner := newRemoteScanner()
 			result, scanErr := scanner.Scan(cmd.Context(), remote.ScanRequest{
 				Baseline: options.Baseline, Format: format, OutputDir: outputDir,
 				JUnitOutputDir: options.JUnitOutputDir,

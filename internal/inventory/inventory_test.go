@@ -49,6 +49,12 @@ hosts:
   - {name: node01, address: node01}
   - {name: node01, address: node02}
 `,
+		"case-insensitive duplicate": `version: 1
+defaults: {user: scanner}
+hosts:
+  - {name: node01, address: node01}
+  - {name: NODE01, address: node02}
+`,
 		"unsafe": `version: 1
 defaults: {user: scanner}
 hosts:

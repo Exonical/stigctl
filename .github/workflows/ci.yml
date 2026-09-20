@@ -24,6 +24,9 @@ jobs:
       - name: Build Windows controller
         run: go build -o bin/stigctl.exe ./cmd/stigctl
 
+      - name: Test Windows controller
+        run: go test ./...
+
       - name: Verify baseline commands
         shell: pwsh
         run: |
