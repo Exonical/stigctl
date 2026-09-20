@@ -2,6 +2,7 @@ package cli
 
 import (
 	"os"
+	"strings"
 	"time"
 
 	"github.com/Exonical/stigctl/internal/exceptions"
@@ -10,6 +11,13 @@ import (
 	"github.com/Exonical/stigctl/internal/rules"
 	"github.com/Exonical/stigctl/internal/validation"
 )
+
+func outputExtension(format string) string {
+	if strings.EqualFold(format, "junit") {
+		return "xml"
+	}
+	return strings.ToLower(format)
+}
 
 func validateProfile(id string) error {
 	_, err := stigprofile.NewStore(contentRoot).Resolve(id)

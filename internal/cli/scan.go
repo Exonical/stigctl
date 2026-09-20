@@ -12,8 +12,10 @@ import (
 	"github.com/Exonical/stigctl/internal/exceptions"
 	stigexport "github.com/Exonical/stigctl/internal/export"
 	"github.com/Exonical/stigctl/internal/export/cklb"
+	"github.com/Exonical/stigctl/internal/export/junit"
 	"github.com/Exonical/stigctl/internal/host"
 	"github.com/Exonical/stigctl/internal/policy"
+	"github.com/Exonical/stigctl/internal/results"
 	"github.com/Exonical/stigctl/internal/rules"
 	"github.com/Exonical/stigctl/internal/validation"
 	"github.com/Exonical/stigctl/internal/validation/goss"
@@ -36,6 +38,7 @@ func newScanCommand() *cobra.Command {
 		cklbTemplate   string
 		inventoryFile  string
 		concurrency    int
+		junitOutput    string
 	)
 
 	cmd := &cobra.Command{
@@ -43,6 +46,9 @@ func newScanCommand() *cobra.Command {
 		Short: "Validate and export STIG results",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
+			if junitOutput != "" && strings.EqualFold(format, "junit") {
+				return fmt.Errorf("--junit-output cannot be combined with --format junit")
+			}
 			if inventoryFile != "" {
 				for _, flag := range []string{"hostname", "ip-address", "mac-address", "fqdn", "role", "target-comments", "cklb-template"} {
 					if cmd.Flags().Changed(flag) {
@@ -51,8 +57,12 @@ func newScanCommand() *cobra.Command {
 				}
 				return runRemoteScans(cmd, remoteScanOptions{
 					Baseline: args[0], InventoryFile: inventoryFile, Format: format,
-					OutputDir: output, Profile: profile, FailOnFindings: failOnFindings, Concurrency: concurrency,
+					OutputDir: output, JUnitOutputDir: junitOutput, Profile: profile,
+					FailOnFindings: failOnFindings, Concurrency: concurrency,
 				})
+			}
+			if junitOutput != "" && output != "" && filepath.Clean(junitOutput) == filepath.Clean(output) {
+				return fmt.Errorf("--junit-output and --output must use different files")
 			}
 			if err := validateProfile(profile); err != nil {
 				return err
@@ -105,7 +115,7 @@ func newScanCommand() *cobra.Command {
 			})
 
 			if output == "" {
-				ext := strings.ToLower(format)
+				ext := outputExtension(format)
 				name := strings.ReplaceAll(args[0], ":", "-")
 				if hostname != "" {
 					name = hostname + "-" + name
@@ -132,6 +142,19 @@ func newScanCommand() *cobra.Command {
 				enc.SetIndent("", "  ")
 				if err := enc.Encode(merged); err != nil {
 					return fmt.Errorf("encode JSON results: %w", err)
+				}
+			case "junit":
+				req := stigexport.Request{
+					Baseline: args[0],
+					Target: stigexport.Target{
+						Hostname:  hostname,
+						IPAddress: ipAddress,
+						FQDN:      fqdn,
+					},
+					Results: merged,
+				}
+				if err := (junit.Exporter{}).Export(cmd.Context(), file, req); err != nil {
+					return err
 				}
 			case "cklb":
 				req := stigexport.Request{
@@ -187,10 +210,16 @@ func newScanCommand() *cobra.Command {
 					}
 				}
 			default:
-				return fmt.Errorf("unsupported format %q: use cklb or json", format)
+				return fmt.Errorf("unsupported format %q: use cklb, json, or junit", format)
 			}
 
 			fmt.Fprintf(cmd.OutOrStdout(), "wrote %s (%s)\n", output, policy.Summary(merged))
+			if junitOutput != "" {
+				if err := writeJUnitReport(cmd, args[0], junitOutput, hostname, ipAddress, fqdn, merged); err != nil {
+					return err
+				}
+				fmt.Fprintf(cmd.OutOrStdout(), "wrote %s (%s)\n", junitOutput, policy.Summary(merged))
+			}
 			if failOnFindings && policy.HasFailures(merged) {
 				return fmt.Errorf("STIG scan contains open findings or validation errors")
 			}
@@ -199,7 +228,7 @@ func newScanCommand() *cobra.Command {
 	}
 
 	cmd.Flags().StringVar(&profile, "profile", "default", "system profile")
-	cmd.Flags().StringVar(&format, "format", "cklb", "output format: cklb or json")
+	cmd.Flags().StringVar(&format, "format", "cklb", "output format: cklb, json, or junit")
 	cmd.Flags().StringVarP(&output, "output", "o", "", "output file, or directory with --inventory")
 	cmd.Flags().BoolVar(&failOnFindings, "fail-on-findings", false, "exit non-zero after writing results when findings exist")
 	cmd.Flags().StringVar(&hostname, "hostname", "", "target hostname; defaults to the local hostname")
@@ -211,5 +240,37 @@ func newScanCommand() *cobra.Command {
 	cmd.Flags().StringVar(&cklbTemplate, "cklb-template", "", "STIG Viewer 3 CKLB template; preserves official checklist metadata and UUIDs")
 	cmd.Flags().StringVar(&inventoryFile, "inventory", "", "scan hosts from a YAML SSH inventory; output is treated as a directory")
 	cmd.Flags().IntVar(&concurrency, "concurrency", 4, "maximum concurrent inventory scans")
+	cmd.Flags().StringVar(&junitOutput, "junit-output", "", "also write JUnit XML; with --inventory, this is an output directory")
 	return cmd
+}
+
+func writeJUnitReport(
+	cmd *cobra.Command,
+	baselineRef string,
+	path string,
+	hostname string,
+	ipAddress string,
+	fqdn string,
+	merged []results.Result,
+) error {
+	dir := filepath.Dir(path)
+	if dir != "." {
+		if err := os.MkdirAll(dir, 0o755); err != nil {
+			return fmt.Errorf("create JUnit output directory: %w", err)
+		}
+	}
+	file, err := os.Create(path)
+	if err != nil {
+		return fmt.Errorf("create JUnit output: %w", err)
+	}
+	defer file.Close()
+	return (junit.Exporter{}).Export(cmd.Context(), file, stigexport.Request{
+		Baseline: baselineRef,
+		Target: stigexport.Target{
+			Hostname:  hostname,
+			IPAddress: ipAddress,
+			FQDN:      fqdn,
+		},
+		Results: merged,
+	})
 }
