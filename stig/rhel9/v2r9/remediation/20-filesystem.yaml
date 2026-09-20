@@ -1,4 +1,102 @@
-name: RHEL 9 STIG - Filesystem
+name: RHEL 9 STIG - Filesystem and Core File Permissions
 
 stages:
-  stig: []
+  stig:
+    - name: V-257885
+      commands:
+        - chmod 0755 /var/log
+
+    - name: V-257886
+      commands:
+        - test ! -e /var/log/messages || chmod 0640 /var/log/messages
+
+    - name: V-257887
+      commands:
+        - |
+          for tool in /sbin/auditctl /sbin/aureport /sbin/ausearch /sbin/autrace /sbin/auditd /sbin/augenrules; do
+            test ! -e "$tool" || chmod 0755 "$tool"
+          done
+
+    - name: V-257891
+      commands:
+        - chmod 0644 /etc/group
+    - name: V-257892
+      commands:
+        - test ! -e /etc/group- || chmod 0644 /etc/group-
+    - name: V-257893
+      commands:
+        - chmod 0000 /etc/gshadow
+    - name: V-257894
+      commands:
+        - test ! -e /etc/gshadow- || chmod 0000 /etc/gshadow-
+    - name: V-257895
+      commands:
+        - chmod 0644 /etc/passwd
+    - name: V-257896
+      commands:
+        - test ! -e /etc/passwd- || chmod 0644 /etc/passwd-
+    - name: V-257897
+      commands:
+        - test ! -e /etc/shadow- || chmod 0000 /etc/shadow-
+
+    - name: V-257898
+      commands:
+        - chown root /etc/group
+    - name: V-257899
+      commands:
+        - chgrp root /etc/group
+    - name: V-257900
+      commands:
+        - test ! -e /etc/group- || chown root /etc/group-
+    - name: V-257901
+      commands:
+        - test ! -e /etc/group- || chgrp root /etc/group-
+    - name: V-257902
+      commands:
+        - chown root /etc/gshadow
+    - name: V-257903
+      commands:
+        - chgrp root /etc/gshadow
+    - name: V-257904
+      commands:
+        - test ! -e /etc/gshadow- || chown root /etc/gshadow-
+    - name: V-257905
+      commands:
+        - test ! -e /etc/gshadow- || chgrp root /etc/gshadow-
+    - name: V-257906
+      commands:
+        - chown root /etc/passwd
+    - name: V-257907
+      commands:
+        - chgrp root /etc/passwd
+    - name: V-257908
+      commands:
+        - test ! -e /etc/passwd- || chown root /etc/passwd-
+    - name: V-257909
+      commands:
+        - test ! -e /etc/passwd- || chgrp root /etc/passwd-
+    - name: V-257910
+      commands:
+        - chown root /etc/shadow
+    - name: V-257911
+      commands:
+        - chgrp root /etc/shadow
+    - name: V-257912
+      commands:
+        - test ! -e /etc/shadow- || chown root /etc/shadow-
+    - name: V-257913
+      commands:
+        - test ! -e /etc/shadow- || chgrp root /etc/shadow-
+
+    - name: V-257914
+      commands:
+        - chown root /var/log
+    - name: V-257915
+      commands:
+        - chgrp root /var/log
+    - name: V-257916
+      commands:
+        - test ! -e /var/log/messages || chown root /var/log/messages
+    - name: V-257917
+      commands:
+        - test ! -e /var/log/messages || chgrp root /var/log/messages
