@@ -51,9 +51,14 @@ type xmlRichText struct {
 
 type xmlCheck struct {
 	System  string      `xml:"system,attr"`
-	Content string      `xml:"check-content"`
+	Content xmlRawText  `xml:"check-content"`
 	Ref     xmlCheckRef `xml:"check-content-ref"`
 	Text    string      `xml:",chardata"`
+}
+
+type xmlRawText struct {
+	Inner string `xml:",innerxml"`
+	Text  string `xml:",chardata"`
 }
 
 type xmlCheckRef struct {
@@ -63,12 +68,14 @@ type xmlCheckRef struct {
 
 type xmlFixText struct {
 	FixRef string `xml:"fixref,attr"`
+	Inner  string `xml:",innerxml"`
 	Text   string `xml:",chardata"`
 }
 
 type xmlFix struct {
-	ID   string `xml:"id,attr"`
-	Text string `xml:",chardata"`
+	ID    string `xml:"id,attr"`
+	Inner string `xml:",innerxml"`
+	Text  string `xml:",chardata"`
 }
 
 type xmlIdent struct {
@@ -123,15 +130,16 @@ func Parse(r io.Reader) (Benchmark, error) {
 				MitigationControl:        description.MitigationControl,
 				Responsibility:           description.Responsibility,
 				IAControls:               description.IAControls,
-				FixText:                  strings.TrimSpace(rule.FixText.Text),
+				FixText:                  rawElementText(rule.FixText.Inner, rule.FixText.Text),
+				LegacyIDs:                []string{},
 			}
 			if converted.FixText == "" {
-				converted.FixText = strings.TrimSpace(rule.Fix.Text)
+				converted.FixText = rawElementText(rule.Fix.Inner, rule.Fix.Text)
 			}
 
 			if len(rule.Checks) > 0 {
 				check := rule.Checks[0]
-				converted.CheckContent = strings.TrimSpace(check.Content)
+				converted.CheckContent = rawElementText(check.Content.Inner, check.Content.Text)
 				if converted.CheckContent == "" {
 					converted.CheckContent = strings.TrimSpace(check.Text)
 				}
@@ -192,7 +200,7 @@ func parseDescription(raw string) descriptionFields {
 		ThirdPartyTools:          extractTag(decoded, "ThirdPartyTools"),
 		MitigationControl:        extractTag(decoded, "MitigationControl"),
 		Responsibility:           extractTag(decoded, "Responsibility"),
-		IAControls:               extractTag(decoded, "IA_Controls"),
+		IAControls:               firstNonEmpty(extractTag(decoded, "IAControls"), extractTag(decoded, "IA_Controls")),
 	}
 }
 
@@ -202,7 +210,23 @@ func extractTag(value, name string) string {
 	if len(match) != 2 {
 		return ""
 	}
-	return stripTags(match[1])
+	return strings.TrimSpace(match[1])
+}
+
+func rawElementText(inner, text string) string {
+	if inner != "" {
+		return html.UnescapeString(inner)
+	}
+	return strings.TrimSpace(text)
+}
+
+func firstNonEmpty(values ...string) string {
+	for _, value := range values {
+		if value != "" {
+			return value
+		}
+	}
+	return ""
 }
 
 func normalizeBenchmarkID(id string) string {
