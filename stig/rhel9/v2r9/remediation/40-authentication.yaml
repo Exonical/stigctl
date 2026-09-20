@@ -1,4 +1,110 @@
 name: RHEL 9 STIG - Authentication
 
 stages:
-  stig: []
+  stig:
+    - name: V-258041
+      commands:
+        - |
+          if grep -qE '^[[:space:]]*PASS_MAX_DAYS' /etc/login.defs; then
+            sed -ri 's/^[[:space:]]*PASS_MAX_DAYS.*/PASS_MAX_DAYS 60/' /etc/login.defs
+          else
+            printf '\nPASS_MAX_DAYS 60\n' >> /etc/login.defs
+          fi
+
+    - name: V-258104
+      commands:
+        - |
+          if grep -qE '^[[:space:]]*PASS_MIN_DAYS' /etc/login.defs; then
+            sed -ri 's/^[[:space:]]*PASS_MIN_DAYS.*/PASS_MIN_DAYS 1/' /etc/login.defs
+          else
+            printf '\nPASS_MIN_DAYS 1\n' >> /etc/login.defs
+          fi
+
+    - name: V-258091
+      files:
+        - path: /etc/security/pwquality.conf.d/60-stig.conf
+          permissions: "0644"
+          content: |
+            retry = 3
+            enforce_for_root
+            lcredit = -1
+            dcredit = -1
+            minlen = 15
+            ocredit = -1
+            dictcheck = 1
+            ucredit = -1
+            difok = 8
+            maxclassrepeat = 4
+            maxrepeat = 3
+            minclass = 4
+
+    - name: V-258101
+      commands:
+        - test -f /etc/security/pwquality.conf.d/60-stig.conf
+    - name: V-258102
+      commands:
+        - test -f /etc/security/pwquality.conf.d/60-stig.conf
+    - name: V-258103
+      commands:
+        - test -f /etc/security/pwquality.conf.d/60-stig.conf
+    - name: V-258107
+      commands:
+        - test -f /etc/security/pwquality.conf.d/60-stig.conf
+    - name: V-258109
+      commands:
+        - test -f /etc/security/pwquality.conf.d/60-stig.conf
+    - name: V-258110
+      commands:
+        - test -f /etc/security/pwquality.conf.d/60-stig.conf
+    - name: V-258111
+      commands:
+        - test -f /etc/security/pwquality.conf.d/60-stig.conf
+    - name: V-258112
+      commands:
+        - test -f /etc/security/pwquality.conf.d/60-stig.conf
+    - name: V-258113
+      commands:
+        - test -f /etc/security/pwquality.conf.d/60-stig.conf
+    - name: V-258114
+      commands:
+        - test -f /etc/security/pwquality.conf.d/60-stig.conf
+    - name: V-258115
+      commands:
+        - test -f /etc/security/pwquality.conf.d/60-stig.conf
+
+    - name: V-258095
+      commands:
+        - |
+          if command -v authselect >/dev/null 2>&1 && authselect current >/dev/null 2>&1; then
+            authselect enable-feature with-faillock || true
+            authselect apply-changes || true
+          fi
+
+    - name: V-258096
+      commands:
+        - |
+          if command -v authselect >/dev/null 2>&1 && authselect current >/dev/null 2>&1; then
+            authselect enable-feature with-faillock || true
+            authselect apply-changes || true
+          fi
+
+    - name: V-258097
+      commands:
+        - |
+          grep -Eq '^[[:space:]]*password[[:space:]]+.*pam_pwquality\.so' /etc/pam.d/password-auth ||
+            sed -i '/^[[:space:]]*password[[:space:]].*pam_unix\.so/i password    required    pam_pwquality.so' /etc/pam.d/password-auth
+
+    - name: V-258098
+      commands:
+        - |
+          grep -Eq '^[[:space:]]*password[[:space:]]+.*pam_pwquality\.so' /etc/pam.d/system-auth ||
+            sed -i '/^[[:space:]]*password[[:space:]].*pam_unix\.so/i password    required    pam_pwquality.so' /etc/pam.d/system-auth
+
+    - name: V-258117
+      commands:
+        - |
+          if grep -qE '^[[:space:]]*ENCRYPT_METHOD' /etc/login.defs; then
+            sed -ri 's/^[[:space:]]*ENCRYPT_METHOD.*/ENCRYPT_METHOD SHA512/' /etc/login.defs
+          else
+            printf '\nENCRYPT_METHOD SHA512\n' >> /etc/login.defs
+          fi
