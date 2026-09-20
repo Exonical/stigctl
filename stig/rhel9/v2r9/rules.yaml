@@ -5240,4 +5240,101 @@ rules:
     status: manual
     remediation: {}
     validation: {}
+  V-258227:
+    title: RHEL 9 must take appropriate action when a critical audit processing failure occurs.
+    rule_id: SV-258227r1014992
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258227
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258227
+
+  V-258231:
+    title: RHEL 9 must employ FIPS 140-3-approved cryptographic hashing algorithms for all stored passwords.
+    rule_id: SV-258231r1208790
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/40-authentication.yaml
+      step: V-258231
+    validation:
+      type: goss
+      file: validation/40-authentication.yaml
+      resource: command
+      test: V-258231
+
+  V-258233:
+    title: RHEL 9 pam_unix.so module must be configured in the password-auth file to use a FIPS 140-3 approved cryptographic hashing algorithm for system authentication.
+    rule_id: SV-258233r1015136
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/40-authentication.yaml
+      step: V-258233
+    validation:
+      type: goss
+      file: validation/40-authentication.yaml
+      resource: command
+      test: V-258233
+
+  V-270174:
+    title: RHEL 9 must display the Standard Mandatory DOD Notice and Consent Banner before granting local or remote access to the system via a graphical user logon.
+    rule_id: SV-270174r1044831
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/35-desktop-device.yaml
+      step: V-270174
+    validation:
+      type: goss
+      file: validation/35-desktop-device.yaml
+      resource: command
+      test: V-270174
+
+  V-270175:
+    title: RHEL 9 "/etc/audit/" must be owned by root.
+    rule_id: SV-270175r1137691
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-270175
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-270175
+
+  V-270176:
+    title: RHEL 9 "/etc/audit/" must be group-owned by root.
+    rule_id: SV-270176r1137691
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-270176
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-270176
+
+  V-270180:
+    title: The RHEL 9 fapolicy module must be configured to employ a deny-all, permit-by-exception policy to allow the execution of authorized software programs.
+    rule_id: SV-270180r1184327
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/45-account-access.yaml
+      step: V-270180
+    validation:
+      type: goss
+      file: validation/45-account-access.yaml
+      resource: command
+      test: V-270180
 
