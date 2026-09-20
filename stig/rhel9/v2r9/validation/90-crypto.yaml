@@ -53,3 +53,21 @@ command:
       grep -Eiq '^[[:space:]]*MACs[[:space:]]+hmac-sha2-256-etm@openssh.com,hmac-sha2-512-etm@openssh.com,hmac-sha2-256,hmac-sha2-512[[:space:]]*$'         /etc/crypto-policies/back-ends/openssh.config
     exit-status: 0
     skip: {{ not (index .Vars.enabled_rules "V-270178") }}
+
+  V-257989:
+    title: "The RHEL 9 SSH server must be configured to use only DOD-approved encryption ciphers employing FIPS 140-3 validated cryptographic hash algorithms to protect the confidentiality of SSH server connections."
+    meta:
+      stig_id: V-257989
+    exec: |
+      grep -Eiq '^[[:space:]]*Ciphers[[:space:]]+aes256-gcm@openssh.com,aes256-ctr,aes128-gcm@openssh.com,aes128-ctr[[:space:]]*$'         /etc/crypto-policies/back-ends/opensshserver.config
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257989") }}
+
+  V-257991:
+    title: "The RHEL 9 SSH server must be configured to use only Message Authentication Codes (MACs) employing FIPS 140-3 validated cryptographic hash algorithms to protect the confidentiality of SSH server connections."
+    meta:
+      stig_id: V-257991
+    exec: |
+      grep -Eiq '^[[:space:]]*MACs[[:space:]]+hmac-sha2-256-etm@openssh.com,hmac-sha2-512-etm@openssh.com,hmac-sha2-256,hmac-sha2-512[[:space:]]*$'         /etc/crypto-policies/back-ends/opensshserver.config
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257991") }}
