@@ -3,6 +3,7 @@ package goss
 import (
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"strings"
@@ -197,7 +198,7 @@ func formatMatcherValue(value any) string {
 		}
 		buf := make([]byte, int(size))
 		n, err := typed.ReadAt(buf, 0)
-		if err != nil && err != io.EOF {
+		if err != nil && !errors.Is(err, io.EOF) {
 			return fmt.Sprint(value)
 		}
 		return strings.TrimSuffix(string(buf[:n]), "\n")
