@@ -36,6 +36,7 @@ func newExceptionsCommand() *cobra.Command {
 			if err != nil {
 				return err
 			}
+			fmt.Fprintf(cmd.OutOrStdout(), "%-24s %-14s %-15s %s\n", "SCOPE", "VULN ID", "STATUS", "REASON")
 			for _, row := range exceptionListRows(doc, profile) {
 				fmt.Fprintf(cmd.OutOrStdout(), "%-24s %-14s %-15s %s\n", row.Scope, row.VulnID, row.Status, row.Reason)
 			}
