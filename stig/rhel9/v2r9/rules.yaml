@@ -3758,9 +3758,7 @@ rules:
     rule_id: SV-257819r1015075
     severity: medium
     status: automated
-    remediation:
-      file: remediation/25-system-hardening.yaml
-      step: V-257819
+    remediation: {}
     validation:
       type: goss
       file: validation/25-system-hardening.yaml
@@ -4066,9 +4064,7 @@ rules:
     rule_id: SV-257948r1045004
     severity: medium
     status: automated
-    remediation:
-      file: remediation/25-system-hardening.yaml
-      step: V-257948
+    remediation: {}
     validation:
       type: goss
       file: validation/25-system-hardening.yaml
