@@ -1,6 +1,7 @@
 gossfile:
   00-packages.yaml: {}
   10-kernel.yaml: {}
+  15-boot-system.yaml: {}
   20-filesystem.yaml: {}
   20-system.yaml: {}
   30-ssh.yaml: {}
