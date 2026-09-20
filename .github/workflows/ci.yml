@@ -74,8 +74,8 @@ jobs:
           cache: true
           cache-dependency-path: go.sum
 
-      - name: Build pinned Goss
-        run: go build -o /tmp/goss github.com/goss-org/goss/cmd/goss
+      - name: Install pinned Goss
+        run: GOBIN=/tmp go install github.com/goss-org/goss/cmd/goss@v0.4.10
 
       - name: Generate lint variables
         shell: bash
