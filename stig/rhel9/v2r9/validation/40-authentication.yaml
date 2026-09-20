@@ -124,7 +124,7 @@ command:
       awk -F= '/^[[:space:]]*maxrepeat[[:space:]]*=/{gsub(/[[:space:]]/,"",$2); value=$2} END{if (value=="") exit 1; print value}' /etc/security/pwquality.conf /etc/security/pwquality.conf.d/*.conf 2>/dev/null
     exit-status: 0
     stdout:
-      - "^3$"
+      - "3"
     skip: {{ not (index .Vars.enabled_rules "V-258114") }}
 
   V-258115:
