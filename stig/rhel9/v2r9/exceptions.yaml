@@ -177,3 +177,11 @@ exceptions:
   V-257886: *container_service_na
   V-257916: *container_service_na
   V-257917: *container_service_na
+
+  # These CAT I controls depend on host boot, storage, GUI, or optional
+  # crypto service state that a container cannot represent faithfully.
+  V-257789: *container_service_na
+  V-257879: *container_service_na
+  V-258018: *container_service_na
+  V-258232: *container_service_na
+  V-258242: *container_service_na
