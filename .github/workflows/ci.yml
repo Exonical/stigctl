@@ -82,6 +82,7 @@ jobs:
         run: |
           set -euo pipefail
           {
+            echo "check_script: stig/rhel9/v2r9/validation/stig-check.sh"
             echo "enabled_rules:"
             sed -n 's/^  \(V-[0-9][0-9]*\):.*/  \1: false/p' stig/rhel9/v2r9/rules.yaml
           } > /tmp/goss-vars.yaml
