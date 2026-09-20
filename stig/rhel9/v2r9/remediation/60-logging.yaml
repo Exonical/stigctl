@@ -1,4 +1,22 @@
 name: RHEL 9 STIG - Logging
 
 stages:
-  stig: []
+  stig:
+    - name: V-258143
+      commands:
+        - |
+          sed -ri '/InputTCPServerRun|UDPServerRun|RELPServerRun|module\(load="imtcp"\)|module\(load="imudp"\)|module\(load="imrelp"\)|input\(type="imtcp"|input\(type="imudp"|input\(type="imrelp"/d' /etc/rsyslog.conf /etc/rsyslog.d/*.conf 2>/dev/null || true
+
+    - name: V-258144
+      files:
+        - path: /etc/rsyslog.d/60-stig-auth.conf
+          permissions: 0644
+          content: |
+            auth.*;authpriv.*;daemon.* /var/log/secure
+
+    - name: V-258150
+      files:
+        - path: /etc/rsyslog.d/60-stig-cron.conf
+          permissions: 0644
+          content: |
+            cron.* /var/log/cron
