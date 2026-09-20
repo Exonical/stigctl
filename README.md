@@ -51,6 +51,13 @@ stigctl scan rhel9:v2r9 \
   --format json \
   --output results.json
 
+# JUnit XML for GitLab, GitHub Actions, Jenkins, and other CI systems
+stigctl scan rhel9:v2r9 \
+  --profile server \
+  --format junit \
+  --output results.xml \
+  --fail-on-findings
+
 # Scan an SSH inventory in parallel
 stigctl scan rhel9:v2r9 \
   --inventory inventory.yaml \
@@ -114,6 +121,25 @@ stigctl scan rhel9:v2r9 \
 The output directory receives one artifact per inventory name, such as
 `results/compute-01-rhel9-v2r9.cklb`. A result is still downloaded when
 `--fail-on-findings` makes the remote scan exit nonzero.
+
+Use `--format junit` to write one XML report per inventory host. Each STIG rule
+is represented as a JUnit testcase: open findings are failures, validation
+errors are errors, and manual/not-applicable/exception/skipped rules are marked
+skipped. For example, `compute-01-rhel9-v2r9.xml` can be published directly as
+a GitLab `artifacts:reports:junit` report or consumed by another JUnit-aware CI
+test reporter.
+
+For GitLab CI, retain the report even when findings make the scan job fail:
+
+```yaml
+stig-scan:
+  script:
+    - ./stigctl scan rhel9:v2r9 --profile server --format junit --output stig-results.xml --fail-on-findings
+  artifacts:
+    when: always
+    reports:
+      junit: stig-results.xml
+```
 
 Remote scanning uses the system OpenSSH `ssh` and `scp` clients. Authentication
 is noninteractive (`BatchMode=yes`) and uses the specified private key, the SSH
