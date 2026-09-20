@@ -115,3 +115,19 @@ exceptions:
   V-257944: *container_service_na
   V-258142: *container_service_na
   V-258152: *container_service_na
+
+  # These controls require a real RHEL host or systemd/boot ownership that a
+  # Rocky Linux CI container cannot represent faithfully.
+  V-257777:
+    status: not_applicable
+    scope:
+      profiles: [container-ci]
+    justification:
+      reason: "CI runs on Rocky Linux rather than a Red Hat Enterprise Linux subscription target."
+    approval:
+      owner: stigctl-ci
+      approved_by: stigctl-ci
+    lifecycle:
+      created: 2026-09-20
+  V-257784: *container_service_na
+  V-257785: *container_service_na
