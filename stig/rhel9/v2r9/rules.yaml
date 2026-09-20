@@ -2314,28 +2314,34 @@ rules:
     title: RHEL 9 must authenticate the remote logging server for offloading audit logs via rsyslog.
     rule_id: SV-258146r1045288
     severity: medium
-    status: manual
-    remediation: {}
+    status: automated
+    remediation:
+      file: remediation/60-logging.yaml
+      step: V-258146
     validation: {}
   V-258147:
     title: RHEL 9 must encrypt the transfer of audit records offloaded onto a different system or media from the system being audited via rsyslog.
     rule_id: SV-258147r1045290
     severity: medium
-    status: manual
-    remediation: {}
+    status: automated
+    remediation:
+      file: remediation/60-logging.yaml
+      step: V-258147
     validation: {}
   V-258148:
     title: RHEL 9 must encrypt via the gtls driver the transfer of audit records offloaded onto a different system or media from the system being audited via rsyslog.
     rule_id: SV-258148r1045292
     severity: medium
-    status: manual
-    remediation: {}
+    status: automated
+    remediation:
+      file: remediation/60-logging.yaml
+      step: V-258148
     validation: {}
   V-258149:
     title: RHEL 9 must be configured to forward audit records via TCP to a different system or media from the system being audited via rsyslog.
     rule_id: SV-258149r1155580
     severity: medium
-    status: manual
+    status: automated
     remediation: {}
     validation: {}
   V-258150:
