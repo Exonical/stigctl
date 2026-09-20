@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+	"path/filepath"
 	"time"
 
 	"github.com/Exonical/stigctl/internal/baseline"
@@ -47,7 +48,7 @@ func newValidateCommand() *cobra.Command {
 			}
 			facts := host.Detect()
 
-			varsFile, cleanup, err := writeEffectiveGossVars(ruleDoc, exceptionDoc, profile, facts.Hostname)
+			varsFile, cleanup, err := writeEffectiveGossVars(ruleDoc, exceptionDoc, profile, facts.Hostname, filepath.Join(filepath.Dir(gossFile), "stig-check.sh"))
 			if err != nil {
 				return err
 			}
