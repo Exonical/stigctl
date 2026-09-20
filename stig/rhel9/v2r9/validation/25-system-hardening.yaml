@@ -53,7 +53,16 @@ command:
     title: "RHEL 9 must ensure cryptographic verification of vendor software packages."
     meta: { stig_id: V-257819 }
     exec: |
-      bad="$(rpm -qa --qf '%{NAME} %{SIGPGP:pgpsig}\n' 2>/dev/null | awk '/\(none\)/{print $1}' | head -n20)"; echo "evidence=unsigned_packages=${bad:-none}"; test -z "$bad"
+      key=/etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+      test -r "$key"
+      summaries="$(rpm -q --queryformat '%{SUMMARY}\n' gpg-pubkey 2>/dev/null | grep -i 'Red Hat' || true)"
+      fingerprints="$(gpg -q --keyid-format short --with-fingerprint "$key" 2>/dev/null || true)"
+      echo "evidence=redhat_keys=$(printf '%s' "$summaries" | tr '\n' ';')"
+      echo "evidence=redhat_fingerprints=$(printf '%s' "$fingerprints" | grep -i 'fingerprint' | tr '\n' ';')"
+      printf '%s\n' "$summaries" | grep -qi 'release key 2'
+      printf '%s\n' "$summaries" | grep -qi 'auxiliary key 3'
+      printf '%s\n' "$fingerprints" | grep -Fqi '567E 347A D004 4ADE 55BA  8A5F 199E 2F91 FD43 1D51'
+      printf '%s\n' "$fingerprints" | grep -Fqi '7E46 2425 8C40 6535 D56D  6F13 5054 E4A4 5A63 40B3'
     exit-status: 0
     stdout:
       - "evidence="
@@ -63,7 +72,9 @@ command:
     title: "RHEL 9 must be configured so that the cryptographic hashes of system files match vendor values."
     meta: { stig_id: V-257823 }
     exec: |
-      bad="$(rpm -Va 2>/dev/null | awk 'length($1)>=8 && substr($1,3,1)=="5"{print $NF}' | head -n20)"; echo "evidence=digest_mismatches=${bad:-none}"; test -z "$bad"
+      bad="$(rpm -Va --noconfig 2>/dev/null | awk '$1 ~ /..5/ && $2 != "c" {print}' | head -n20)"
+      echo "evidence=digest_mismatches=${bad:-none}"
+      test -z "$bad"
     exit-status: 0
     stdout:
       - "evidence="
