@@ -976,3 +976,103 @@ rules:
       file: validation/10-kernel.yaml
       resource: command
       test: V-257808
+  V-257777:
+    title: RHEL 9 must be a vendor-supported release.
+    rule_id: SV-257777r1155676
+    severity: high
+    status: automated
+    remediation: {}
+    validation:
+      type: goss
+      file: validation/20-system.yaml
+      resource: command
+      test: V-257777
+  V-257784:
+    title: The systemd Ctrl-Alt-Delete burst key sequence in RHEL 9 must be disabled.
+    rule_id: SV-257784r1208766
+    severity: high
+    status: automated
+    remediation:
+      file: remediation/20-system.yaml
+      step: V-257784
+    validation:
+      type: goss
+      file: validation/20-system.yaml
+      resource: command
+      test: V-257784
+  V-257785:
+    title: The x86 Ctrl-Alt-Delete key sequence must be disabled on RHEL 9.
+    rule_id: SV-257785r1044833
+    severity: high
+    status: automated
+    remediation:
+      file: remediation/20-system.yaml
+      step: V-257785
+    validation:
+      type: goss
+      file: validation/20-system.yaml
+      resource: command
+      test: V-257785
+  V-257826:
+    title: RHEL 9 must not have a File Transfer Protocol (FTP) server package installed.
+    rule_id: SV-257826r1208770
+    severity: high
+    status: automated
+    remediation:
+      file: remediation/00-packages.yaml
+      step: V-257826
+    validation:
+      type: goss
+      file: validation/00-packages.yaml
+      resource: package
+      test: V-257826
+  V-257955:
+    title: There must be no shosts.equiv files on RHEL 9.
+    rule_id: SV-257955r991589
+    severity: high
+    status: automated
+    remediation:
+      file: remediation/20-system.yaml
+      step: V-257955
+    validation:
+      type: goss
+      file: validation/20-system.yaml
+      resource: command
+      test: V-257955
+  V-257956:
+    title: There must be no .shosts files on RHEL 9.
+    rule_id: SV-257956r991589
+    severity: high
+    status: automated
+    remediation:
+      file: remediation/20-system.yaml
+      step: V-257956
+    validation:
+      type: goss
+      file: validation/20-system.yaml
+      resource: command
+      test: V-257956
+  V-258059:
+    title: The root account must be the only account having unrestricted access to RHEL 9 system.
+    rule_id: SV-258059r991589
+    severity: high
+    status: automated
+    remediation: {}
+    validation:
+      type: goss
+      file: validation/20-system.yaml
+      resource: command
+      test: V-258059
+  V-258094:
+    title: RHEL 9 must not allow blank or null passwords.
+    rule_id: SV-258094r1045187
+    severity: high
+    status: automated
+    remediation:
+      file: remediation/20-system.yaml
+      step: V-258094
+    validation:
+      type: goss
+      file: validation/20-system.yaml
+      resource: command
+      test: V-258094
