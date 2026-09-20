@@ -100,3 +100,23 @@ stages:
     - name: V-257917
       commands:
         - test ! -e /var/log/messages || chgrp root /var/log/messages
+
+    - name: V-257888
+      commands:
+        - dnf -y reinstall cronie crontabs
+        - rpm --setugids cronie crontabs
+        - rpm --setperms cronie crontabs
+
+    - name: V-257926
+      commands:
+        - |
+          for path in /etc/cron.d /etc/cron.daily /etc/cron.hourly /etc/cron.monthly /etc/cron.weekly /etc/crontab; do
+            test ! -e "$path" || chown -R root "$path"
+          done
+
+    - name: V-257927
+      commands:
+        - |
+          for path in /etc/cron.d /etc/cron.daily /etc/cron.hourly /etc/cron.monthly /etc/cron.weekly /etc/crontab; do
+            test ! -e "$path" || chgrp -R root "$path"
+          done
