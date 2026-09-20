@@ -56,15 +56,17 @@ command:
   V-258169:
     title: "RHEL 9 must produce enriched audit records."
     meta: { stig_id: V-258169 }
-    exec: "grep -Eiq '^[[:space:]]*log_format[[:space:]]*=[[:space:]]*ENRICHED[[:space:]]*$' /etc/audit/auditd.conf"
+    exec: 'actual=$(grep -Ei ''^[[:space:]]*log_format[[:space:]]*='' /etc/audit/auditd.conf 2>/dev/null); echo "evidence=${actual:-log_format=<unset>}"; printf ''%s\n'' "$actual" | grep -Eiq ''^[[:space:]]*log_format[[:space:]]*=[[:space:]]*ENRICHED[[:space:]]*$'''
     exit-status: 0
+    stdout: ["evidence="]
     skip: {{ not (index .Vars.enabled_rules "V-258169") }}
 
   V-258170:
     title: "RHEL 9 must write audit records to disk."
     meta: { stig_id: V-258170 }
-    exec: "grep -Eiq '^[[:space:]]*write_logs[[:space:]]*=[[:space:]]*yes[[:space:]]*$' /etc/audit/auditd.conf"
+    exec: 'actual=$(grep -Ei ''^[[:space:]]*write_logs[[:space:]]*='' /etc/audit/auditd.conf 2>/dev/null); echo "evidence=${actual:-write_logs=<unset>}"; printf ''%s\n'' "$actual" | grep -Eiq ''^[[:space:]]*write_logs[[:space:]]*=[[:space:]]*yes[[:space:]]*$'''
     exit-status: 0
+    stdout: ["evidence="]
     skip: {{ not (index .Vars.enabled_rules "V-258170") }}
 
   V-258171:

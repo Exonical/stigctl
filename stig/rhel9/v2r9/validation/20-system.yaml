@@ -54,8 +54,9 @@ command:
     title: "RHEL 9 must not allow blank or null passwords."
     meta:
       stig_id: V-258094
-    exec: "! grep -Eisq '(^|[[:space:]])nullok([[:space:]]|$)' /etc/pam.d/system-auth /etc/pam.d/password-auth"
+    exec: 'matches=$(grep -Eis ''(^|[[:space:]])nullok([[:space:]]|$)'' /etc/pam.d/system-auth /etc/pam.d/password-auth); echo "evidence=matches=${matches:-<none>}"; test -z "$matches"'
     exit-status: 0
+    stdout: ["evidence="]
     skip: {{ not (index .Vars.enabled_rules "V-258094") }}
 
   V-257820:

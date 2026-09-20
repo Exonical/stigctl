@@ -10,15 +10,17 @@ command:
   V-258104:
     title: "RHEL 9 must enforce a 24-hour minimum password lifetime for new users."
     meta: { stig_id: V-258104 }
-    exec: "grep -Eq '^[[:space:]]*PASS_MIN_DAYS[[:space:]]+1[[:space:]]*$' /etc/login.defs"
+    exec: 'actual=$(grep -E ''^[[:space:]]*PASS_MIN_DAYS[[:space:]]'' /etc/login.defs 2>/dev/null); echo "evidence=${actual:-PASS_MIN_DAYS=<unset>}"; printf ''%s\n'' "$actual" | grep -Eq ''^[[:space:]]*PASS_MIN_DAYS[[:space:]]+1[[:space:]]*$'''
     exit-status: 0
+    stdout: ["evidence="]
     skip: {{ not (index .Vars.enabled_rules "V-258104") }}
 
   V-258091:
     title: "RHEL 9 must configure pwquality retries to three or less."
     meta: { stig_id: V-258091 }
-    exec: "grep -RhsE '^[[:space:]]*retry[[:space:]]*=[[:space:]]*[1-3][[:space:]]*$' /etc/security/pwquality.conf /etc/security/pwquality.conf.d 2>/dev/null | grep -q ."
+    exec: 'actual=$(grep -RhsE ''^[[:space:]]*retry[[:space:]]*='' /etc/security/pwquality.conf /etc/security/pwquality.conf.d 2>/dev/null); echo "evidence=${actual:-retry=<unset>}"; printf ''%s\n'' "$actual" | grep -Eq ''^[[:space:]]*retry[[:space:]]*=[[:space:]]*[1-3][[:space:]]*$'''
     exit-status: 0
+    stdout: ["evidence="]
     skip: {{ not (index .Vars.enabled_rules "V-258091") }}
 
   V-258095:
@@ -56,22 +58,25 @@ command:
   V-258101:
     title: "RHEL 9 must enforce password complexity rules for root."
     meta: { stig_id: V-258101 }
-    exec: "grep -RhsE '^[[:space:]]*enforce_for_root[[:space:]]*$' /etc/security/pwquality.conf /etc/security/pwquality.conf.d 2>/dev/null | grep -q ."
+    exec: 'actual=$(grep -RhsE ''^[[:space:]]*enforce_for_root[[:space:]]*$'' /etc/security/pwquality.conf /etc/security/pwquality.conf.d 2>/dev/null); evidence="${actual:+set}"; echo "evidence=enforce_for_root=${evidence:-<unset>}"; test -n "$actual"'
     exit-status: 0
+    stdout: ["evidence="]
     skip: {{ not (index .Vars.enabled_rules "V-258101") }}
 
   V-258102:
     title: "RHEL 9 must require at least one lowercase password character."
     meta: { stig_id: V-258102 }
-    exec: "grep -RhsE '^[[:space:]]*lcredit[[:space:]]*=[[:space:]]*-[1-9][0-9]*[[:space:]]*$' /etc/security/pwquality.conf /etc/security/pwquality.conf.d 2>/dev/null | grep -q ."
+    exec: 'actual=$(grep -RhsE ''^[[:space:]]*lcredit[[:space:]]*='' /etc/security/pwquality.conf /etc/security/pwquality.conf.d 2>/dev/null); echo "evidence=${actual:-lcredit=<unset>}"; printf ''%s\n'' "$actual" | grep -Eq ''^[[:space:]]*lcredit[[:space:]]*=[[:space:]]*-[1-9][0-9]*[[:space:]]*$'''
     exit-status: 0
+    stdout: ["evidence="]
     skip: {{ not (index .Vars.enabled_rules "V-258102") }}
 
   V-258103:
     title: "RHEL 9 must require at least one numeric password character."
     meta: { stig_id: V-258103 }
-    exec: "grep -RhsE '^[[:space:]]*dcredit[[:space:]]*=[[:space:]]*-[1-9][0-9]*[[:space:]]*$' /etc/security/pwquality.conf /etc/security/pwquality.conf.d 2>/dev/null | grep -q ."
+    exec: 'actual=$(grep -RhsE ''^[[:space:]]*dcredit[[:space:]]*='' /etc/security/pwquality.conf /etc/security/pwquality.conf.d 2>/dev/null); echo "evidence=${actual:-dcredit=<unset>}"; printf ''%s\n'' "$actual" | grep -Eq ''^[[:space:]]*dcredit[[:space:]]*=[[:space:]]*-[1-9][0-9]*[[:space:]]*$'''
     exit-status: 0
+    stdout: ["evidence="]
     skip: {{ not (index .Vars.enabled_rules "V-258103") }}
 
   V-258107:
@@ -85,36 +90,41 @@ command:
   V-258109:
     title: "RHEL 9 must require at least one special password character."
     meta: { stig_id: V-258109 }
-    exec: "grep -RhsE '^[[:space:]]*ocredit[[:space:]]*=[[:space:]]*-[1-9][0-9]*[[:space:]]*$' /etc/security/pwquality.conf /etc/security/pwquality.conf.d 2>/dev/null | grep -q ."
+    exec: 'actual=$(grep -RhsE ''^[[:space:]]*ocredit[[:space:]]*='' /etc/security/pwquality.conf /etc/security/pwquality.conf.d 2>/dev/null); echo "evidence=${actual:-ocredit=<unset>}"; printf ''%s\n'' "$actual" | grep -Eq ''^[[:space:]]*ocredit[[:space:]]*=[[:space:]]*-[1-9][0-9]*[[:space:]]*$'''
     exit-status: 0
+    stdout: ["evidence="]
     skip: {{ not (index .Vars.enabled_rules "V-258109") }}
 
   V-258110:
     title: "RHEL 9 must prevent dictionary words in passwords."
     meta: { stig_id: V-258110 }
-    exec: "grep -RhsE '^[[:space:]]*dictcheck[[:space:]]*=[[:space:]]*1[[:space:]]*$' /etc/security/pwquality.conf /etc/security/pwquality.conf.d 2>/dev/null | grep -q ."
+    exec: 'actual=$(grep -RhsE ''^[[:space:]]*dictcheck[[:space:]]*='' /etc/security/pwquality.conf /etc/security/pwquality.conf.d 2>/dev/null); echo "evidence=${actual:-dictcheck=<unset>}"; printf ''%s\n'' "$actual" | grep -Eq ''^[[:space:]]*dictcheck[[:space:]]*=[[:space:]]*1[[:space:]]*$'''
     exit-status: 0
+    stdout: ["evidence="]
     skip: {{ not (index .Vars.enabled_rules "V-258110") }}
 
   V-258111:
     title: "RHEL 9 must require at least one uppercase password character."
     meta: { stig_id: V-258111 }
-    exec: "grep -RhsE '^[[:space:]]*ucredit[[:space:]]*=[[:space:]]*-[1-9][0-9]*[[:space:]]*$' /etc/security/pwquality.conf /etc/security/pwquality.conf.d 2>/dev/null | grep -q ."
+    exec: 'actual=$(grep -RhsE ''^[[:space:]]*ucredit[[:space:]]*='' /etc/security/pwquality.conf /etc/security/pwquality.conf.d 2>/dev/null); echo "evidence=${actual:-ucredit=<unset>}"; printf ''%s\n'' "$actual" | grep -Eq ''^[[:space:]]*ucredit[[:space:]]*=[[:space:]]*-[1-9][0-9]*[[:space:]]*$'''
     exit-status: 0
+    stdout: ["evidence="]
     skip: {{ not (index .Vars.enabled_rules "V-258111") }}
 
   V-258112:
     title: "RHEL 9 must require at least eight changed characters when passwords are changed."
     meta: { stig_id: V-258112 }
-    exec: "grep -RhsE '^[[:space:]]*difok[[:space:]]*=[[:space:]]*8[[:space:]]*$' /etc/security/pwquality.conf /etc/security/pwquality.conf.d 2>/dev/null | grep -q ."
+    exec: 'actual=$(grep -RhsE ''^[[:space:]]*difok[[:space:]]*='' /etc/security/pwquality.conf /etc/security/pwquality.conf.d 2>/dev/null); echo "evidence=${actual:-difok=<unset>}"; printf ''%s\n'' "$actual" | grep -Eq ''^[[:space:]]*difok[[:space:]]*=[[:space:]]*8[[:space:]]*$'''
     exit-status: 0
+    stdout: ["evidence="]
     skip: {{ not (index .Vars.enabled_rules "V-258112") }}
 
   V-258113:
     title: "RHEL 9 must limit same-class repeating password characters to four."
     meta: { stig_id: V-258113 }
-    exec: "grep -RhsE '^[[:space:]]*maxclassrepeat[[:space:]]*=[[:space:]]*4[[:space:]]*$' /etc/security/pwquality.conf /etc/security/pwquality.conf.d 2>/dev/null | grep -q ."
+    exec: 'actual=$(grep -RhsE ''^[[:space:]]*maxclassrepeat[[:space:]]*='' /etc/security/pwquality.conf /etc/security/pwquality.conf.d 2>/dev/null); echo "evidence=${actual:-maxclassrepeat=<unset>}"; printf ''%s\n'' "$actual" | grep -Eq ''^[[:space:]]*maxclassrepeat[[:space:]]*=[[:space:]]*4[[:space:]]*$'''
     exit-status: 0
+    stdout: ["evidence="]
     skip: {{ not (index .Vars.enabled_rules "V-258113") }}
 
   V-258114:
@@ -130,50 +140,57 @@ command:
   V-258115:
     title: "RHEL 9 must require at least four password character classes."
     meta: { stig_id: V-258115 }
-    exec: "grep -RhsE '^[[:space:]]*minclass[[:space:]]*=[[:space:]]*4[[:space:]]*$' /etc/security/pwquality.conf /etc/security/pwquality.conf.d 2>/dev/null | grep -q ."
+    exec: 'actual=$(grep -RhsE ''^[[:space:]]*minclass[[:space:]]*='' /etc/security/pwquality.conf /etc/security/pwquality.conf.d 2>/dev/null); echo "evidence=${actual:-minclass=<unset>}"; printf ''%s\n'' "$actual" | grep -Eq ''^[[:space:]]*minclass[[:space:]]*=[[:space:]]*4[[:space:]]*$'''
     exit-status: 0
+    stdout: ["evidence="]
     skip: {{ not (index .Vars.enabled_rules "V-258115") }}
 
   V-258117:
     title: "RHEL 9 must use the shadow file to store encrypted password representations."
     meta: { stig_id: V-258117 }
-    exec: "grep -Eq '^[[:space:]]*ENCRYPT_METHOD[[:space:]]+SHA512[[:space:]]*$' /etc/login.defs"
+    exec: 'actual=$(grep -E ''^[[:space:]]*ENCRYPT_METHOD[[:space:]]'' /etc/login.defs 2>/dev/null); echo "evidence=${actual:-ENCRYPT_METHOD=<unset>}"; printf ''%s\n'' "$actual" | grep -Eq ''^[[:space:]]*ENCRYPT_METHOD[[:space:]]+SHA512[[:space:]]*$'''
     exit-status: 0
+    stdout: ["evidence="]
     skip: {{ not (index .Vars.enabled_rules "V-258117") }}
 
   V-258072:
     title: "RHEL 9 must define default permissions for the bash shell."
     meta: { stig_id: V-258072 }
-    exec: "grep -Eq '^[[:space:]]*umask[[:space:]]+077[[:space:]]*$' /etc/bashrc"
+    exec: 'actual=$(grep -E ''^[[:space:]]*umask[[:space:]]'' /etc/bashrc 2>/dev/null); echo "evidence=${actual:-umask=<unset>}"; printf ''%s\n'' "$actual" | grep -Eq ''^[[:space:]]*umask[[:space:]]+077[[:space:]]*$'''
     exit-status: 0
+    stdout: ["evidence="]
     skip: {{ not (index .Vars.enabled_rules "V-258072") }}
 
   V-258073:
     title: "RHEL 9 must define default permissions for the c shell."
     meta: { stig_id: V-258073 }
-    exec: "grep -Eq '^[[:space:]]*umask[[:space:]]+077[[:space:]]*$' /etc/csh.cshrc"
+    exec: 'actual=$(grep -E ''^[[:space:]]*umask[[:space:]]'' /etc/csh.cshrc 2>/dev/null); echo "evidence=${actual:-umask=<unset>}"; printf ''%s\n'' "$actual" | grep -Eq ''^[[:space:]]*umask[[:space:]]+077[[:space:]]*$'''
     exit-status: 0
+    stdout: ["evidence="]
     skip: {{ not (index .Vars.enabled_rules "V-258073") }}
 
   V-258074:
     title: "RHEL 9 must define default permissions for all authenticated users."
     meta: { stig_id: V-258074 }
-    exec: "grep -Eq '^[[:space:]]*UMASK[[:space:]]+077[[:space:]]*$' /etc/login.defs"
+    exec: 'actual=$(grep -E ''^[[:space:]]*UMASK[[:space:]]'' /etc/login.defs 2>/dev/null); echo "evidence=${actual:-UMASK=<unset>}"; printf ''%s\n'' "$actual" | grep -Eq ''^[[:space:]]*UMASK[[:space:]]+077[[:space:]]*$'''
     exit-status: 0
+    stdout: ["evidence="]
     skip: {{ not (index .Vars.enabled_rules "V-258074") }}
 
   V-258075:
     title: "RHEL 9 must define default permissions for the system default profile."
     meta: { stig_id: V-258075 }
-    exec: "grep -Eq '^[[:space:]]*umask[[:space:]]+077[[:space:]]*$' /etc/profile"
+    exec: 'actual=$(grep -E ''^[[:space:]]*umask[[:space:]]'' /etc/profile 2>/dev/null); echo "evidence=${actual:-umask=<unset>}"; printf ''%s\n'' "$actual" | grep -Eq ''^[[:space:]]*umask[[:space:]]+077[[:space:]]*$'''
     exit-status: 0
+    stdout: ["evidence="]
     skip: {{ not (index .Vars.enabled_rules "V-258075") }}
 
   V-258084:
     title: "RHEL 9 must require reauthentication when using sudo."
     meta: { stig_id: V-258084 }
-    exec: "grep -REiq '^[[:space:]]*Defaults[[:space:]]+.*timestamp_timeout[[:space:]]*=[[:space:]]*0([[:space:],]|$)' /etc/sudoers /etc/sudoers.d 2>/dev/null"
+    exec: 'actual=$(grep -REih ''^[[:space:]]*Defaults[[:space:]]+.*timestamp_timeout'' /etc/sudoers /etc/sudoers.d 2>/dev/null); echo "evidence=${actual:-timestamp_timeout <unset>}"; printf ''%s\n'' "$actual" | grep -Eiq ''^[[:space:]]*Defaults[[:space:]]+.*timestamp_timeout[[:space:]]*=[[:space:]]*0([[:space:],]|$)'''
     exit-status: 0
+    stdout: ["evidence="]
     skip: {{ not (index .Vars.enabled_rules "V-258084") }}
 
   V-258085:
@@ -187,8 +204,9 @@ command:
   V-258106:
     title: "RHEL 9 must require users to provide a password for privilege escalation."
     meta: { stig_id: V-258106 }
-    exec: "! grep -REiq '^[[:space:]]*[^#].*NOPASSWD' /etc/sudoers /etc/sudoers.d 2>/dev/null"
+    exec: 'matches=$(grep -REi ''^[[:space:]]*[^#].*NOPASSWD'' /etc/sudoers /etc/sudoers.d 2>/dev/null); echo "evidence=matches=${matches:-<none>}"; test -z "$matches"'
     exit-status: 0
+    stdout: ["evidence="]
     skip: {{ not (index .Vars.enabled_rules "V-258106") }}
 
   V-272496:
