@@ -215,3 +215,30 @@ command:
     exec: "test -e /var/log/messages && test \"$(stat -c %G /var/log/messages)\" = root"
     exit-status: 0
     skip: {{ not (index .Vars.enabled_rules "V-257917") }}
+
+  V-257888:
+    title: "RHEL 9 permissions of cron configuration files and directories must not be modified from operating system defaults."
+    meta: { stig_id: V-257888 }
+    exec: "test -z \"$(rpm --verify cronie crontabs | awk '!($2==\"c\" && $1 ~ /^.\\..\\.\\.\\..\\./){print}')\""
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257888") }}
+
+  V-257926:
+    title: "RHEL 9 cron configuration files directory must be owned by root."
+    meta: { stig_id: V-257926 }
+    exec: |
+      for path in /etc/cron.d /etc/cron.daily /etc/cron.hourly /etc/cron.monthly /etc/cron.weekly /etc/crontab; do
+        test ! -e "$path" || test -z "$(find "$path" -xdev ! -user root -print -quit 2>/dev/null)" || exit 1
+      done
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257926") }}
+
+  V-257927:
+    title: "RHEL 9 cron configuration files directory must be group-owned by root."
+    meta: { stig_id: V-257927 }
+    exec: |
+      for path in /etc/cron.d /etc/cron.daily /etc/cron.hourly /etc/cron.monthly /etc/cron.weekly /etc/crontab; do
+        test ! -e "$path" || test -z "$(find "$path" -xdev ! -group root -print -quit 2>/dev/null)" || exit 1
+      done
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257927") }}
