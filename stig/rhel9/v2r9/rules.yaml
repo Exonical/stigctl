@@ -2598,4 +2598,745 @@ rules:
       file: validation/40-authentication.yaml
       resource: command
       test: V-272496
+  V-258176:
+    title: RHEL 9 must audit uses of the "execve" system call.
+    rule_id: SV-258176r1155595
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258176
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258176
+
+  V-258177:
+    title: RHEL 9 must audit all uses of the chmod, fchmod, and fchmodat system calls.
+    rule_id: SV-258177r1155597
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258177
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258177
+
+  V-258178:
+    title: RHEL 9 must audit all uses of the chown, fchown, fchownat, and lchown system calls.
+    rule_id: SV-258178r1155599
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258178
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258178
+
+  V-258179:
+    title: RHEL 9 must audit all uses of the setxattr, fsetxattr, lsetxattr, removexattr, fremovexattr, and lremovexattr system calls.
+    rule_id: SV-258179r1155601
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258179
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258179
+
+  V-258180:
+    title: RHEL 9 must audit all uses of umount system calls.
+    rule_id: SV-258180r1045325
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258180
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258180
+
+  V-258181:
+    title: RHEL 9 must audit all uses of the chacl command.
+    rule_id: SV-258181r1045328
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258181
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258181
+
+  V-258182:
+    title: RHEL 9 must audit all uses of the setfacl command.
+    rule_id: SV-258182r1045331
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258182
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258182
+
+  V-258183:
+    title: RHEL 9 must audit all uses of the chcon command.
+    rule_id: SV-258183r1045334
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258183
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258183
+
+  V-258184:
+    title: RHEL 9 must audit all uses of the semanage command.
+    rule_id: SV-258184r1045337
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258184
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258184
+
+  V-258185:
+    title: RHEL 9 must audit all uses of the setfiles command.
+    rule_id: SV-258185r1045340
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258185
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258185
+
+  V-258186:
+    title: RHEL 9 must audit all uses of the setsebool command.
+    rule_id: SV-258186r1045343
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258186
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258186
+
+  V-258187:
+    title: RHEL 9 must audit all uses of the rename, unlink, rmdir, renameat, and unlinkat system calls.
+    rule_id: SV-258187r1155603
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258187
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258187
+
+  V-258188:
+    title: RHEL 9 must audit all uses of the truncate, ftruncate, creat, open, openat, and open_by_handle_at system calls.
+    rule_id: SV-258188r1155605
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258188
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258188
+
+  V-258189:
+    title: RHEL 9 must audit all uses of the delete_module system call.
+    rule_id: SV-258189r1155607
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258189
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258189
+
+  V-258190:
+    title: RHEL 9 must audit all uses of the init_module and finit_module system calls.
+    rule_id: SV-258190r1155609
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258190
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258190
+
+  V-258191:
+    title: RHEL 9 must audit all uses of the chage command.
+    rule_id: SV-258191r1045358
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258191
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258191
+
+  V-258192:
+    title: RHEL 9 must audit all uses of the chsh command.
+    rule_id: SV-258192r1045361
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258192
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258192
+
+  V-258193:
+    title: RHEL 9 must audit all uses of the crontab command.
+    rule_id: SV-258193r1045364
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258193
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258193
+
+  V-258194:
+    title: RHEL 9 must audit all uses of the gpasswd command.
+    rule_id: SV-258194r1045367
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258194
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258194
+
+  V-258195:
+    title: RHEL 9 must audit all uses of the kmod command.
+    rule_id: SV-258195r1045370
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258195
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258195
+
+  V-258196:
+    title: RHEL 9 must audit all uses of the newgrp command.
+    rule_id: SV-258196r1045373
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258196
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258196
+
+  V-258197:
+    title: RHEL 9 must audit all uses of the pam_timestamp_check command.
+    rule_id: SV-258197r1045376
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258197
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258197
+
+  V-258198:
+    title: RHEL 9 must audit all uses of the passwd command.
+    rule_id: SV-258198r1045379
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258198
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258198
+
+  V-258199:
+    title: RHEL 9 must audit all uses of the postdrop command.
+    rule_id: SV-258199r1045382
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258199
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258199
+
+  V-258200:
+    title: RHEL 9 must audit all uses of the postqueue command.
+    rule_id: SV-258200r1045385
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258200
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258200
+
+  V-258201:
+    title: RHEL 9 must audit all uses of the ssh-agent command.
+    rule_id: SV-258201r1045388
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258201
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258201
+
+  V-258202:
+    title: RHEL 9 must audit all uses of the ssh-keysign command.
+    rule_id: SV-258202r1045391
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258202
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258202
+
+  V-258203:
+    title: RHEL 9 must audit all uses of the su command.
+    rule_id: SV-258203r1045394
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258203
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258203
+
+  V-258204:
+    title: RHEL 9 must audit all uses of the sudo command.
+    rule_id: SV-258204r1045397
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258204
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258204
+
+  V-258205:
+    title: RHEL 9 must audit all uses of the sudoedit command.
+    rule_id: SV-258205r1045400
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258205
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258205
+
+  V-258206:
+    title: RHEL 9 must audit all uses of the unix_chkpwd command.
+    rule_id: SV-258206r1045403
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258206
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258206
+
+  V-258207:
+    title: RHEL 9 must audit all uses of the unix_update command.
+    rule_id: SV-258207r1045406
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258207
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258207
+
+  V-258208:
+    title: RHEL 9 must audit all uses of the userhelper command.
+    rule_id: SV-258208r1045409
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258208
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258208
+
+  V-258209:
+    title: RHEL 9 must audit all uses of the usermod command.
+    rule_id: SV-258209r1045412
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258209
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258209
+
+  V-258210:
+    title: RHEL 9 must audit all uses of the mount command.
+    rule_id: SV-258210r1045415
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258210
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258210
+
+  V-258211:
+    title: Successful/unsuccessful uses of the init command in RHEL 9 must generate an audit record.
+    rule_id: SV-258211r1045418
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258211
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258211
+
+  V-258212:
+    title: Successful/unsuccessful uses of the poweroff command in RHEL 9 must generate an audit record.
+    rule_id: SV-258212r1045421
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258212
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258212
+
+  V-258213:
+    title: Successful/unsuccessful uses of the reboot command in RHEL 9 must generate an audit record.
+    rule_id: SV-258213r1045424
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258213
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258213
+
+  V-258214:
+    title: Successful/unsuccessful uses of the shutdown command in RHEL 9 must generate an audit record.
+    rule_id: SV-258214r1045427
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258214
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258214
+
+  V-258215:
+    title: Successful/unsuccessful uses of the umount system call in RHEL 9 must generate an audit record.
+    rule_id: SV-258215r1155611
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258215
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258215
+
+  V-258216:
+    title: Successful/unsuccessful uses of the umount2 system call in RHEL 9 must generate an audit record.
+    rule_id: SV-258216r1155613
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258216
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258216
+
+  V-258217:
+    title: RHEL 9 must generate audit records for all account creations, modifications, disabling, and termination events that affect /etc/sudoers.
+    rule_id: SV-258217r1210919
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258217
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258217
+
+  V-258218:
+    title: RHEL 9 must generate audit records for all account creations, modifications, disabling, and termination events that affect /etc/sudoers.d/directory.
+    rule_id: SV-258218r1210920
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258218
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258218
+
+  V-258219:
+    title: RHEL 9 must generate audit records for all account creations, modifications, disabling, and termination events that affect /etc/group.
+    rule_id: SV-258219r1210921
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258219
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258219
+
+  V-258220:
+    title: RHEL 9 must generate audit records for all account creations, modifications, disabling, and termination events that affect /etc/gshadow.
+    rule_id: SV-258220r1210922
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258220
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258220
+
+  V-258221:
+    title: RHEL 9 must generate audit records for all account creations, modifications, disabling, and termination events that affect /etc/opasswd.
+    rule_id: SV-258221r1210923
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258221
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258221
+
+  V-258222:
+    title: RHEL 9 must generate audit records for all account creations, modifications, disabling, and termination events that affect /etc/passwd.
+    rule_id: SV-258222r1210924
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258222
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258222
+
+  V-258223:
+    title: RHEL 9 must generate audit records for all account creations, modifications, disabling, and termination events that affect /etc/shadow.
+    rule_id: SV-258223r1210925
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258223
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258223
+
+  V-258224:
+    title: RHEL 9 must generate audit records for all account creations, modifications, disabling, and termination events that affect /var/log/faillock.
+    rule_id: SV-258224r1210926
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258224
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258224
+
+  V-258225:
+    title: RHEL 9 must generate audit records for all account creations, modifications, disabling, and termination events that affect /var/log/lastlog.
+    rule_id: SV-258225r1210927
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258225
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258225
+
+  V-258228:
+    title: RHEL 9 audit system must protect logon UIDs from unauthorized change.
+    rule_id: SV-258228r991572
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258228
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258228
+
+  V-258229:
+    title: RHEL 9 audit system must protect auditing rules from unauthorized change.
+    rule_id: SV-258229r958434
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258229
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258229
+
+  V-279936:
+    title: RHEL 9 must audit any script or executable called by cron as root or by any privileged user.
+    rule_id: SV-279936r1210929
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-279936
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-279936
 
