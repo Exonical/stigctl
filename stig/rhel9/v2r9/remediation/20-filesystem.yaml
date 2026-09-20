@@ -120,3 +120,28 @@ stages:
           for path in /etc/cron.d /etc/cron.daily /etc/cron.hourly /etc/cron.monthly /etc/cron.weekly /etc/crontab; do
             test ! -e "$path" || chgrp -R root "$path"
           done
+
+    - name: V-257919
+      commands:
+        - |
+          while IFS= read -r path; do
+            gid="$(stat -Lc %g "$path" 2>/dev/null || echo 99999)"
+            test "$gid" -lt 1000 || chgrp root "$path"
+          done < <(find -L /bin /sbin /usr/bin /usr/sbin /usr/libexec /usr/local/bin /usr/local/sbin -xdev -type f -print 2>/dev/null)
+
+    - name: V-257921
+      commands:
+        - |
+          while IFS= read -r path; do
+            gid="$(stat -c %g "$path" 2>/dev/null || echo 99999)"
+            test "$gid" -lt 1000 || chgrp root "$path"
+          done < <(find /lib /lib64 /usr/lib /usr/lib64 -xdev -type f -name '*.so*' -print 2>/dev/null)
+
+    - name: V-257923
+      commands:
+        - |
+          while IFS= read -r path; do
+            gid="$(stat -c %g "$path" 2>/dev/null || echo 99999)"
+            test "$gid" -lt 1000 || chgrp root "$path"
+          done < <(find /lib /lib64 /usr/lib /usr/lib64 -xdev -type d -print 2>/dev/null)
+
