@@ -70,7 +70,8 @@ command:
   V-257996:
     title: "RHEL 9 must terminate SSH traffic after 10 minutes of becoming unresponsive."
     meta: { stig_id: V-257996 }
-    exec: "/usr/sbin/sshd -T 2>/dev/null | awk '$1=="clientaliveinterval" {exit !($2 <= 600 && $2 > 0)}'"
+    exec: |
+      /usr/sbin/sshd -T 2>/dev/null | awk '$1=="clientaliveinterval" {exit !($2 <= 600 && $2 > 0)}'
     exit-status: 0
     skip: {{ not (index .Vars.enabled_rules "V-257996") }}
 
