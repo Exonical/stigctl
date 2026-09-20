@@ -108,3 +108,48 @@ stages:
           else
             printf '\nENCRYPT_METHOD SHA512\n' >> /etc/login.defs
           fi
+
+    - name: V-258072
+      commands:
+        - |
+          sed -ri '/^[[:space:]]*umask[[:space:]]+/d' /etc/bashrc
+          printf '\numask 077\n' >> /etc/bashrc
+
+    - name: V-258073
+      commands:
+        - |
+          sed -ri '/^[[:space:]]*umask[[:space:]]+/d' /etc/csh.cshrc
+          printf '\numask 077\n' >> /etc/csh.cshrc
+
+    - name: V-258074
+      commands:
+        - |
+          if grep -qE '^[[:space:]]*UMASK[[:space:]]+' /etc/login.defs; then
+            sed -ri 's/^[[:space:]]*UMASK.*/UMASK 077/' /etc/login.defs
+          else
+            printf '\nUMASK 077\n' >> /etc/login.defs
+          fi
+
+    - name: V-258075
+      commands:
+        - |
+          sed -ri '/^[[:space:]]*umask[[:space:]]+/d' /etc/profile
+          printf '\numask 077\n' >> /etc/profile
+
+    - name: V-258084
+      files:
+        - path: /etc/sudoers.d/60-stig-auth
+          permissions: 0440
+          content: |
+            Defaults timestamp_timeout=0
+            Defaults !targetpw
+            Defaults !rootpw
+            Defaults !runaspw
+
+    - name: V-258085
+      commands:
+        - test -f /etc/sudoers.d/60-stig-auth
+
+    - name: V-258106
+      commands:
+        - find /etc/sudoers /etc/sudoers.d -type f -exec sed -ri '/NOPASSWD/ s/^/# /' {} +
