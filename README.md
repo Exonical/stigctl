@@ -178,6 +178,28 @@ The staged executable must be compatible with the target operating system and
 CPU architecture. Temporary data is created under `/var/tmp` and removed after
 the result is collected.
 
+### Windows controller
+
+Baseline, profile, and exception commands run natively on Windows. Local
+remediation and validation require Linux because the embedded Yip and Goss
+engines use Linux system interfaces.
+
+A Windows machine can still control agentless inventory scans. Supply a Linux
+`stigctl` executable compatible with the target hosts using `--remote-binary`:
+
+```powershell
+go run .\cmd\stigctl\main.go scan rhel9:v2r9 `
+  --inventory .\inventory.yaml `
+  --remote-binary .\stigctl-linux-amd64 `
+  --format cklb `
+  --output .\cklb-results `
+  --junit-output .\junit-results
+```
+
+The controller uses the system `ssh.exe` and `scp.exe` clients. The remote
+Linux hosts do not need `stigctl`, Goss, or baseline content installed; the
+controller stages them temporarily and removes them after each scan.
+
 ## Architecture
 
 ```text

@@ -114,7 +114,6 @@ func newBaselineSyncCommand() *cobra.Command {
 	}
 }
 
-
 func newBaselineImportCommand() *cobra.Command {
 	var syncRules bool
 
@@ -219,7 +218,6 @@ func newBaselineImportCommand() *cobra.Command {
 	return cmd
 }
 
-
 func newBaselineImportCKLBCommand() *cobra.Command {
 	return &cobra.Command{
 		Use:   "import-cklb <baseline> <cklb-file>",
@@ -305,7 +303,6 @@ func newBaselineImportCKLBCommand() *cobra.Command {
 		},
 	}
 }
-
 
 func newBaselineVerifyCommand() *cobra.Command {
 	return &cobra.Command{
@@ -431,7 +428,6 @@ func newBaselineVerifyCommand() *cobra.Command {
 		},
 	}
 }
-
 
 func newBaselineCoverageCommand() *cobra.Command {
 	return &cobra.Command{

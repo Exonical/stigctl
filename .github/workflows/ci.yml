@@ -9,6 +9,27 @@ permissions:
   contents: read
 
 jobs:
+  windows-build:
+    name: Windows controller build
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+          cache: true
+          cache-dependency-path: go.sum
+
+      - name: Build Windows controller
+        run: go build -o bin/stigctl.exe ./cmd/stigctl
+
+      - name: Verify baseline commands
+        shell: pwsh
+        run: |
+          .\bin\stigctl.exe baseline list
+          .\bin\stigctl.exe baseline show rhel9:v2r9
+
   test:
     name: Test
     runs-on: ubuntu-latest
