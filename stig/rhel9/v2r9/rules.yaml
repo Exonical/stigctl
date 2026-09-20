@@ -3339,4 +3339,173 @@ rules:
       file: validation/50-audit.yaml
       resource: command
       test: V-279936
+  V-258153:
+    title: RHEL 9 audit system must take appropriate action when an error writing to the audit storage volume occurs.
+    rule_id: SV-258153r1038966
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258153
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258153
+
+  V-258154:
+    title: RHEL 9 audit system must take appropriate action when the audit storage volume is full.
+    rule_id: SV-258154r1038966
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258154
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258154
+
+  V-258156:
+    title: RHEL 9 must take action when allocated audit record storage volume reaches 75 percent of the repository maximum audit record storage capacity.
+    rule_id: SV-258156r1106364
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258156
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258156
+
+  V-258157:
+    title: RHEL 9 must notify the system administrator (SA) and information system security officer (ISSO) (at a minimum) when allocated audit record storage volume reaches 75 percent utilization.
+    rule_id: SV-258157r1134932
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258157
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258157
+
+  V-258158:
+    title: RHEL 9 must take action when allocated audit record storage volume reaches 95 percent of the audit record storage capacity.
+    rule_id: SV-258158r971542
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258158
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258158
+
+  V-258159:
+    title: RHEL 9 must take action when allocated audit record storage volume reaches 95 percent of the repository maximum audit record storage capacity.
+    rule_id: SV-258159r971542
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258159
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258159
+
+  V-258160:
+    title: RHEL 9 audit system must take appropriate action when the audit files have reached maximum size.
+    rule_id: SV-258160r1038966
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258160
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258160
+
+  V-258161:
+    title: RHEL 9 must label all offloaded audit logs before sending them to the central log server.
+    rule_id: SV-258161r958416
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258161
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258161
+
+  V-258162:
+    title: RHEL 9 must take appropriate action when the internal event queue is full.
+    rule_id: SV-258162r1184331
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258162
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258162
+
+  V-258163:
+    title: RHEL 9 System Administrator (SA) and/or information system security officer (ISSO) (at a minimum) must be alerted of an audit processing failure event.
+    rule_id: SV-258163r958424
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258163
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258163
+
+  V-258173:
+    title: RHEL 9 must allocate an audit_backlog_limit of sufficient size to capture processes that start prior to the audit daemon.
+    rule_id: SV-258173r1101933
+    severity: low
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258173
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258173
+
+  V-258155:
+    title: RHEL 9 must allocate audit record storage capacity to store at least one week's worth of audit records.
+    rule_id: SV-258155r1045300
+    severity: medium
+    status: manual
+    remediation: {}
+    validation: {}
+
+  V-258174:
+    title: RHEL 9 must have mail aliases to notify the information system security officer (ISSO) and system administrator (SA) (at a minimum) in the event of an audit processing failure.
+    rule_id: SV-258174r958424
+    severity: medium
+    status: manual
+    remediation: {}
+    validation: {}
 
