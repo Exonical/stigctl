@@ -97,7 +97,7 @@ func runRemoteScans(cmd *cobra.Command, options remoteScanOptions) error {
 	}
 	var scanErrors []error
 	for _, item := range ordered {
-		if item.result.OutputPath != "" {
+		if item.result.Published && item.result.OutputPath != "" {
 			if info, statErr := os.Stat(item.result.OutputPath); statErr == nil && info.Size() > 0 {
 				fmt.Fprintf(cmd.OutOrStdout(), "[%s] wrote %s\n", item.result.Target.Name, item.result.OutputPath)
 			}
