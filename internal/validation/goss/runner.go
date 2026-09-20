@@ -1,8 +1,10 @@
 package goss
 
 import (
+	"bytes"
 	"context"
 	"fmt"
+	"io"
 	"strings"
 
 	"github.com/Exonical/stigctl/internal/results"
@@ -162,7 +164,7 @@ func testMessage(test resource.TestResult) string {
 			test.ResourceType,
 			test.ResourceId,
 			test.Property,
-			test.MatcherResult.Actual,
+			formatMatcherValue(test.MatcherResult.Actual),
 		)
 	}
 	return fmt.Sprintf(
@@ -170,9 +172,38 @@ func testMessage(test resource.TestResult) string {
 		test.ResourceType,
 		test.ResourceId,
 		test.Property,
-		test.MatcherResult.Expected,
-		test.MatcherResult.Actual,
+		formatMatcherValue(test.MatcherResult.Expected),
+		formatMatcherValue(test.MatcherResult.Actual),
 	)
+}
+
+func formatMatcherValue(value any) string {
+	switch typed := value.(type) {
+	case nil:
+		return "<nil>"
+	case string:
+		return strings.TrimSuffix(typed, "\n")
+	case []byte:
+		return strings.TrimSuffix(string(typed), "\n")
+	case *bytes.Buffer:
+		return strings.TrimSuffix(typed.String(), "\n")
+	case interface {
+		Size() int64
+		ReadAt([]byte, int64) (int, error)
+	}:
+		size := typed.Size()
+		if size == 0 {
+			return ""
+		}
+		buf := make([]byte, int(size))
+		n, err := typed.ReadAt(buf, 0)
+		if err != nil && err != io.EOF {
+			return fmt.Sprint(value)
+		}
+		return strings.TrimSuffix(string(buf[:n]), "\n")
+	default:
+		return fmt.Sprint(value)
+	}
 }
 
 func sortStrings(values []string) {
