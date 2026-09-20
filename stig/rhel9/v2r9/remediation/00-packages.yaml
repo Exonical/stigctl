@@ -118,3 +118,7 @@ stages:
       packages:
         install:
           - postfix
+    - name: V-257826
+      packages:
+        remove:
+          - vsftpd
