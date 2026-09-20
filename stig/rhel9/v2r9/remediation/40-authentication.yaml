@@ -162,3 +162,11 @@ stages:
     - name: V-258106
       commands:
         - find /etc/sudoers /etc/sudoers.d -type f -exec sed -ri '/NOPASSWD/ s/^/# /' {} +
+
+    - name: V-272496
+      files:
+        - path: /etc/sudoers.d/60-stig-selinux
+          permissions: 0440
+          content: |
+            %wheel ALL=(ALL) TYPE=sysadm_t ROLE=sysadm_r ALL
+
