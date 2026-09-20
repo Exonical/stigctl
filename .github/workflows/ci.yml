@@ -192,6 +192,18 @@ jobs:
       - name: Pull Rocky Linux 9
         run: docker pull rockylinux/rockylinux:9
 
+      - name: Download authoritative RHEL 9 V2R9 XCCDF
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSLo /tmp/U_RHEL_9_V2R9_STIG.zip \
+            https://dl.dod.cyber.mil/wp-content/uploads/stigs/zip/U_RHEL_9_V2R9_STIG.zip
+          echo "1875de2543d01695c5a346c51888cc336113e9199bfe6726d74a08de286ca1ae  /tmp/U_RHEL_9_V2R9_STIG.zip" \
+            | sha256sum --check -
+          mkdir -p stig/rhel9/v2r9/source
+          unzip -j -o /tmp/U_RHEL_9_V2R9_STIG.zip '*xccdf.xml' -d stig/rhel9/v2r9/source
+          test -f stig/rhel9/v2r9/source/U_RHEL_9_STIG_V2R9_Manual-xccdf.xml
+
       - name: Apply and validate STIG in Rocky Linux 9 container
         run: |
           docker run --rm \
