@@ -1076,3 +1076,79 @@ rules:
       file: validation/20-system.yaml
       resource: command
       test: V-258094
+  V-257984:
+    title: RHEL 9 SSHD must not allow blank passwords.
+    rule_id: SV-257984r1045026
+    severity: high
+    status: automated
+    remediation:
+      file: remediation/50-auth.yaml
+      step: V-257984
+    validation:
+      type: goss
+      file: validation/50-auth.yaml
+      resource: command
+      test: V-257984
+  V-257986:
+    title: RHEL 9 must enable the Pluggable Authentication Module (PAM) interface for SSHD.
+    rule_id: SV-257986r1045030
+    severity: high
+    status: automated
+    remediation:
+      file: remediation/50-auth.yaml
+      step: V-257986
+    validation:
+      type: goss
+      file: validation/50-auth.yaml
+      resource: command
+      test: V-257986
+  V-258078:
+    title: RHEL 9 must use a Linux Security Module configured to enforce limits on system services.
+    rule_id: SV-258078r958944
+    severity: high
+    status: automated
+    remediation:
+      file: remediation/50-auth.yaml
+      step: V-258078
+    validation:
+      type: goss
+      file: validation/50-auth.yaml
+      resource: command
+      test: V-258078
+  V-258230:
+    title: RHEL 9 must enable FIPS mode.
+    rule_id: SV-258230r1184334
+    severity: high
+    status: automated
+    remediation: {}
+    validation:
+      type: goss
+      file: validation/90-crypto.yaml
+      resource: command
+      test: V-258230
+  V-258236:
+    title: RHEL 9 cryptographic policy must not be overridden.
+    rule_id: SV-258236r1101920
+    severity: high
+    status: automated
+    remediation:
+      file: remediation/90-crypto.yaml
+      step: V-258236
+    validation:
+      type: goss
+      file: validation/90-crypto.yaml
+      resource: command
+      test: V-258236
+  V-258241:
+    title: RHEL 9 must implement a FIPS 140-3-compliant systemwide cryptographic policy.
+    rule_id: SV-258241r1184293
+    severity: high
+    status: automated
+    remediation:
+      file: remediation/90-crypto.yaml
+      step: V-258241
+    validation:
+      type: goss
+      file: validation/90-crypto.yaml
+      resource: command
+      test: V-258241
