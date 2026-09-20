@@ -196,3 +196,16 @@ exceptions:
       approved_by: stigctl-ci
     lifecycle:
       created: 2026-09-20
+  # Boot-loader and kernel command-line controls cannot be represented by the CI container.
+  V-257781: *container_kernel_na
+  V-257787: *container_kernel_na
+  V-257788: *container_kernel_na
+  V-257790: *container_kernel_na
+  V-257791: *container_kernel_na
+  V-257792: *container_kernel_na
+  V-257793: *container_kernel_na
+  V-257794: *container_kernel_na
+  V-257795: *container_kernel_na
+  V-257796: *container_kernel_na
+  V-258173: *container_kernel_na
+
