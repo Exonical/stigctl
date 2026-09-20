@@ -1,3 +1,73 @@
-# Goss validation resources for audit controls.
-# Use DISA V-IDs as resource IDs where possible and add meta.stig_id.
-{}
+command:
+  V-257924:
+    title: "RHEL 9 audit tools must be owned by root."
+    meta: { stig_id: V-257924 }
+    exec: |
+      for tool in /sbin/auditctl /sbin/aureport /sbin/ausearch /sbin/autrace /sbin/auditd /sbin/augenrules; do
+        test ! -e "$tool" || test "$(stat -c %U "$tool")" = root || exit 1
+      done
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257924") }}
+
+  V-257925:
+    title: "RHEL 9 audit tools must be group-owned by root."
+    meta: { stig_id: V-257925 }
+    exec: |
+      for tool in /sbin/auditctl /sbin/aureport /sbin/ausearch /sbin/autrace /sbin/auditd /sbin/augenrules; do
+        test ! -e "$tool" || test "$(stat -c %G "$tool")" = root || exit 1
+      done
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257925") }}
+
+  V-258165:
+    title: "RHEL 9 audit logs must be group-owned by root or a restricted logging group."
+    meta: { stig_id: V-258165 }
+    exec: |
+      group="$(awk -F= '/^[[:space:]]*log_group[[:space:]]*=/{gsub(/[[:space:]]/,"",$2); print $2; exit}' /etc/audit/auditd.conf)"
+      test -n "$group" || group=root
+      test "$(stat -c %G /var/log/audit)" = "$group"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-258165") }}
+
+  V-258166:
+    title: "RHEL 9 audit log directory must be owned by root."
+    meta: { stig_id: V-258166 }
+    exec: "test \"$(stat -c %U /var/log/audit)\" = root"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-258166") }}
+
+  V-258167:
+    title: "RHEL 9 audit log files must have mode 0600 or less permissive."
+    meta: { stig_id: V-258167 }
+    exec: "test -z \"$(find /var/log/audit -type f -perm /077 -print -quit)\""
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-258167") }}
+
+  V-258168:
+    title: "RHEL 9 must periodically flush audit records to disk."
+    meta: { stig_id: V-258168 }
+    exec: "awk -F= '/^[[:space:]]*freq[[:space:]]*=/{gsub(/[[:space:]]/,"",$2); if ($2 >= 1 && $2 <= 100) ok=1} END{exit !ok}' /etc/audit/auditd.conf"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-258168") }}
+
+  V-258169:
+    title: "RHEL 9 must produce enriched audit records."
+    meta: { stig_id: V-258169 }
+    exec: "grep -Eiq '^[[:space:]]*log_format[[:space:]]*=[[:space:]]*ENRICHED[[:space:]]*$' /etc/audit/auditd.conf"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-258169") }}
+
+  V-258170:
+    title: "RHEL 9 must write audit records to disk."
+    meta: { stig_id: V-258170 }
+    exec: "grep -Eiq '^[[:space:]]*write_logs[[:space:]]*=[[:space:]]*yes[[:space:]]*$' /etc/audit/auditd.conf"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-258170") }}
+
+  V-258171:
+    title: "RHEL 9 audit configuration files must have mode 0600 or less permissive."
+    meta: { stig_id: V-258171 }
+    exec: |
+      test -z "$(find /etc/audit/rules.d /etc/audit/auditd.conf /etc/audit/audit.rules -type f -perm /077 -print 2>/dev/null)"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-258171") }}
