@@ -18,6 +18,7 @@ type remoteScanOptions struct {
 	InventoryFile  string
 	Format         string
 	OutputDir      string
+	JUnitOutputDir string
 	Profile        string
 	FailOnFindings bool
 	Concurrency    int
@@ -82,7 +83,8 @@ func runRemoteScans(cmd *cobra.Command, options remoteScanOptions) error {
 			scanner := remote.NewScanner()
 			result, scanErr := scanner.Scan(cmd.Context(), remote.ScanRequest{
 				Baseline: options.Baseline, Format: format, OutputDir: outputDir,
-				Payload: payload, Binary: binary, FailOnFindings: options.FailOnFindings,
+				JUnitOutputDir: options.JUnitOutputDir,
+				Payload:        payload, Binary: binary, FailOnFindings: options.FailOnFindings,
 				Target: target,
 			})
 			results <- indexedResult{index: i, result: result, err: scanErr}
@@ -100,6 +102,11 @@ func runRemoteScans(cmd *cobra.Command, options remoteScanOptions) error {
 		if item.result.Published && item.result.OutputPath != "" {
 			if info, statErr := os.Stat(item.result.OutputPath); statErr == nil && info.Size() > 0 {
 				fmt.Fprintf(cmd.OutOrStdout(), "[%s] wrote %s\n", item.result.Target.Name, item.result.OutputPath)
+			}
+		}
+		if item.result.JUnitPublished && item.result.JUnitOutputPath != "" {
+			if info, statErr := os.Stat(item.result.JUnitOutputPath); statErr == nil && info.Size() > 0 {
+				fmt.Fprintf(cmd.OutOrStdout(), "[%s] wrote %s\n", item.result.Target.Name, item.result.JUnitOutputPath)
 			}
 		}
 		if item.err != nil {
