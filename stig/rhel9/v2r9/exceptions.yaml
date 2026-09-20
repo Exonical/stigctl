@@ -208,4 +208,7 @@ exceptions:
   V-257795: *container_kernel_na
   V-257796: *container_kernel_na
   V-258173: *container_kernel_na
+  # The CI container does not run NetworkManager or an SSH daemon.
+  V-257949: *container_service_na
+  V-257981: *container_service_na
 
