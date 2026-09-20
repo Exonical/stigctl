@@ -2221,3 +2221,200 @@ rules:
       file: validation/20-filesystem.yaml
       resource: command
       test: V-257917
+  V-257924:
+    title: RHEL 9 audit tools must be owned by root.
+    rule_id: SV-257924r991557
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-257924
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-257924
+  V-257925:
+    title: RHEL 9 audit tools must be group-owned by root.
+    rule_id: SV-257925r991557
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-257925
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-257925
+  V-258141:
+    title: RHEL 9 must have the packages required for encrypting offloaded audit logs installed.
+    rule_id: SV-258141r1045280
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/00-packages.yaml
+      step: V-258141
+    validation:
+      type: goss
+      file: validation/00-packages.yaml
+      resource: package
+      test: V-258141
+  V-258143:
+    title: RHEL 9 must be configured so that the rsyslog daemon does not accept log messages from other servers unless the server is being used for log aggregation.
+    rule_id: SV-258143r1184329
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/60-logging.yaml
+      step: V-258143
+    validation:
+      type: goss
+      file: validation/60-logging.yaml
+      resource: command
+      test: V-258143
+  V-258144:
+    title: All RHEL 9 remote access methods must be monitored.
+    rule_id: SV-258144r1045286
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/60-logging.yaml
+      step: V-258144
+    validation:
+      type: goss
+      file: validation/60-logging.yaml
+      resource: command
+      test: V-258144
+  V-258146:
+    title: RHEL 9 must authenticate the remote logging server for offloading audit logs via rsyslog.
+    rule_id: SV-258146r1045288
+    severity: medium
+    status: manual
+    remediation: {}
+    validation: {}
+  V-258147:
+    title: RHEL 9 must encrypt the transfer of audit records offloaded onto a different system or media from the system being audited via rsyslog.
+    rule_id: SV-258147r1045290
+    severity: medium
+    status: manual
+    remediation: {}
+    validation: {}
+  V-258148:
+    title: RHEL 9 must encrypt via the gtls driver the transfer of audit records offloaded onto a different system or media from the system being audited via rsyslog.
+    rule_id: SV-258148r1045292
+    severity: medium
+    status: manual
+    remediation: {}
+    validation: {}
+  V-258149:
+    title: RHEL 9 must be configured to forward audit records via TCP to a different system or media from the system being audited via rsyslog.
+    rule_id: SV-258149r1155580
+    severity: medium
+    status: manual
+    remediation: {}
+    validation: {}
+  V-258150:
+    title: RHEL 9 must use cron logging.
+    rule_id: SV-258150r1045296
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/60-logging.yaml
+      step: V-258150
+    validation:
+      type: goss
+      file: validation/60-logging.yaml
+      resource: command
+      test: V-258150
+  V-258165:
+    title: RHEL 9 audit logs must be group-owned by root or by a restricted logging group to prevent unauthorized read access.
+    rule_id: SV-258165r958434
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258165
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258165
+  V-258166:
+    title: RHEL 9 audit log directory must be owned by root to prevent unauthorized read access.
+    rule_id: SV-258166r1045303
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258166
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258166
+  V-258167:
+    title: RHEL 9 audit logs file must have mode 0600 or less permissive to prevent unauthorized access to the audit log.
+    rule_id: SV-258167r1155630
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258167
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258167
+  V-258168:
+    title: RHEL 9 must periodically flush audit records to disk to prevent the loss of audit records.
+    rule_id: SV-258168r958428
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258168
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258168
+  V-258169:
+    title: RHEL 9 must produce audit records containing information to establish the identity of any individual or process associated with the event.
+    rule_id: SV-258169r991556
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258169
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258169
+  V-258170:
+    title: RHEL 9 must write audit records to disk.
+    rule_id: SV-258170r991589
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258170
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258170
+  V-258171:
+    title: RHEL 9 must allow only the information system security manager or appointed roles to select which auditable events are to be audited.
+    rule_id: SV-258171r1208777
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258171
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258171
