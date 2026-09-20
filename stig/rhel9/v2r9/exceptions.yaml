@@ -218,4 +218,12 @@ exceptions:
   V-258038: *container_service_na
   V-258039: *container_service_na
   V-258040: *container_service_na
+  # Host service and authentication-stack controls not faithfully represented by the CI container.
+  V-258077: *container_service_na
+  V-258079: *container_service_na
+  V-258089: *container_service_na
+  V-258090: *container_service_na
+  V-258125: *container_service_na
+  V-258128: *container_service_na
+  V-258129: *container_service_na
 
