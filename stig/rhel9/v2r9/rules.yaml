@@ -2572,3 +2572,30 @@ rules:
       file: validation/40-authentication.yaml
       resource: command
       test: V-258106
+  V-258164:
+    title: RHEL 9 audit system must audit local events.
+    rule_id: SV-258164r1045301
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/50-audit.yaml
+      step: V-258164
+    validation:
+      type: goss
+      file: validation/50-audit.yaml
+      resource: command
+      test: V-258164
+  V-272496:
+    title: RHEL 9 must elevate the SELinux context when an administrator calls the sudo command.
+    rule_id: SV-272496r1155582
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/40-authentication.yaml
+      step: V-272496
+    validation:
+      type: goss
+      file: validation/40-authentication.yaml
+      resource: command
+      test: V-272496
+
