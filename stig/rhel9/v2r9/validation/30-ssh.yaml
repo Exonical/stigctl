@@ -1,3 +1,166 @@
-# Goss validation resources for ssh controls.
-# Use DISA V-IDs as resource IDs where possible and add meta.stig_id.
-{}
+package:
+  V-257978:
+    name: openssh-server
+    title: "All RHEL 9 networked systems must have SSH installed."
+    meta:
+      stig_id: V-257978
+    installed: true
+    skip: {{ not (index .Vars.enabled_rules "V-257978") }}
+
+service:
+  V-257979:
+    name: sshd
+    title: "All RHEL 9 networked systems must have and implement SSH."
+    meta:
+      stig_id: V-257979
+    enabled: true
+    running: true
+    skip: {{ not (index .Vars.enabled_rules "V-257979") }}
+
+command:
+  V-257982:
+    title: "RHEL 9 must log SSH connection attempts and failures to the server."
+    meta: { stig_id: V-257982 }
+    exec: "/usr/sbin/sshd -T 2>/dev/null | grep -Eiq '^loglevel[[:space:]]+verbose$'"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257982") }}
+
+  V-257983:
+    title: "RHEL 9 SSHD must accept public key authentication."
+    meta: { stig_id: V-257983 }
+    exec: "/usr/sbin/sshd -T 2>/dev/null | grep -Eiq '^pubkeyauthentication[[:space:]]+yes$'"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257983") }}
+
+  V-257985:
+    title: "RHEL 9 must not permit direct logons to the root account using remote access via SSH."
+    meta: { stig_id: V-257985 }
+    exec: "/usr/sbin/sshd -T 2>/dev/null | grep -Eiq '^permitrootlogin[[:space:]]+no$'"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257985") }}
+
+  V-257992:
+    title: "RHEL 9 must not allow a noncertificate trusted host SSH logon to the system."
+    meta: { stig_id: V-257992 }
+    exec: "/usr/sbin/sshd -T 2>/dev/null | grep -Eiq '^hostbasedauthentication[[:space:]]+no$'"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257992") }}
+
+  V-257993:
+    title: "RHEL 9 must not allow users to override SSH environment variables."
+    meta: { stig_id: V-257993 }
+    exec: "/usr/sbin/sshd -T 2>/dev/null | grep -Eiq '^permituserenvironment[[:space:]]+no$'"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257993") }}
+
+  V-257994:
+    title: "RHEL 9 must force a frequent session key renegotiation for SSH connections to the server."
+    meta: { stig_id: V-257994 }
+    exec: "/usr/sbin/sshd -T 2>/dev/null | grep -Eiq '^rekeylimit[[:space:]]+1G[[:space:]]+3600$|^rekeylimit[[:space:]]+1073741824[[:space:]]+3600$'"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257994") }}
+
+  V-257995:
+    title: "RHEL 9 must terminate unresponsive SSH sessions."
+    meta: { stig_id: V-257995 }
+    exec: "/usr/sbin/sshd -T 2>/dev/null | grep -Eiq '^clientalivecountmax[[:space:]]+1$'"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257995") }}
+
+  V-257996:
+    title: "RHEL 9 must terminate SSH traffic after 10 minutes of becoming unresponsive."
+    meta: { stig_id: V-257996 }
+    exec: "/usr/sbin/sshd -T 2>/dev/null | awk '$1=="clientaliveinterval" {exit !($2 <= 600 && $2 > 0)}'"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257996") }}
+
+  V-257997:
+    title: "RHEL 9 SSH server configuration file must be group-owned by root."
+    meta: { stig_id: V-257997 }
+    exec: "test -z \"$(find /etc/ssh/sshd_config /etc/ssh/sshd_config.d -xdev ! -group root -print 2>/dev/null)\""
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257997") }}
+
+  V-257998:
+    title: "The RHEL 9 SSH server configuration file must be owned by root."
+    meta: { stig_id: V-257998 }
+    exec: "test -z \"$(find /etc/ssh/sshd_config /etc/ssh/sshd_config.d -xdev ! -user root -print 2>/dev/null)\""
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257998") }}
+
+  V-257999:
+    title: "RHEL 9 SSH server configuration files' permissions must not be modified."
+    meta: { stig_id: V-257999 }
+    exec: "test -z \"$(rpm --verify openssh-server | awk '! ($2 == \"c\" && $1 ~ /^.\\..\\.\\.\\..\\./) {print $0}')\""
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257999") }}
+
+  V-258000:
+    title: "RHEL 9 SSH private host key files must have mode 0600 or less permissive."
+    meta: { stig_id: V-258000 }
+    exec: "test -z \"$(find /etc/ssh -maxdepth 1 -type f -name 'ssh_host*_key' -perm /077 -print)\""
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-258000") }}
+
+  V-258001:
+    title: "RHEL 9 SSH public host key files must have mode 0644 or less permissive."
+    meta: { stig_id: V-258001 }
+    exec: "test -z \"$(find /etc/ssh -maxdepth 1 -type f -name 'ssh_host*_key.pub' -perm /0133 -print)\""
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-258001") }}
+
+  V-258003:
+    title: "RHEL 9 SSH daemon must not allow GSSAPI authentication."
+    meta: { stig_id: V-258003 }
+    exec: "/usr/sbin/sshd -T 2>/dev/null | grep -Eiq '^gssapiauthentication[[:space:]]+no$'"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-258003") }}
+
+  V-258004:
+    title: "RHEL 9 SSH daemon must not allow Kerberos authentication."
+    meta: { stig_id: V-258004 }
+    exec: "/usr/sbin/sshd -T 2>/dev/null | grep -Eiq '^kerberosauthentication[[:space:]]+no$'"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-258004") }}
+
+  V-258005:
+    title: "RHEL 9 SSH daemon must not allow rhosts authentication."
+    meta: { stig_id: V-258005 }
+    exec: "/usr/sbin/sshd -T 2>/dev/null | grep -Eiq '^ignorerhosts[[:space:]]+yes$'"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-258005") }}
+
+  V-258006:
+    title: "RHEL 9 SSH daemon must not allow known hosts authentication."
+    meta: { stig_id: V-258006 }
+    exec: "/usr/sbin/sshd -T 2>/dev/null | grep -Eiq '^ignoreuserknownhosts[[:space:]]+yes$'"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-258006") }}
+
+  V-258007:
+    title: "RHEL 9 SSH daemon must disable remote X connections for interactive users."
+    meta: { stig_id: V-258007 }
+    exec: "/usr/sbin/sshd -T 2>/dev/null | grep -Eiq '^x11forwarding[[:space:]]+no$'"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-258007") }}
+
+  V-258008:
+    title: "RHEL 9 SSH daemon must perform strict mode checking of home directory configuration files."
+    meta: { stig_id: V-258008 }
+    exec: "/usr/sbin/sshd -T 2>/dev/null | grep -Eiq '^strictmodes[[:space:]]+yes$'"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-258008") }}
+
+  V-258009:
+    title: "RHEL 9 SSH daemon must display the date and time of the last successful account logon upon an SSH logon."
+    meta: { stig_id: V-258009 }
+    exec: "/usr/sbin/sshd -T 2>/dev/null | grep -Eiq '^printlastlog[[:space:]]+yes$'"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-258009") }}
+
+  V-258011:
+    title: "RHEL 9 SSH daemon must prevent remote hosts from connecting to the proxy display."
+    meta: { stig_id: V-258011 }
+    exec: "/usr/sbin/sshd -T 2>/dev/null | grep -Eiq '^x11uselocalhost[[:space:]]+yes$'"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-258011") }}
