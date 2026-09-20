@@ -170,3 +170,26 @@ stages:
             net.ipv6.conf.default.accept_source_route = 0
       sysctl:
         net.ipv6.conf.default.accept_source_route: "0"
+
+    - name: V-257937
+      commands:
+        - |
+          systemctl enable --now firewalld.service
+          firewall-cmd --set-default-zone=drop
+          for zone in $(firewall-cmd --get-active-zones | awk 'NF==1{print $1}'); do
+            for iface in $(firewall-cmd --zone="$zone" --list-interfaces); do
+              firewall-cmd --permanent --zone=drop --change-interface="$iface"
+            done
+          done
+          firewall-cmd --reload
+
+    - name: V-257939
+      commands:
+        - |
+          if grep -qEi '^[[:space:]]*FirewallBackend[[:space:]]*=' /etc/firewalld/firewalld.conf; then
+            sed -ri 's/^[[:space:]]*FirewallBackend[[:space:]]*=.*/FirewallBackend=nftables/I' /etc/firewalld/firewalld.conf
+          else
+            printf '\nFirewallBackend=nftables\n' >> /etc/firewalld/firewalld.conf
+          fi
+          systemctl restart firewalld.service 2>/dev/null || true
+
