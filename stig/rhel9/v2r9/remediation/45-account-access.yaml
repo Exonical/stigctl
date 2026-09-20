@@ -238,3 +238,12 @@ stages:
         - |
           grep -q '^All=' /etc/aide.conf && grep '^All=' /etc/aide.conf | grep -q xattrs || sed -ri 's|^All=(.*)|All=\1+xattrs|' /etc/aide.conf
 
+    - name: V-270180
+      commands:
+        - |
+          if grep -qE '^[[:space:]]*permissive[[:space:]]*=' /etc/fapolicyd/fapolicyd.conf; then sed -ri 's/^[[:space:]]*permissive[[:space:]]*=.*/permissive = 0/' /etc/fapolicyd/fapolicyd.conf; else printf '\npermissive = 0\n' >> /etc/fapolicyd/fapolicyd.conf; fi
+          install -d -m 0755 /etc/fapolicyd/rules.d
+          grep -RhsE '^[[:space:]]*deny(_audit|_log)?[[:space:]]+perm=any[[:space:]]+all[[:space:]]*:[[:space:]]+all[[:space:]]*$' /etc/fapolicyd/rules.d 2>/dev/null | grep -q . || printf 'deny perm=any all : all\n' > /etc/fapolicyd/rules.d/99-stig-deny-all.rules
+          fagenrules --load 2>/dev/null || true
+          systemctl restart fapolicyd 2>/dev/null || true
+
