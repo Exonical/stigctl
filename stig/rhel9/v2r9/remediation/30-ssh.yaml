@@ -1,4 +1,121 @@
-name: RHEL 9 STIG - Ssh
+name: RHEL 9 STIG - SSH
 
 stages:
-  stig: []
+  stig:
+    - name: V-257978
+      packages:
+        install:
+          - openssh-server
+
+    - name: V-257979
+      only_service_manager: systemd
+      systemctl:
+        enable:
+          - sshd
+        start:
+          - sshd
+
+    - name: V-257982
+      files:
+        - path: /etc/ssh/sshd_config.d/60-stig-security.conf
+          permissions: "0600"
+          content: |
+            LogLevel VERBOSE
+            PubkeyAuthentication yes
+            PermitRootLogin no
+            HostbasedAuthentication no
+            PermitUserEnvironment no
+            RekeyLimit 1G 1h
+            ClientAliveCountMax 1
+            ClientAliveInterval 600
+            GSSAPIAuthentication no
+            KerberosAuthentication no
+            IgnoreRhosts yes
+            IgnoreUserKnownHosts yes
+            X11Forwarding no
+            StrictModes yes
+            PrintLastLog yes
+            X11UseLocalhost yes
+      commands:
+        - systemctl restart sshd.service || true
+
+    - name: V-257983
+      commands:
+        - test -f /etc/ssh/sshd_config.d/60-stig-security.conf
+
+    - name: V-257985
+      commands:
+        - test -f /etc/ssh/sshd_config.d/60-stig-security.conf
+
+    - name: V-257992
+      commands:
+        - test -f /etc/ssh/sshd_config.d/60-stig-security.conf
+
+    - name: V-257993
+      commands:
+        - test -f /etc/ssh/sshd_config.d/60-stig-security.conf
+
+    - name: V-257994
+      commands:
+        - test -f /etc/ssh/sshd_config.d/60-stig-security.conf
+
+    - name: V-257995
+      commands:
+        - test -f /etc/ssh/sshd_config.d/60-stig-security.conf
+
+    - name: V-257996
+      commands:
+        - test -f /etc/ssh/sshd_config.d/60-stig-security.conf
+
+    - name: V-257997
+      commands:
+        - chgrp -R root /etc/ssh/sshd_config /etc/ssh/sshd_config.d
+
+    - name: V-257998
+      commands:
+        - chown -R root /etc/ssh/sshd_config /etc/ssh/sshd_config.d
+
+    - name: V-257999
+      commands:
+        - rpm --setugids openssh-server
+        - rpm --setperms openssh-server
+
+    - name: V-258000
+      commands:
+        - find /etc/ssh -maxdepth 1 -type f -name 'ssh_host*_key' -exec chmod 0600 {} +
+
+    - name: V-258001
+      commands:
+        - find /etc/ssh -maxdepth 1 -type f -name 'ssh_host*_key.pub' -exec chmod 0644 {} +
+
+    - name: V-258003
+      commands:
+        - test -f /etc/ssh/sshd_config.d/60-stig-security.conf
+
+    - name: V-258004
+      commands:
+        - test -f /etc/ssh/sshd_config.d/60-stig-security.conf
+
+    - name: V-258005
+      commands:
+        - test -f /etc/ssh/sshd_config.d/60-stig-security.conf
+
+    - name: V-258006
+      commands:
+        - test -f /etc/ssh/sshd_config.d/60-stig-security.conf
+
+    - name: V-258007
+      commands:
+        - test -f /etc/ssh/sshd_config.d/60-stig-security.conf
+
+    - name: V-258008
+      commands:
+        - test -f /etc/ssh/sshd_config.d/60-stig-security.conf
+
+    - name: V-258009
+      commands:
+        - test -f /etc/ssh/sshd_config.d/60-stig-security.conf
+
+    - name: V-258011
+      commands:
+        - test -f /etc/ssh/sshd_config.d/60-stig-security.conf
