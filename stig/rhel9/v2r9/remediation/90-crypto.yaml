@@ -27,3 +27,13 @@ stages:
       commands:
         - dnf -y reinstall crypto-policies
         - update-crypto-policies --set FIPS
+
+    - name: V-257989
+      commands:
+        - dnf -y reinstall crypto-policies
+        - update-crypto-policies --set FIPS
+
+    - name: V-257991
+      commands:
+        - dnf -y reinstall crypto-policies
+        - update-crypto-policies --set FIPS
