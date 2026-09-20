@@ -1,0 +1,141 @@
+command:
+  V-257778:
+    title: "RHEL 9 vendor packaged system security patches and updates must be installed and up to date."
+    meta: { stig_id: V-257778 }
+    exec: |
+      updates="$(dnf -q updateinfo list --security --available 2>/dev/null | awk '/^RHSA-/{print}' | head -n20)"
+      printf 'evidence=security_updates_available=%s\n' "${updates:-none}"
+      test -z "$updates"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257778") }}
+
+  V-257779:
+    title: "RHEL 9 must display the Standard Mandatory DOD Notice and Consent Banner before granting local or remote access to the system via a command line user logon."
+    meta: { stig_id: V-257779 }
+    exec: |
+      test -r /etc/issue
+      grep -Fq 'You are accessing a U.S. Government (USG) Information System (IS) that is provided for USG-authorized use only.' /etc/issue
+      grep -Fq 'At any time, the USG may inspect and seize data stored on this IS.' /etc/issue
+      grep -Fq 'Notwithstanding the above, using this IS does not constitute consent' /etc/issue
+      echo 'evidence=dod_cli_banner=present'
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257779") }}
+
+  V-257781:
+    title: "The graphical display manager must not be the default target on RHEL 9 unless approved."
+    meta: { stig_id: V-257781 }
+    exec: |
+      target="$(systemctl get-default 2>/dev/null || true)"
+      echo "evidence=default_target=$target"
+      test "$target" != graphical.target
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257781") }}
+
+  V-257788:
+    title: "RHEL 9 must disable the ability of systemd to spawn an interactive boot process."
+    meta: { stig_id: V-257788 }
+    exec: |
+      state="$(systemctl is-enabled debug-shell.service 2>/dev/null || true)"
+      echo "evidence=debug_shell=$state"
+      test "$state" = masked || test "$state" = disabled || test "$state" = not-found
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257788") }}
+
+  V-257790:
+    title: "RHEL 9 /boot/grub2/grub.cfg file must be group-owned by root."
+    meta: { stig_id: V-257790 }
+    exec: |
+      path="$(readlink -f /etc/grub2.cfg 2>/dev/null || true)"
+      test -n "$path" || path=/boot/grub2/grub.cfg
+      test -e "$path"
+      group="$(stat -c %G "$path")"
+      echo "evidence=grub_group=$group path=$path"
+      test "$group" = root
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257790") }}
+
+  V-257791:
+    title: "RHEL 9 /boot/grub2/grub.cfg file must be owned by root."
+    meta: { stig_id: V-257791 }
+    exec: |
+      path="$(readlink -f /etc/grub2.cfg 2>/dev/null || true)"
+      test -n "$path" || path=/boot/grub2/grub.cfg
+      test -e "$path"
+      owner="$(stat -c %U "$path")"
+      echo "evidence=grub_owner=$owner path=$path"
+      test "$owner" = root
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257791") }}
+
+  V-257792:
+    title: "RHEL 9 must disable virtual system calls."
+    meta: { stig_id: V-257792 }
+    exec: |
+      cmd="$(cat /proc/cmdline 2>/dev/null)"
+      echo "evidence=kernel_cmdline=$cmd"
+      printf '%s\n' "$cmd" | grep -qw 'vsyscall=none'
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257792") }}
+
+  V-257793:
+    title: "RHEL 9 must clear the page allocator to prevent use-after-free attacks."
+    meta: { stig_id: V-257793 }
+    exec: |
+      cmd="$(cat /proc/cmdline 2>/dev/null)"
+      echo "evidence=kernel_cmdline=$cmd"
+      printf '%s\n' "$cmd" | grep -qw 'init_on_alloc=1'
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257793") }}
+
+  V-257794:
+    title: "RHEL 9 must clear memory when it is freed to prevent use-after-free attacks."
+    meta: { stig_id: V-257794 }
+    exec: |
+      cmd="$(cat /proc/cmdline 2>/dev/null)"
+      echo "evidence=kernel_cmdline=$cmd"
+      printf '%s\n' "$cmd" | grep -qw 'init_on_free=1'
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257794") }}
+
+  V-257795:
+    title: "RHEL 9 must enable mitigations against processor-based vulnerabilities."
+    meta: { stig_id: V-257795 }
+    exec: |
+      cmd="$(cat /proc/cmdline 2>/dev/null)"
+      echo "evidence=kernel_cmdline=$cmd"
+      ! printf '%s\n' "$cmd" | grep -qw 'mitigations=off'
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257795") }}
+
+  V-257796:
+    title: "RHEL 9 must enable auditing of processes that start prior to the audit daemon."
+    meta: { stig_id: V-257796 }
+    exec: |
+      cmd="$(cat /proc/cmdline 2>/dev/null)"
+      echo "evidence=kernel_cmdline=$cmd"
+      printf '%s\n' "$cmd" | grep -qw 'audit=1'
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-257796") }}
+
