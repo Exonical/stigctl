@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"encoding/xml"
 	"errors"
 	"fmt"
 	"os"
@@ -63,7 +64,8 @@ func (s Scanner) Scan(ctx context.Context, req ScanRequest) (result ScanResult, 
 	if err := os.MkdirAll(req.OutputDir, 0o755); err != nil {
 		return result, fmt.Errorf("create remote scan output directory: %w", err)
 	}
-	result.OutputPath = filepath.Join(req.OutputDir, req.Target.Name+"-"+strings.ReplaceAll(req.Baseline, ":", "-")+"."+req.Format)
+	extension := artifactExtension(req.Format)
+	result.OutputPath = filepath.Join(req.OutputDir, req.Target.Name+"-"+strings.ReplaceAll(req.Baseline, ":", "-")+"."+extension)
 
 	remoteDir, err := s.makeRemoteDir(ctx, req.Target)
 	if err != nil {
@@ -85,7 +87,7 @@ func (s Scanner) Scan(ctx context.Context, req ScanRequest) (result ScanResult, 
 		return result, fmt.Errorf("stage baseline on %s: %w", req.Target.Name, err)
 	}
 
-	remoteOutput := remoteDir + "/result." + req.Format
+	remoteOutput := remoteDir + "/result." + extension
 	command := buildScanCommand(req, remoteDir, remoteOutput)
 	var stdout, stderr bytes.Buffer
 	runErr := s.runner.Run(ctx, "ssh", append(sshArgs(req.Target), destination(req.Target), command), &stdout, &stderr)
@@ -111,7 +113,7 @@ func (s Scanner) Scan(ctx context.Context, req ScanRequest) (result ScanResult, 
 		}
 		return result, fmt.Errorf("collect scan from %s: %w", req.Target.Name, copyErr)
 	}
-	if err := validateArtifact(tempPath); err != nil {
+	if err := validateArtifact(tempPath, req.Format); err != nil {
 		artifactErr := fmt.Errorf("validate scan artifact from %s: %w", req.Target.Name, err)
 		if runErr != nil {
 			return result, errors.Join(
@@ -131,7 +133,7 @@ func (s Scanner) Scan(ctx context.Context, req ScanRequest) (result ScanResult, 
 	return result, nil
 }
 
-func validateArtifact(path string) error {
+func validateArtifact(path, format string) error {
 	data, err := os.ReadFile(path)
 	if err != nil {
 		return err
@@ -139,10 +141,30 @@ func validateArtifact(path string) error {
 	if len(bytes.TrimSpace(data)) == 0 {
 		return fmt.Errorf("artifact is empty")
 	}
-	if !json.Valid(data) {
-		return fmt.Errorf("artifact is not valid JSON")
+	switch strings.ToLower(format) {
+	case "junit":
+		var document struct {
+			XMLName xml.Name
+		}
+		if err := xml.Unmarshal(data, &document); err != nil {
+			return fmt.Errorf("artifact is not valid XML: %w", err)
+		}
+		if document.XMLName.Local != "testsuite" && document.XMLName.Local != "testsuites" {
+			return fmt.Errorf("artifact root element is %q, expected testsuite or testsuites", document.XMLName.Local)
+		}
+	default:
+		if !json.Valid(data) {
+			return fmt.Errorf("artifact is not valid JSON")
+		}
 	}
 	return nil
+}
+
+func artifactExtension(format string) string {
+	if strings.EqualFold(format, "junit") {
+		return "xml"
+	}
+	return strings.ToLower(format)
 }
 
 func (s Scanner) makeRemoteDir(ctx context.Context, target inventory.Target) (string, error) {
