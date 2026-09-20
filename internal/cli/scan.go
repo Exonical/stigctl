@@ -12,6 +12,7 @@ import (
 	"github.com/Exonical/stigctl/internal/exceptions"
 	stigexport "github.com/Exonical/stigctl/internal/export"
 	"github.com/Exonical/stigctl/internal/export/cklb"
+	"github.com/Exonical/stigctl/internal/export/junit"
 	"github.com/Exonical/stigctl/internal/host"
 	"github.com/Exonical/stigctl/internal/policy"
 	"github.com/Exonical/stigctl/internal/rules"
@@ -105,7 +106,7 @@ func newScanCommand() *cobra.Command {
 			})
 
 			if output == "" {
-				ext := strings.ToLower(format)
+				ext := outputExtension(format)
 				name := strings.ReplaceAll(args[0], ":", "-")
 				if hostname != "" {
 					name = hostname + "-" + name
@@ -132,6 +133,19 @@ func newScanCommand() *cobra.Command {
 				enc.SetIndent("", "  ")
 				if err := enc.Encode(merged); err != nil {
 					return fmt.Errorf("encode JSON results: %w", err)
+				}
+			case "junit":
+				req := stigexport.Request{
+					Baseline: args[0],
+					Target: stigexport.Target{
+						Hostname:  hostname,
+						IPAddress: ipAddress,
+						FQDN:      fqdn,
+					},
+					Results: merged,
+				}
+				if err := (junit.Exporter{}).Export(cmd.Context(), file, req); err != nil {
+					return err
 				}
 			case "cklb":
 				req := stigexport.Request{
@@ -187,7 +201,7 @@ func newScanCommand() *cobra.Command {
 					}
 				}
 			default:
-				return fmt.Errorf("unsupported format %q: use cklb or json", format)
+				return fmt.Errorf("unsupported format %q: use cklb, json, or junit", format)
 			}
 
 			fmt.Fprintf(cmd.OutOrStdout(), "wrote %s (%s)\n", output, policy.Summary(merged))
@@ -199,7 +213,7 @@ func newScanCommand() *cobra.Command {
 	}
 
 	cmd.Flags().StringVar(&profile, "profile", "default", "system profile")
-	cmd.Flags().StringVar(&format, "format", "cklb", "output format: cklb or json")
+	cmd.Flags().StringVar(&format, "format", "cklb", "output format: cklb, json, or junit")
 	cmd.Flags().StringVarP(&output, "output", "o", "", "output file, or directory with --inventory")
 	cmd.Flags().BoolVar(&failOnFindings, "fail-on-findings", false, "exit non-zero after writing results when findings exist")
 	cmd.Flags().StringVar(&hostname, "hostname", "", "target hostname; defaults to the local hostname")
