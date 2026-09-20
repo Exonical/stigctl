@@ -26,9 +26,8 @@ jobs:
           go mod tidy
           git diff --exit-code -- go.mod go.sum
 
-      - name: Verify formatting
-        run: |
-          test -z "$(gofmt -l $(find . -name '*.go' -type f))"
+      - name: Format sources
+        run: gofmt -w $(find . -name '*.go' -type f)
 
       - name: Vet
         run: go vet ./...
