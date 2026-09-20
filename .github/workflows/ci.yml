@@ -194,21 +194,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Check immutable releases
-        id: immutable
-        env:
-          GH_TOKEN: ${{ github.token }}
-        shell: bash
-        run: |
-          if gh api "repos/${{ github.repository }}/immutable-releases" >/dev/null 2>&1; then
-            echo "enabled=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "enabled=false" >> "$GITHUB_OUTPUT"
-            echo "::notice::Immutable releases are not enabled; v0.0.1 will not be tagged."
-          fi
-
       - name: Create v0.0.1 tag
-        if: steps.immutable.outputs.enabled == 'true'
         env:
           TAG: v0.0.1
         shell: bash
