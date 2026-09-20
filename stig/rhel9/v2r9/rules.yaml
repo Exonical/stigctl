@@ -1285,3 +1285,549 @@ rules:
     status: manual
     remediation: {}
     validation: {}
+  V-257978:
+    title: All RHEL 9 networked systems must have SSH installed.
+    rule_id: SV-257978r1045013
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/30-ssh.yaml
+      step: V-257978
+    validation:
+      type: goss
+      file: validation/30-ssh.yaml
+      resource: package
+      test: V-257978
+  V-257979:
+    title: All RHEL 9 networked systems must have and implement SSH to protect the confidentiality and integrity of transmitted and received information, as well as information during preparation for transmission.
+    rule_id: SV-257979r958908
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/30-ssh.yaml
+      step: V-257979
+    validation:
+      type: goss
+      file: validation/30-ssh.yaml
+      resource: service
+      test: V-257979
+  V-257982:
+    title: RHEL 9 must log SSH connection attempts and failures to the server.
+    rule_id: SV-257982r1045021
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/30-ssh.yaml
+      step: V-257982
+    validation:
+      type: goss
+      file: validation/30-ssh.yaml
+      resource: command
+      test: V-257982
+  V-257983:
+    title: RHEL 9 SSHD must accept public key authentication.
+    rule_id: SV-257983r1045024
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/30-ssh.yaml
+      step: V-257983
+    validation:
+      type: goss
+      file: validation/30-ssh.yaml
+      resource: command
+      test: V-257983
+  V-257985:
+    title: RHEL 9 must not permit direct logons to the root account using remote access via SSH.
+    rule_id: SV-257985r1069364
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/30-ssh.yaml
+      step: V-257985
+    validation:
+      type: goss
+      file: validation/30-ssh.yaml
+      resource: command
+      test: V-257985
+  V-257992:
+    title: RHEL 9 must not allow a noncertificate trusted host SSH logon to the system.
+    rule_id: SV-257992r1045047
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/30-ssh.yaml
+      step: V-257992
+    validation:
+      type: goss
+      file: validation/30-ssh.yaml
+      resource: command
+      test: V-257992
+  V-257993:
+    title: RHEL 9 must not allow users to override SSH environment variables.
+    rule_id: SV-257993r1045049
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/30-ssh.yaml
+      step: V-257993
+    validation:
+      type: goss
+      file: validation/30-ssh.yaml
+      resource: command
+      test: V-257993
+  V-257994:
+    title: RHEL 9 must force a frequent session key renegotiation for SSH connections to the server.
+    rule_id: SV-257994r1045051
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/30-ssh.yaml
+      step: V-257994
+    validation:
+      type: goss
+      file: validation/30-ssh.yaml
+      resource: command
+      test: V-257994
+  V-257995:
+    title: RHEL 9 must be configured so that all network connections associated with SSH traffic terminate after becoming unresponsive.
+    rule_id: SV-257995r1045053
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/30-ssh.yaml
+      step: V-257995
+    validation:
+      type: goss
+      file: validation/30-ssh.yaml
+      resource: command
+      test: V-257995
+  V-257996:
+    title: RHEL 9 must be configured so that all network connections associated with SSH traffic are terminated after 10 minutes of becoming unresponsive.
+    rule_id: SV-257996r1134915
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/30-ssh.yaml
+      step: V-257996
+    validation:
+      type: goss
+      file: validation/30-ssh.yaml
+      resource: command
+      test: V-257996
+  V-257997:
+    title: RHEL 9 SSH server configuration file must be group-owned by root.
+    rule_id: SV-257997r1069370
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/30-ssh.yaml
+      step: V-257997
+    validation:
+      type: goss
+      file: validation/30-ssh.yaml
+      resource: command
+      test: V-257997
+  V-257998:
+    title: The RHEL 9 SSH server configuration file must be owned by root.
+    rule_id: SV-257998r1082181
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/30-ssh.yaml
+      step: V-257998
+    validation:
+      type: goss
+      file: validation/30-ssh.yaml
+      resource: command
+      test: V-257998
+  V-257999:
+    title: RHEL 9 SSH server configuration files' permissions must not be modified.
+    rule_id: SV-257999r1155686
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/30-ssh.yaml
+      step: V-257999
+    validation:
+      type: goss
+      file: validation/30-ssh.yaml
+      resource: command
+      test: V-257999
+  V-258000:
+    title: RHEL 9 SSH private host key files must have mode 0600 or less permissive.
+    rule_id: SV-258000r1208772
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/30-ssh.yaml
+      step: V-258000
+    validation:
+      type: goss
+      file: validation/30-ssh.yaml
+      resource: command
+      test: V-258000
+  V-258001:
+    title: RHEL 9 SSH public host key files must have mode 0644 or less permissive.
+    rule_id: SV-258001r991589
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/30-ssh.yaml
+      step: V-258001
+    validation:
+      type: goss
+      file: validation/30-ssh.yaml
+      resource: command
+      test: V-258001
+  V-258003:
+    title: RHEL 9 SSH daemon must not allow GSSAPI authentication.
+    rule_id: SV-258003r1045065
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/30-ssh.yaml
+      step: V-258003
+    validation:
+      type: goss
+      file: validation/30-ssh.yaml
+      resource: command
+      test: V-258003
+  V-258004:
+    title: RHEL 9 SSH daemon must not allow Kerberos authentication.
+    rule_id: SV-258004r1045067
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/30-ssh.yaml
+      step: V-258004
+    validation:
+      type: goss
+      file: validation/30-ssh.yaml
+      resource: command
+      test: V-258004
+  V-258005:
+    title: RHEL 9 SSH daemon must not allow rhosts authentication.
+    rule_id: SV-258005r1045069
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/30-ssh.yaml
+      step: V-258005
+    validation:
+      type: goss
+      file: validation/30-ssh.yaml
+      resource: command
+      test: V-258005
+  V-258006:
+    title: RHEL 9 SSH daemon must not allow known hosts authentication.
+    rule_id: SV-258006r1045071
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/30-ssh.yaml
+      step: V-258006
+    validation:
+      type: goss
+      file: validation/30-ssh.yaml
+      resource: command
+      test: V-258006
+  V-258007:
+    title: RHEL 9 SSH daemon must disable remote X connections for interactive users.
+    rule_id: SV-258007r1045073
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/30-ssh.yaml
+      step: V-258007
+    validation:
+      type: goss
+      file: validation/30-ssh.yaml
+      resource: command
+      test: V-258007
+  V-258008:
+    title: RHEL 9 SSH daemon must perform strict mode checking of home directory configuration files.
+    rule_id: SV-258008r1045075
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/30-ssh.yaml
+      step: V-258008
+    validation:
+      type: goss
+      file: validation/30-ssh.yaml
+      resource: command
+      test: V-258008
+  V-258009:
+    title: RHEL 9 SSH daemon must display the date and time of the last successful account logon upon an SSH logon.
+    rule_id: SV-258009r1045077
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/30-ssh.yaml
+      step: V-258009
+    validation:
+      type: goss
+      file: validation/30-ssh.yaml
+      resource: command
+      test: V-258009
+  V-258011:
+    title: RHEL 9 SSH daemon must prevent remote hosts from connecting to the proxy display.
+    rule_id: SV-258011r1045079
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/30-ssh.yaml
+      step: V-258011
+    validation:
+      type: goss
+      file: validation/30-ssh.yaml
+      resource: command
+      test: V-258011
+  V-258041:
+    title: RHEL 9 user account passwords for new users or password changes must have a 60-day maximum password lifetime restriction in /etc/login.defs.
+    rule_id: SV-258041r1038967
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/40-authentication.yaml
+      step: V-258041
+    validation:
+      type: goss
+      file: validation/40-authentication.yaml
+      resource: command
+      test: V-258041
+  V-258091:
+    title: RHEL 9 must ensure the password complexity module in the system-auth file is configured for three retries or less.
+    rule_id: SV-258091r1208774
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/40-authentication.yaml
+      step: V-258091
+    validation:
+      type: goss
+      file: validation/40-authentication.yaml
+      resource: command
+      test: V-258091
+  V-258095:
+    title: RHEL 9 must configure the use of the pam_faillock.so module in the /etc/pam.d/system-auth file.
+    rule_id: SV-258095r1045189
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/40-authentication.yaml
+      step: V-258095
+    validation:
+      type: goss
+      file: validation/40-authentication.yaml
+      resource: command
+      test: V-258095
+  V-258096:
+    title: RHEL 9 must configure the use of the pam_faillock.so module in the /etc/pam.d/password-auth file.
+    rule_id: SV-258096r1045191
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/40-authentication.yaml
+      step: V-258096
+    validation:
+      type: goss
+      file: validation/40-authentication.yaml
+      resource: command
+      test: V-258096
+  V-258097:
+    title: RHEL 9 must ensure the password complexity module is enabled in the password-auth file.
+    rule_id: SV-258097r1045193
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/40-authentication.yaml
+      step: V-258097
+    validation:
+      type: goss
+      file: validation/40-authentication.yaml
+      resource: command
+      test: V-258097
+  V-258098:
+    title: RHEL 9 must ensure the password complexity module is enabled in the system-auth file.
+    rule_id: SV-258098r1045195
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/40-authentication.yaml
+      step: V-258098
+    validation:
+      type: goss
+      file: validation/40-authentication.yaml
+      resource: command
+      test: V-258098
+  V-258101:
+    title: RHEL 9 must enforce password complexity rules for the root account.
+    rule_id: SV-258101r1045204
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/40-authentication.yaml
+      step: V-258101
+    validation:
+      type: goss
+      file: validation/40-authentication.yaml
+      resource: command
+      test: V-258101
+  V-258102:
+    title: RHEL 9 must enforce password complexity by requiring that at least one lowercase character be used.
+    rule_id: SV-258102r1045207
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/40-authentication.yaml
+      step: V-258102
+    validation:
+      type: goss
+      file: validation/40-authentication.yaml
+      resource: command
+      test: V-258102
+  V-258103:
+    title: RHEL 9 must enforce password complexity by requiring that at least one numeric character be used.
+    rule_id: SV-258103r1045210
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/40-authentication.yaml
+      step: V-258103
+    validation:
+      type: goss
+      file: validation/40-authentication.yaml
+      resource: command
+      test: V-258103
+  V-258104:
+    title: RHEL 9 passwords for new users or password changes must have a 24 hours minimum password lifetime restriction in /etc/login.defs.
+    rule_id: SV-258104r1015104
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/40-authentication.yaml
+      step: V-258104
+    validation:
+      type: goss
+      file: validation/40-authentication.yaml
+      resource: command
+      test: V-258104
+  V-258107:
+    title: RHEL 9 passwords must be created with a minimum of 15 characters.
+    rule_id: SV-258107r1045218
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/40-authentication.yaml
+      step: V-258107
+    validation:
+      type: goss
+      file: validation/40-authentication.yaml
+      resource: command
+      test: V-258107
+  V-258109:
+    title: RHEL 9 must enforce password complexity by requiring that at least one special character be used.
+    rule_id: SV-258109r1045220
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/40-authentication.yaml
+      step: V-258109
+    validation:
+      type: goss
+      file: validation/40-authentication.yaml
+      resource: command
+      test: V-258109
+  V-258110:
+    title: RHEL 9 must prevent the use of dictionary words for passwords.
+    rule_id: SV-258110r1045223
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/40-authentication.yaml
+      step: V-258110
+    validation:
+      type: goss
+      file: validation/40-authentication.yaml
+      resource: command
+      test: V-258110
+  V-258111:
+    title: RHEL 9 must enforce password complexity by requiring that at least one uppercase character be used.
+    rule_id: SV-258111r1045226
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/40-authentication.yaml
+      step: V-258111
+    validation:
+      type: goss
+      file: validation/40-authentication.yaml
+      resource: command
+      test: V-258111
+  V-258112:
+    title: RHEL 9 must require the change of at least eight characters when passwords are changed.
+    rule_id: SV-258112r1045229
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/40-authentication.yaml
+      step: V-258112
+    validation:
+      type: goss
+      file: validation/40-authentication.yaml
+      resource: command
+      test: V-258112
+  V-258113:
+    title: RHEL 9 must require the maximum number of repeating characters of the same character class be limited to four when passwords are changed.
+    rule_id: SV-258113r1045232
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/40-authentication.yaml
+      step: V-258113
+    validation:
+      type: goss
+      file: validation/40-authentication.yaml
+      resource: command
+      test: V-258113
+  V-258114:
+    title: RHEL 9 must require the maximum number of repeating characters be limited to three when passwords are changed.
+    rule_id: SV-258114r1045235
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/40-authentication.yaml
+      step: V-258114
+    validation:
+      type: goss
+      file: validation/40-authentication.yaml
+      resource: command
+      test: V-258114
+  V-258115:
+    title: RHEL 9 must require the change of at least four character classes when passwords are changed.
+    rule_id: SV-258115r1045238
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/40-authentication.yaml
+      step: V-258115
+    validation:
+      type: goss
+      file: validation/40-authentication.yaml
+      resource: command
+      test: V-258115
+  V-258117:
+    title: RHEL 9 must be configured to use the shadow file to store only encrypted representations of passwords.
+    rule_id: SV-258117r1015116
+    severity: medium
+    status: automated
+    remediation:
+      file: remediation/40-authentication.yaml
+      step: V-258117
+    validation:
+      type: goss
+      file: validation/40-authentication.yaml
+      resource: command
+      test: V-258117
