@@ -1,3 +1,133 @@
-# Goss validation resources for authentication controls.
-# Use DISA V-IDs as resource IDs where possible and add meta.stig_id.
-{}
+command:
+  V-258041:
+    title: "RHEL 9 must enforce a 60-day maximum password lifetime for new users."
+    meta: { stig_id: V-258041 }
+    exec: "awk '$1=="PASS_MAX_DAYS" {exit !($2 <= 60)} END {if (NR==0) exit 1}' /etc/login.defs"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-258041") }}
+
+  V-258104:
+    title: "RHEL 9 must enforce a 24-hour minimum password lifetime for new users."
+    meta: { stig_id: V-258104 }
+    exec: "grep -Eq '^[[:space:]]*PASS_MIN_DAYS[[:space:]]+1[[:space:]]*$' /etc/login.defs"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-258104") }}
+
+  V-258091:
+    title: "RHEL 9 must configure pwquality retries to three or less."
+    meta: { stig_id: V-258091 }
+    exec: "grep -RhsE '^[[:space:]]*retry[[:space:]]*=[[:space:]]*[1-3][[:space:]]*$' /etc/security/pwquality.conf /etc/security/pwquality.conf.d 2>/dev/null | grep -q ."
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-258091") }}
+
+  V-258095:
+    title: "RHEL 9 must configure pam_faillock.so in system-auth."
+    meta: { stig_id: V-258095 }
+    exec: "grep -Eq '^[[:space:]]*(auth|account)[[:space:]]+.*pam_faillock\.so' /etc/pam.d/system-auth"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-258095") }}
+
+  V-258096:
+    title: "RHEL 9 must configure pam_faillock.so in password-auth."
+    meta: { stig_id: V-258096 }
+    exec: "grep -Eq '^[[:space:]]*(auth|account)[[:space:]]+.*pam_faillock\.so' /etc/pam.d/password-auth"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-258096") }}
+
+  V-258097:
+    title: "RHEL 9 must enable the password complexity module in password-auth."
+    meta: { stig_id: V-258097 }
+    exec: "grep -Eq '^[[:space:]]*password[[:space:]]+.*pam_pwquality\.so' /etc/pam.d/password-auth"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-258097") }}
+
+  V-258098:
+    title: "RHEL 9 must enable the password complexity module in system-auth."
+    meta: { stig_id: V-258098 }
+    exec: "grep -Eq '^[[:space:]]*password[[:space:]]+.*pam_pwquality\.so' /etc/pam.d/system-auth"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-258098") }}
+
+  V-258101:
+    title: "RHEL 9 must enforce password complexity rules for root."
+    meta: { stig_id: V-258101 }
+    exec: "grep -RhsE '^[[:space:]]*enforce_for_root[[:space:]]*$' /etc/security/pwquality.conf /etc/security/pwquality.conf.d 2>/dev/null | grep -q ."
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-258101") }}
+
+  V-258102:
+    title: "RHEL 9 must require at least one lowercase password character."
+    meta: { stig_id: V-258102 }
+    exec: "grep -RhsE '^[[:space:]]*lcredit[[:space:]]*=[[:space:]]*-[1-9][0-9]*[[:space:]]*$' /etc/security/pwquality.conf /etc/security/pwquality.conf.d 2>/dev/null | grep -q ."
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-258102") }}
+
+  V-258103:
+    title: "RHEL 9 must require at least one numeric password character."
+    meta: { stig_id: V-258103 }
+    exec: "grep -RhsE '^[[:space:]]*dcredit[[:space:]]*=[[:space:]]*-[1-9][0-9]*[[:space:]]*$' /etc/security/pwquality.conf /etc/security/pwquality.conf.d 2>/dev/null | grep -q ."
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-258103") }}
+
+  V-258107:
+    title: "RHEL 9 passwords must be created with a minimum of 15 characters."
+    meta: { stig_id: V-258107 }
+    exec: "awk -F= '/^[[:space:]]*minlen[[:space:]]*=/{gsub(/[[:space:]]/,"",$2); if ($2 >= 15) ok=1} END{exit !ok}' /etc/security/pwquality.conf /etc/security/pwquality.conf.d/*.conf 2>/dev/null"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-258107") }}
+
+  V-258109:
+    title: "RHEL 9 must require at least one special password character."
+    meta: { stig_id: V-258109 }
+    exec: "grep -RhsE '^[[:space:]]*ocredit[[:space:]]*=[[:space:]]*-[1-9][0-9]*[[:space:]]*$' /etc/security/pwquality.conf /etc/security/pwquality.conf.d 2>/dev/null | grep -q ."
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-258109") }}
+
+  V-258110:
+    title: "RHEL 9 must prevent dictionary words in passwords."
+    meta: { stig_id: V-258110 }
+    exec: "grep -RhsE '^[[:space:]]*dictcheck[[:space:]]*=[[:space:]]*1[[:space:]]*$' /etc/security/pwquality.conf /etc/security/pwquality.conf.d 2>/dev/null | grep -q ."
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-258110") }}
+
+  V-258111:
+    title: "RHEL 9 must require at least one uppercase password character."
+    meta: { stig_id: V-258111 }
+    exec: "grep -RhsE '^[[:space:]]*ucredit[[:space:]]*=[[:space:]]*-[1-9][0-9]*[[:space:]]*$' /etc/security/pwquality.conf /etc/security/pwquality.conf.d 2>/dev/null | grep -q ."
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-258111") }}
+
+  V-258112:
+    title: "RHEL 9 must require at least eight changed characters when passwords are changed."
+    meta: { stig_id: V-258112 }
+    exec: "grep -RhsE '^[[:space:]]*difok[[:space:]]*=[[:space:]]*8[[:space:]]*$' /etc/security/pwquality.conf /etc/security/pwquality.conf.d 2>/dev/null | grep -q ."
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-258112") }}
+
+  V-258113:
+    title: "RHEL 9 must limit same-class repeating password characters to four."
+    meta: { stig_id: V-258113 }
+    exec: "grep -RhsE '^[[:space:]]*maxclassrepeat[[:space:]]*=[[:space:]]*4[[:space:]]*$' /etc/security/pwquality.conf /etc/security/pwquality.conf.d 2>/dev/null | grep -q ."
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-258113") }}
+
+  V-258114:
+    title: "RHEL 9 must limit repeating password characters to three."
+    meta: { stig_id: V-258114 }
+    exec: "grep -RhsE '^[[:space:]]*maxrepeat[[:space:]]*=[[:space:]]*3[[:space:]]*$' /etc/security/pwquality.conf /etc/security/pwquality.conf.d 2>/dev/null | grep -q ."
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-258114") }}
+
+  V-258115:
+    title: "RHEL 9 must require at least four password character classes."
+    meta: { stig_id: V-258115 }
+    exec: "grep -RhsE '^[[:space:]]*minclass[[:space:]]*=[[:space:]]*4[[:space:]]*$' /etc/security/pwquality.conf /etc/security/pwquality.conf.d 2>/dev/null | grep -q ."
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-258115") }}
+
+  V-258117:
+    title: "RHEL 9 must use the shadow file to store encrypted password representations."
+    meta: { stig_id: V-258117 }
+    exec: "grep -Eq '^[[:space:]]*ENCRYPT_METHOD[[:space:]]+SHA512[[:space:]]*$' /etc/login.defs"
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-258117") }}
