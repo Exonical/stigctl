@@ -252,3 +252,26 @@ make build
 ```
 
 The CI workflow uses Go 1.27.1.
+
+
+## Releases
+
+Releases are built with GoReleaser. The release artifacts are Linux `amd64` and `arm64` archives containing the `stigctl` binary plus the versioned STIG content, profiles, schemas, license, and README.
+
+Validate the release configuration locally with:
+
+```bash
+make release-check
+```
+
+Create a local snapshot without publishing:
+
+```bash
+make snapshot
+```
+
+Published releases use semantic version tags such as `v0.0.1`. The GitHub release workflow is pinned to GoReleaser v2.18.2 and refuses to publish unless GitHub immutable releases are enabled for the repository.
+
+Enable release immutability in **Repository Settings → Releases → Enable release immutability** before creating the first release. Once an immutable release is published, GitHub locks its tag and assets and generates a release attestation.
+
+The CI workflow will create the initial `v0.0.1` tag automatically after tests pass only when immutable releases are enabled. Subsequent releases should be created with new semantic-version tags; published release tags must never be reused or moved.
