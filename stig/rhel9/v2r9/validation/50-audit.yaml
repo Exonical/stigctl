@@ -85,3 +85,1118 @@ command:
       - "yes"
     skip: {{ not (index .Vars.enabled_rules "V-258164") }}
 
+  V-258176:
+    title: "RHEL 9 must audit uses of the \"execve\" system call."
+    meta: { stig_id: V-258176 }
+    exec: |
+      missing=0
+      if grep -RhsF -- '-a always,exit -F arch=b32 -S execve -C uid!=euid -F euid=0 -k execpriv' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F arch=b32 -S execve -C uid!=euid -F euid=0 -k execpriv'
+      else
+        printf 'missing=%s\n' '-a always,exit -F arch=b32 -S execve -C uid!=euid -F euid=0 -k execpriv'
+        missing=1
+      fi
+      if grep -RhsF -- '-a always,exit -F arch=b64 -S execve -C uid!=euid -F euid=0 -k execpriv' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F arch=b64 -S execve -C uid!=euid -F euid=0 -k execpriv'
+      else
+        printf 'missing=%s\n' '-a always,exit -F arch=b64 -S execve -C uid!=euid -F euid=0 -k execpriv'
+        missing=1
+      fi
+      if grep -RhsF -- '-a always,exit -F arch=b32 -S execve -C gid!=egid -F egid=0 -k execpriv' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F arch=b32 -S execve -C gid!=egid -F egid=0 -k execpriv'
+      else
+        printf 'missing=%s\n' '-a always,exit -F arch=b32 -S execve -C gid!=egid -F egid=0 -k execpriv'
+        missing=1
+      fi
+      if grep -RhsF -- '-a always,exit -F arch=b64 -S execve -C gid!=egid -F egid=0 -k execpriv' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F arch=b64 -S execve -C gid!=egid -F egid=0 -k execpriv'
+      else
+        printf 'missing=%s\n' '-a always,exit -F arch=b64 -S execve -C gid!=egid -F egid=0 -k execpriv'
+        missing=1
+      fi
+      test "$missing" -eq 0
+    exit-status: 0
+    stdout:
+      - "verified="
+    skip: {{ not (index .Vars.enabled_rules "V-258176") }}
+
+
+  V-258177:
+    title: "RHEL 9 must audit all uses of the chmod, fchmod, and fchmodat system calls."
+    meta: { stig_id: V-258177 }
+    exec: |
+      missing=0
+      if grep -RhsF -- '-a always,exit -F arch=b32 -S chmod,fchmod,fchmodat -F auid>=1000 -F auid!=unset -k perm_mod' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F arch=b32 -S chmod,fchmod,fchmodat -F auid>=1000 -F auid!=unset -k perm_mod'
+      else
+        printf 'missing=%s\n' '-a always,exit -F arch=b32 -S chmod,fchmod,fchmodat -F auid>=1000 -F auid!=unset -k perm_mod'
+        missing=1
+      fi
+      if grep -RhsF -- '-a always,exit -F arch=b64 -S chmod,fchmod,fchmodat -F auid>=1000 -F auid!=unset -k perm_mod' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F arch=b64 -S chmod,fchmod,fchmodat -F auid>=1000 -F auid!=unset -k perm_mod'
+      else
+        printf 'missing=%s\n' '-a always,exit -F arch=b64 -S chmod,fchmod,fchmodat -F auid>=1000 -F auid!=unset -k perm_mod'
+        missing=1
+      fi
+      test "$missing" -eq 0
+    exit-status: 0
+    stdout:
+      - "verified="
+    skip: {{ not (index .Vars.enabled_rules "V-258177") }}
+
+
+  V-258178:
+    title: "RHEL 9 must audit all uses of the chown, fchown, fchownat, and lchown system calls."
+    meta: { stig_id: V-258178 }
+    exec: |
+      missing=0
+      if grep -RhsF -- '-a always,exit -F arch=b32 -S chown,fchown,fchownat,lchown -F auid>=1000 -F auid!=unset -k perm_mod' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F arch=b32 -S chown,fchown,fchownat,lchown -F auid>=1000 -F auid!=unset -k perm_mod'
+      else
+        printf 'missing=%s\n' '-a always,exit -F arch=b32 -S chown,fchown,fchownat,lchown -F auid>=1000 -F auid!=unset -k perm_mod'
+        missing=1
+      fi
+      if grep -RhsF -- '-a always,exit -F arch=b64 -S chown,fchown,fchownat,lchown -F auid>=1000 -F auid!=unset -k perm_mod' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F arch=b64 -S chown,fchown,fchownat,lchown -F auid>=1000 -F auid!=unset -k perm_mod'
+      else
+        printf 'missing=%s\n' '-a always,exit -F arch=b64 -S chown,fchown,fchownat,lchown -F auid>=1000 -F auid!=unset -k perm_mod'
+        missing=1
+      fi
+      test "$missing" -eq 0
+    exit-status: 0
+    stdout:
+      - "verified="
+    skip: {{ not (index .Vars.enabled_rules "V-258178") }}
+
+
+  V-258179:
+    title: "RHEL 9 must audit all uses of the setxattr, fsetxattr, lsetxattr, removexattr, fremovexattr, and lremovexattr system calls."
+    meta: { stig_id: V-258179 }
+    exec: |
+      missing=0
+      if grep -RhsF -- '-a always,exit -F arch=b32 -S setxattr,fsetxattr,lsetxattr,removexattr,fremovexattr,lremovexattr -F auid>=1000 -F auid!=unset -k perm_mod' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F arch=b32 -S setxattr,fsetxattr,lsetxattr,removexattr,fremovexattr,lremovexattr -F auid>=1000 -F auid!=unset -k perm_mod'
+      else
+        printf 'missing=%s\n' '-a always,exit -F arch=b32 -S setxattr,fsetxattr,lsetxattr,removexattr,fremovexattr,lremovexattr -F auid>=1000 -F auid!=unset -k perm_mod'
+        missing=1
+      fi
+      if grep -RhsF -- '-a always,exit -F arch=b64 -S setxattr,fsetxattr,lsetxattr,removexattr,fremovexattr,lremovexattr -F auid>=1000 -F auid!=unset -k perm_mod' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F arch=b64 -S setxattr,fsetxattr,lsetxattr,removexattr,fremovexattr,lremovexattr -F auid>=1000 -F auid!=unset -k perm_mod'
+      else
+        printf 'missing=%s\n' '-a always,exit -F arch=b64 -S setxattr,fsetxattr,lsetxattr,removexattr,fremovexattr,lremovexattr -F auid>=1000 -F auid!=unset -k perm_mod'
+        missing=1
+      fi
+      if grep -RhsF -- '-a always,exit -F arch=b32 -S setxattr,fsetxattr,lsetxattr,removexattr,fremovexattr,lremovexattr -F auid=0 -k perm_mod' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F arch=b32 -S setxattr,fsetxattr,lsetxattr,removexattr,fremovexattr,lremovexattr -F auid=0 -k perm_mod'
+      else
+        printf 'missing=%s\n' '-a always,exit -F arch=b32 -S setxattr,fsetxattr,lsetxattr,removexattr,fremovexattr,lremovexattr -F auid=0 -k perm_mod'
+        missing=1
+      fi
+      if grep -RhsF -- '-a always,exit -F arch=b64 -S setxattr,fsetxattr,lsetxattr,removexattr,fremovexattr,lremovexattr -F auid=0 -k perm_mod' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F arch=b64 -S setxattr,fsetxattr,lsetxattr,removexattr,fremovexattr,lremovexattr -F auid=0 -k perm_mod'
+      else
+        printf 'missing=%s\n' '-a always,exit -F arch=b64 -S setxattr,fsetxattr,lsetxattr,removexattr,fremovexattr,lremovexattr -F auid=0 -k perm_mod'
+        missing=1
+      fi
+      test "$missing" -eq 0
+    exit-status: 0
+    stdout:
+      - "verified="
+    skip: {{ not (index .Vars.enabled_rules "V-258179") }}
+
+
+  V-258180:
+    title: "RHEL 9 must audit all uses of umount system calls."
+    meta: { stig_id: V-258180 }
+    exec: |
+      missing=0
+      if grep -RhsF -- '-a always,exit -F path=/usr/bin/umount -F perm=x -F auid>=1000 -F auid!=unset -k privileged-mount' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F path=/usr/bin/umount -F perm=x -F auid>=1000 -F auid!=unset -k privileged-mount'
+      else
+        printf 'missing=%s\n' '-a always,exit -F path=/usr/bin/umount -F perm=x -F auid>=1000 -F auid!=unset -k privileged-mount'
+        missing=1
+      fi
+      test "$missing" -eq 0
+    exit-status: 0
+    stdout:
+      - "verified="
+    skip: {{ not (index .Vars.enabled_rules "V-258180") }}
+
+
+  V-258181:
+    title: "RHEL 9 must audit all uses of the chacl command."
+    meta: { stig_id: V-258181 }
+    exec: |
+      missing=0
+      if grep -RhsF -- '-a always,exit -F path=/usr/bin/chacl -F perm=x -F auid>=1000 -F auid!=unset -k perm_mod' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F path=/usr/bin/chacl -F perm=x -F auid>=1000 -F auid!=unset -k perm_mod'
+      else
+        printf 'missing=%s\n' '-a always,exit -F path=/usr/bin/chacl -F perm=x -F auid>=1000 -F auid!=unset -k perm_mod'
+        missing=1
+      fi
+      test "$missing" -eq 0
+    exit-status: 0
+    stdout:
+      - "verified="
+    skip: {{ not (index .Vars.enabled_rules "V-258181") }}
+
+
+  V-258182:
+    title: "RHEL 9 must audit all uses of the setfacl command."
+    meta: { stig_id: V-258182 }
+    exec: |
+      missing=0
+      if grep -RhsF -- '-a always,exit -F path=/usr/bin/setfacl -F perm=x -F auid>=1000 -F auid!=unset -k perm_mod' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F path=/usr/bin/setfacl -F perm=x -F auid>=1000 -F auid!=unset -k perm_mod'
+      else
+        printf 'missing=%s\n' '-a always,exit -F path=/usr/bin/setfacl -F perm=x -F auid>=1000 -F auid!=unset -k perm_mod'
+        missing=1
+      fi
+      test "$missing" -eq 0
+    exit-status: 0
+    stdout:
+      - "verified="
+    skip: {{ not (index .Vars.enabled_rules "V-258182") }}
+
+
+  V-258183:
+    title: "RHEL 9 must audit all uses of the chcon command."
+    meta: { stig_id: V-258183 }
+    exec: |
+      missing=0
+      if grep -RhsF -- '-a always,exit -F path=/usr/bin/chcon -F perm=x -F auid>=1000 -F auid!=unset -k perm_mod' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F path=/usr/bin/chcon -F perm=x -F auid>=1000 -F auid!=unset -k perm_mod'
+      else
+        printf 'missing=%s\n' '-a always,exit -F path=/usr/bin/chcon -F perm=x -F auid>=1000 -F auid!=unset -k perm_mod'
+        missing=1
+      fi
+      test "$missing" -eq 0
+    exit-status: 0
+    stdout:
+      - "verified="
+    skip: {{ not (index .Vars.enabled_rules "V-258183") }}
+
+
+  V-258184:
+    title: "RHEL 9 must audit all uses of the semanage command."
+    meta: { stig_id: V-258184 }
+    exec: |
+      missing=0
+      if grep -RhsF -- '-a always,exit -F path=/usr/sbin/semanage -F perm=x -F auid>=1000 -F auid!=unset -k privileged-unix-update' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F path=/usr/sbin/semanage -F perm=x -F auid>=1000 -F auid!=unset -k privileged-unix-update'
+      else
+        printf 'missing=%s\n' '-a always,exit -F path=/usr/sbin/semanage -F perm=x -F auid>=1000 -F auid!=unset -k privileged-unix-update'
+        missing=1
+      fi
+      test "$missing" -eq 0
+    exit-status: 0
+    stdout:
+      - "verified="
+    skip: {{ not (index .Vars.enabled_rules "V-258184") }}
+
+
+  V-258185:
+    title: "RHEL 9 must audit all uses of the setfiles command."
+    meta: { stig_id: V-258185 }
+    exec: |
+      missing=0
+      if grep -RhsF -- '-a always,exit -F path=/usr/sbin/setfiles -F perm=x -F auid>=1000 -F auid!=unset -k privileged-unix-update' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F path=/usr/sbin/setfiles -F perm=x -F auid>=1000 -F auid!=unset -k privileged-unix-update'
+      else
+        printf 'missing=%s\n' '-a always,exit -F path=/usr/sbin/setfiles -F perm=x -F auid>=1000 -F auid!=unset -k privileged-unix-update'
+        missing=1
+      fi
+      test "$missing" -eq 0
+    exit-status: 0
+    stdout:
+      - "verified="
+    skip: {{ not (index .Vars.enabled_rules "V-258185") }}
+
+
+  V-258186:
+    title: "RHEL 9 must audit all uses of the setsebool command."
+    meta: { stig_id: V-258186 }
+    exec: |
+      missing=0
+      if grep -RhsF -- '-a always,exit -F path=/usr/sbin/setsebool -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F path=/usr/sbin/setsebool -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged'
+      else
+        printf 'missing=%s\n' '-a always,exit -F path=/usr/sbin/setsebool -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged'
+        missing=1
+      fi
+      test "$missing" -eq 0
+    exit-status: 0
+    stdout:
+      - "verified="
+    skip: {{ not (index .Vars.enabled_rules "V-258186") }}
+
+
+  V-258187:
+    title: "RHEL 9 must audit all uses of the rename, unlink, rmdir, renameat, and unlinkat system calls."
+    meta: { stig_id: V-258187 }
+    exec: |
+      missing=0
+      if grep -RhsF -- '-a always,exit -F arch=b32 -S rename,unlink,rmdir,renameat,unlinkat -F auid>=1000 -F auid!=unset -k delete' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F arch=b32 -S rename,unlink,rmdir,renameat,unlinkat -F auid>=1000 -F auid!=unset -k delete'
+      else
+        printf 'missing=%s\n' '-a always,exit -F arch=b32 -S rename,unlink,rmdir,renameat,unlinkat -F auid>=1000 -F auid!=unset -k delete'
+        missing=1
+      fi
+      if grep -RhsF -- '-a always,exit -F arch=b64 -S rename,unlink,rmdir,renameat,unlinkat -F auid>=1000 -F auid!=unset -k delete' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F arch=b64 -S rename,unlink,rmdir,renameat,unlinkat -F auid>=1000 -F auid!=unset -k delete'
+      else
+        printf 'missing=%s\n' '-a always,exit -F arch=b64 -S rename,unlink,rmdir,renameat,unlinkat -F auid>=1000 -F auid!=unset -k delete'
+        missing=1
+      fi
+      test "$missing" -eq 0
+    exit-status: 0
+    stdout:
+      - "verified="
+    skip: {{ not (index .Vars.enabled_rules "V-258187") }}
+
+
+  V-258188:
+    title: "RHEL 9 must audit all uses of the truncate, ftruncate, creat, open, openat, and open_by_handle_at system calls."
+    meta: { stig_id: V-258188 }
+    exec: |
+      missing=0
+      if grep -RhsF -- '-a always,exit -F arch=b32 -S truncate,ftruncate,creat,open,openat,open_by_handle_at -F exit=-EPERM -F auid>=1000 -F auid!=unset -k perm_access' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F arch=b32 -S truncate,ftruncate,creat,open,openat,open_by_handle_at -F exit=-EPERM -F auid>=1000 -F auid!=unset -k perm_access'
+      else
+        printf 'missing=%s\n' '-a always,exit -F arch=b32 -S truncate,ftruncate,creat,open,openat,open_by_handle_at -F exit=-EPERM -F auid>=1000 -F auid!=unset -k perm_access'
+        missing=1
+      fi
+      if grep -RhsF -- '-a always,exit -F arch=b64 -S truncate,ftruncate,creat,open,openat,open_by_handle_at -F exit=-EPERM -F auid>=1000 -F auid!=unset -k perm_access' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F arch=b64 -S truncate,ftruncate,creat,open,openat,open_by_handle_at -F exit=-EPERM -F auid>=1000 -F auid!=unset -k perm_access'
+      else
+        printf 'missing=%s\n' '-a always,exit -F arch=b64 -S truncate,ftruncate,creat,open,openat,open_by_handle_at -F exit=-EPERM -F auid>=1000 -F auid!=unset -k perm_access'
+        missing=1
+      fi
+      if grep -RhsF -- '-a always,exit -F arch=b32 -S truncate,ftruncate,creat,open,openat,open_by_handle_at -F exit=-EACCES -F auid>=1000 -F auid!=unset -k perm_access' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F arch=b32 -S truncate,ftruncate,creat,open,openat,open_by_handle_at -F exit=-EACCES -F auid>=1000 -F auid!=unset -k perm_access'
+      else
+        printf 'missing=%s\n' '-a always,exit -F arch=b32 -S truncate,ftruncate,creat,open,openat,open_by_handle_at -F exit=-EACCES -F auid>=1000 -F auid!=unset -k perm_access'
+        missing=1
+      fi
+      if grep -RhsF -- '-a always,exit -F arch=b64 -S truncate,ftruncate,creat,open,openat,open_by_handle_at -F exit=-EACCES -F auid>=1000 -F auid!=unset -k perm_access' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F arch=b64 -S truncate,ftruncate,creat,open,openat,open_by_handle_at -F exit=-EACCES -F auid>=1000 -F auid!=unset -k perm_access'
+      else
+        printf 'missing=%s\n' '-a always,exit -F arch=b64 -S truncate,ftruncate,creat,open,openat,open_by_handle_at -F exit=-EACCES -F auid>=1000 -F auid!=unset -k perm_access'
+        missing=1
+      fi
+      test "$missing" -eq 0
+    exit-status: 0
+    stdout:
+      - "verified="
+    skip: {{ not (index .Vars.enabled_rules "V-258188") }}
+
+
+  V-258189:
+    title: "RHEL 9 must audit all uses of the delete_module system call."
+    meta: { stig_id: V-258189 }
+    exec: |
+      missing=0
+      if grep -RhsF -- '-a always,exit -F arch=b32 -S delete_module -F auid>=1000 -F auid!=unset -k module_chng' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F arch=b32 -S delete_module -F auid>=1000 -F auid!=unset -k module_chng'
+      else
+        printf 'missing=%s\n' '-a always,exit -F arch=b32 -S delete_module -F auid>=1000 -F auid!=unset -k module_chng'
+        missing=1
+      fi
+      if grep -RhsF -- '-a always,exit -F arch=b64 -S delete_module -F auid>=1000 -F auid!=unset -k module_chng' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F arch=b64 -S delete_module -F auid>=1000 -F auid!=unset -k module_chng'
+      else
+        printf 'missing=%s\n' '-a always,exit -F arch=b64 -S delete_module -F auid>=1000 -F auid!=unset -k module_chng'
+        missing=1
+      fi
+      test "$missing" -eq 0
+    exit-status: 0
+    stdout:
+      - "verified="
+    skip: {{ not (index .Vars.enabled_rules "V-258189") }}
+
+
+  V-258190:
+    title: "RHEL 9 must audit all uses of the init_module and finit_module system calls."
+    meta: { stig_id: V-258190 }
+    exec: |
+      missing=0
+      if grep -RhsF -- '-a always,exit -F arch=b32 -S init_module,finit_module -F auid>=1000 -F auid!=unset -k module_chng' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F arch=b32 -S init_module,finit_module -F auid>=1000 -F auid!=unset -k module_chng'
+      else
+        printf 'missing=%s\n' '-a always,exit -F arch=b32 -S init_module,finit_module -F auid>=1000 -F auid!=unset -k module_chng'
+        missing=1
+      fi
+      if grep -RhsF -- '-a always,exit -F arch=b64 -S init_module,finit_module -F auid>=1000 -F auid!=unset -k module_chng' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F arch=b64 -S init_module,finit_module -F auid>=1000 -F auid!=unset -k module_chng'
+      else
+        printf 'missing=%s\n' '-a always,exit -F arch=b64 -S init_module,finit_module -F auid>=1000 -F auid!=unset -k module_chng'
+        missing=1
+      fi
+      test "$missing" -eq 0
+    exit-status: 0
+    stdout:
+      - "verified="
+    skip: {{ not (index .Vars.enabled_rules "V-258190") }}
+
+
+  V-258191:
+    title: "RHEL 9 must audit all uses of the chage command."
+    meta: { stig_id: V-258191 }
+    exec: |
+      missing=0
+      if grep -RhsF -- '-a always,exit -F path=/usr/bin/chage -F perm=x -F auid>=1000 -F auid!=unset -k privileged-chage' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F path=/usr/bin/chage -F perm=x -F auid>=1000 -F auid!=unset -k privileged-chage'
+      else
+        printf 'missing=%s\n' '-a always,exit -F path=/usr/bin/chage -F perm=x -F auid>=1000 -F auid!=unset -k privileged-chage'
+        missing=1
+      fi
+      test "$missing" -eq 0
+    exit-status: 0
+    stdout:
+      - "verified="
+    skip: {{ not (index .Vars.enabled_rules "V-258191") }}
+
+
+  V-258192:
+    title: "RHEL 9 must audit all uses of the chsh command."
+    meta: { stig_id: V-258192 }
+    exec: |
+      missing=0
+      if grep -RhsF -- '-a always,exit -F path=/usr/bin/chsh -F perm=x -F auid>=1000 -F auid!=unset -k priv_cmd' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F path=/usr/bin/chsh -F perm=x -F auid>=1000 -F auid!=unset -k priv_cmd'
+      else
+        printf 'missing=%s\n' '-a always,exit -F path=/usr/bin/chsh -F perm=x -F auid>=1000 -F auid!=unset -k priv_cmd'
+        missing=1
+      fi
+      test "$missing" -eq 0
+    exit-status: 0
+    stdout:
+      - "verified="
+    skip: {{ not (index .Vars.enabled_rules "V-258192") }}
+
+
+  V-258193:
+    title: "RHEL 9 must audit all uses of the crontab command."
+    meta: { stig_id: V-258193 }
+    exec: |
+      missing=0
+      if grep -RhsF -- '-a always,exit -F path=/usr/bin/crontab -F perm=x -F auid>=1000 -F auid!=unset -k privileged-crontab' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F path=/usr/bin/crontab -F perm=x -F auid>=1000 -F auid!=unset -k privileged-crontab'
+      else
+        printf 'missing=%s\n' '-a always,exit -F path=/usr/bin/crontab -F perm=x -F auid>=1000 -F auid!=unset -k privileged-crontab'
+        missing=1
+      fi
+      test "$missing" -eq 0
+    exit-status: 0
+    stdout:
+      - "verified="
+    skip: {{ not (index .Vars.enabled_rules "V-258193") }}
+
+
+  V-258194:
+    title: "RHEL 9 must audit all uses of the gpasswd command."
+    meta: { stig_id: V-258194 }
+    exec: |
+      missing=0
+      if grep -RhsF -- '-a always,exit -F path=/usr/bin/gpasswd -F perm=x -F auid>=1000 -F auid!=unset -k privileged-gpasswd' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F path=/usr/bin/gpasswd -F perm=x -F auid>=1000 -F auid!=unset -k privileged-gpasswd'
+      else
+        printf 'missing=%s\n' '-a always,exit -F path=/usr/bin/gpasswd -F perm=x -F auid>=1000 -F auid!=unset -k privileged-gpasswd'
+        missing=1
+      fi
+      test "$missing" -eq 0
+    exit-status: 0
+    stdout:
+      - "verified="
+    skip: {{ not (index .Vars.enabled_rules "V-258194") }}
+
+
+  V-258195:
+    title: "RHEL 9 must audit all uses of the kmod command."
+    meta: { stig_id: V-258195 }
+    exec: |
+      missing=0
+      if grep -RhsF -- '-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -k modules' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -k modules'
+      else
+        printf 'missing=%s\n' '-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -k modules'
+        missing=1
+      fi
+      test "$missing" -eq 0
+    exit-status: 0
+    stdout:
+      - "verified="
+    skip: {{ not (index .Vars.enabled_rules "V-258195") }}
+
+
+  V-258196:
+    title: "RHEL 9 must audit all uses of the newgrp command."
+    meta: { stig_id: V-258196 }
+    exec: |
+      missing=0
+      if grep -RhsF -- '-a always,exit -F path=/usr/bin/newgrp -F perm=x -F auid>=1000 -F auid!=unset -k priv_cmd' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F path=/usr/bin/newgrp -F perm=x -F auid>=1000 -F auid!=unset -k priv_cmd'
+      else
+        printf 'missing=%s\n' '-a always,exit -F path=/usr/bin/newgrp -F perm=x -F auid>=1000 -F auid!=unset -k priv_cmd'
+        missing=1
+      fi
+      test "$missing" -eq 0
+    exit-status: 0
+    stdout:
+      - "verified="
+    skip: {{ not (index .Vars.enabled_rules "V-258196") }}
+
+
+  V-258197:
+    title: "RHEL 9 must audit all uses of the pam_timestamp_check command."
+    meta: { stig_id: V-258197 }
+    exec: |
+      missing=0
+      if grep -RhsF -- '-a always,exit -F path=/usr/sbin/pam_timestamp_check -F perm=x -F auid>=1000 -F auid!=unset -k privileged-pam_timestamp_check' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F path=/usr/sbin/pam_timestamp_check -F perm=x -F auid>=1000 -F auid!=unset -k privileged-pam_timestamp_check'
+      else
+        printf 'missing=%s\n' '-a always,exit -F path=/usr/sbin/pam_timestamp_check -F perm=x -F auid>=1000 -F auid!=unset -k privileged-pam_timestamp_check'
+        missing=1
+      fi
+      test "$missing" -eq 0
+    exit-status: 0
+    stdout:
+      - "verified="
+    skip: {{ not (index .Vars.enabled_rules "V-258197") }}
+
+
+  V-258198:
+    title: "RHEL 9 must audit all uses of the passwd command."
+    meta: { stig_id: V-258198 }
+    exec: |
+      missing=0
+      if grep -RhsF -- '-a always,exit -F path=/usr/bin/passwd -F perm=x -F auid>=1000 -F auid!=unset -k privileged-passwd' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F path=/usr/bin/passwd -F perm=x -F auid>=1000 -F auid!=unset -k privileged-passwd'
+      else
+        printf 'missing=%s\n' '-a always,exit -F path=/usr/bin/passwd -F perm=x -F auid>=1000 -F auid!=unset -k privileged-passwd'
+        missing=1
+      fi
+      test "$missing" -eq 0
+    exit-status: 0
+    stdout:
+      - "verified="
+    skip: {{ not (index .Vars.enabled_rules "V-258198") }}
+
+
+  V-258199:
+    title: "RHEL 9 must audit all uses of the postdrop command."
+    meta: { stig_id: V-258199 }
+    exec: |
+      missing=0
+      if grep -RhsF -- '-a always,exit -F path=/usr/sbin/postdrop -F perm=x -F auid>=1000 -F auid!=unset -k privileged-unix-update' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F path=/usr/sbin/postdrop -F perm=x -F auid>=1000 -F auid!=unset -k privileged-unix-update'
+      else
+        printf 'missing=%s\n' '-a always,exit -F path=/usr/sbin/postdrop -F perm=x -F auid>=1000 -F auid!=unset -k privileged-unix-update'
+        missing=1
+      fi
+      test "$missing" -eq 0
+    exit-status: 0
+    stdout:
+      - "verified="
+    skip: {{ not (index .Vars.enabled_rules "V-258199") }}
+
+
+  V-258200:
+    title: "RHEL 9 must audit all uses of the postqueue command."
+    meta: { stig_id: V-258200 }
+    exec: |
+      missing=0
+      if grep -RhsF -- '-a always,exit -F path=/usr/sbin/postqueue -F perm=x -F auid>=1000 -F auid!=unset -k privileged-unix-update' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F path=/usr/sbin/postqueue -F perm=x -F auid>=1000 -F auid!=unset -k privileged-unix-update'
+      else
+        printf 'missing=%s\n' '-a always,exit -F path=/usr/sbin/postqueue -F perm=x -F auid>=1000 -F auid!=unset -k privileged-unix-update'
+        missing=1
+      fi
+      test "$missing" -eq 0
+    exit-status: 0
+    stdout:
+      - "verified="
+    skip: {{ not (index .Vars.enabled_rules "V-258200") }}
+
+
+  V-258201:
+    title: "RHEL 9 must audit all uses of the ssh-agent command."
+    meta: { stig_id: V-258201 }
+    exec: |
+      missing=0
+      if grep -RhsF -- '-a always,exit -F path=/usr/bin/ssh-agent -F perm=x -F auid>=1000 -F auid!=unset -k privileged-ssh' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F path=/usr/bin/ssh-agent -F perm=x -F auid>=1000 -F auid!=unset -k privileged-ssh'
+      else
+        printf 'missing=%s\n' '-a always,exit -F path=/usr/bin/ssh-agent -F perm=x -F auid>=1000 -F auid!=unset -k privileged-ssh'
+        missing=1
+      fi
+      test "$missing" -eq 0
+    exit-status: 0
+    stdout:
+      - "verified="
+    skip: {{ not (index .Vars.enabled_rules "V-258201") }}
+
+
+  V-258202:
+    title: "RHEL 9 must audit all uses of the ssh-keysign command."
+    meta: { stig_id: V-258202 }
+    exec: |
+      missing=0
+      if grep -RhsF -- '-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F perm=x -F auid>=1000 -F auid!=unset -k privileged-ssh' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F perm=x -F auid>=1000 -F auid!=unset -k privileged-ssh'
+      else
+        printf 'missing=%s\n' '-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F perm=x -F auid>=1000 -F auid!=unset -k privileged-ssh'
+        missing=1
+      fi
+      test "$missing" -eq 0
+    exit-status: 0
+    stdout:
+      - "verified="
+    skip: {{ not (index .Vars.enabled_rules "V-258202") }}
+
+
+  V-258203:
+    title: "RHEL 9 must audit all uses of the su command."
+    meta: { stig_id: V-258203 }
+    exec: |
+      missing=0
+      if grep -RhsF -- '-a always,exit -F path=/usr/bin/su -F perm=x -F auid>=1000 -F auid!=unset -k privileged-priv_change' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F path=/usr/bin/su -F perm=x -F auid>=1000 -F auid!=unset -k privileged-priv_change'
+      else
+        printf 'missing=%s\n' '-a always,exit -F path=/usr/bin/su -F perm=x -F auid>=1000 -F auid!=unset -k privileged-priv_change'
+        missing=1
+      fi
+      test "$missing" -eq 0
+    exit-status: 0
+    stdout:
+      - "verified="
+    skip: {{ not (index .Vars.enabled_rules "V-258203") }}
+
+
+  V-258204:
+    title: "RHEL 9 must audit all uses of the sudo command."
+    meta: { stig_id: V-258204 }
+    exec: |
+      missing=0
+      if grep -RhsF -- '-a always,exit -F path=/usr/bin/sudo -F perm=x -F auid>=1000 -F auid!=unset -k priv_cmd' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F path=/usr/bin/sudo -F perm=x -F auid>=1000 -F auid!=unset -k priv_cmd'
+      else
+        printf 'missing=%s\n' '-a always,exit -F path=/usr/bin/sudo -F perm=x -F auid>=1000 -F auid!=unset -k priv_cmd'
+        missing=1
+      fi
+      test "$missing" -eq 0
+    exit-status: 0
+    stdout:
+      - "verified="
+    skip: {{ not (index .Vars.enabled_rules "V-258204") }}
+
+
+  V-258205:
+    title: "RHEL 9 must audit all uses of the sudoedit command."
+    meta: { stig_id: V-258205 }
+    exec: |
+      missing=0
+      if grep -RhsF -- '-a always,exit -F path=/usr/bin/sudoedit -F perm=x -F auid>=1000 -F auid!=unset -k priv_cmd' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F path=/usr/bin/sudoedit -F perm=x -F auid>=1000 -F auid!=unset -k priv_cmd'
+      else
+        printf 'missing=%s\n' '-a always,exit -F path=/usr/bin/sudoedit -F perm=x -F auid>=1000 -F auid!=unset -k priv_cmd'
+        missing=1
+      fi
+      test "$missing" -eq 0
+    exit-status: 0
+    stdout:
+      - "verified="
+    skip: {{ not (index .Vars.enabled_rules "V-258205") }}
+
+
+  V-258206:
+    title: "RHEL 9 must audit all uses of the unix_chkpwd command."
+    meta: { stig_id: V-258206 }
+    exec: |
+      missing=0
+      if grep -RhsF -- '-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid>=1000 -F auid!=unset -k privileged-unix-update' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid>=1000 -F auid!=unset -k privileged-unix-update'
+      else
+        printf 'missing=%s\n' '-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid>=1000 -F auid!=unset -k privileged-unix-update'
+        missing=1
+      fi
+      test "$missing" -eq 0
+    exit-status: 0
+    stdout:
+      - "verified="
+    skip: {{ not (index .Vars.enabled_rules "V-258206") }}
+
+
+  V-258207:
+    title: "RHEL 9 must audit all uses of the unix_update command."
+    meta: { stig_id: V-258207 }
+    exec: |
+      missing=0
+      if grep -RhsF -- '-a always,exit -F path=/usr/sbin/unix_update -F perm=x -F auid>=1000 -F auid!=unset -k privileged-unix-update' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F path=/usr/sbin/unix_update -F perm=x -F auid>=1000 -F auid!=unset -k privileged-unix-update'
+      else
+        printf 'missing=%s\n' '-a always,exit -F path=/usr/sbin/unix_update -F perm=x -F auid>=1000 -F auid!=unset -k privileged-unix-update'
+        missing=1
+      fi
+      test "$missing" -eq 0
+    exit-status: 0
+    stdout:
+      - "verified="
+    skip: {{ not (index .Vars.enabled_rules "V-258207") }}
+
+
+  V-258208:
+    title: "RHEL 9 must audit all uses of the userhelper command."
+    meta: { stig_id: V-258208 }
+    exec: |
+      missing=0
+      if grep -RhsF -- '-a always,exit -F path=/usr/sbin/userhelper -F perm=x -F auid>=1000 -F auid!=unset -k privileged-unix-update' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F path=/usr/sbin/userhelper -F perm=x -F auid>=1000 -F auid!=unset -k privileged-unix-update'
+      else
+        printf 'missing=%s\n' '-a always,exit -F path=/usr/sbin/userhelper -F perm=x -F auid>=1000 -F auid!=unset -k privileged-unix-update'
+        missing=1
+      fi
+      test "$missing" -eq 0
+    exit-status: 0
+    stdout:
+      - "verified="
+    skip: {{ not (index .Vars.enabled_rules "V-258208") }}
+
+
+  V-258209:
+    title: "RHEL 9 must audit all uses of the usermod command."
+    meta: { stig_id: V-258209 }
+    exec: |
+      missing=0
+      if grep -RhsF -- '-a always,exit -F path=/usr/sbin/usermod -F perm=x -F auid>=1000 -F auid!=unset -k privileged-usermod' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F path=/usr/sbin/usermod -F perm=x -F auid>=1000 -F auid!=unset -k privileged-usermod'
+      else
+        printf 'missing=%s\n' '-a always,exit -F path=/usr/sbin/usermod -F perm=x -F auid>=1000 -F auid!=unset -k privileged-usermod'
+        missing=1
+      fi
+      test "$missing" -eq 0
+    exit-status: 0
+    stdout:
+      - "verified="
+    skip: {{ not (index .Vars.enabled_rules "V-258209") }}
+
+
+  V-258210:
+    title: "RHEL 9 must audit all uses of the mount command."
+    meta: { stig_id: V-258210 }
+    exec: |
+      missing=0
+      if grep -RhsF -- '-a always,exit -F path=/usr/bin/mount -F perm=x -F auid>=1000 -F auid!=unset -k privileged-mount' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F path=/usr/bin/mount -F perm=x -F auid>=1000 -F auid!=unset -k privileged-mount'
+      else
+        printf 'missing=%s\n' '-a always,exit -F path=/usr/bin/mount -F perm=x -F auid>=1000 -F auid!=unset -k privileged-mount'
+        missing=1
+      fi
+      test "$missing" -eq 0
+    exit-status: 0
+    stdout:
+      - "verified="
+    skip: {{ not (index .Vars.enabled_rules "V-258210") }}
+
+
+  V-258211:
+    title: "Successful/unsuccessful uses of the init command in RHEL 9 must generate an audit record."
+    meta: { stig_id: V-258211 }
+    exec: |
+      missing=0
+      if grep -RhsF -- '-a always,exit -F path=/usr/sbin/init -F perm=x -F auid>=1000 -F auid!=unset -k privileged-init' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F path=/usr/sbin/init -F perm=x -F auid>=1000 -F auid!=unset -k privileged-init'
+      else
+        printf 'missing=%s\n' '-a always,exit -F path=/usr/sbin/init -F perm=x -F auid>=1000 -F auid!=unset -k privileged-init'
+        missing=1
+      fi
+      test "$missing" -eq 0
+    exit-status: 0
+    stdout:
+      - "verified="
+    skip: {{ not (index .Vars.enabled_rules "V-258211") }}
+
+
+  V-258212:
+    title: "Successful/unsuccessful uses of the poweroff command in RHEL 9 must generate an audit record."
+    meta: { stig_id: V-258212 }
+    exec: |
+      missing=0
+      if grep -RhsF -- '-a always,exit -F path=/usr/sbin/poweroff -F perm=x -F auid>=1000 -F auid!=unset -k privileged-poweroff' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F path=/usr/sbin/poweroff -F perm=x -F auid>=1000 -F auid!=unset -k privileged-poweroff'
+      else
+        printf 'missing=%s\n' '-a always,exit -F path=/usr/sbin/poweroff -F perm=x -F auid>=1000 -F auid!=unset -k privileged-poweroff'
+        missing=1
+      fi
+      test "$missing" -eq 0
+    exit-status: 0
+    stdout:
+      - "verified="
+    skip: {{ not (index .Vars.enabled_rules "V-258212") }}
+
+
+  V-258213:
+    title: "Successful/unsuccessful uses of the reboot command in RHEL 9 must generate an audit record."
+    meta: { stig_id: V-258213 }
+    exec: |
+      missing=0
+      if grep -RhsF -- '-a always,exit -F path=/usr/sbin/reboot -F perm=x -F auid>=1000 -F auid!=unset -k privileged-reboot' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F path=/usr/sbin/reboot -F perm=x -F auid>=1000 -F auid!=unset -k privileged-reboot'
+      else
+        printf 'missing=%s\n' '-a always,exit -F path=/usr/sbin/reboot -F perm=x -F auid>=1000 -F auid!=unset -k privileged-reboot'
+        missing=1
+      fi
+      test "$missing" -eq 0
+    exit-status: 0
+    stdout:
+      - "verified="
+    skip: {{ not (index .Vars.enabled_rules "V-258213") }}
+
+
+  V-258214:
+    title: "Successful/unsuccessful uses of the shutdown command in RHEL 9 must generate an audit record."
+    meta: { stig_id: V-258214 }
+    exec: |
+      missing=0
+      if grep -RhsF -- '-a always,exit -F path=/usr/sbin/shutdown -F perm=x -F auid>=1000 -F auid!=unset -k privileged-shutdown' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F path=/usr/sbin/shutdown -F perm=x -F auid>=1000 -F auid!=unset -k privileged-shutdown'
+      else
+        printf 'missing=%s\n' '-a always,exit -F path=/usr/sbin/shutdown -F perm=x -F auid>=1000 -F auid!=unset -k privileged-shutdown'
+        missing=1
+      fi
+      test "$missing" -eq 0
+    exit-status: 0
+    stdout:
+      - "verified="
+    skip: {{ not (index .Vars.enabled_rules "V-258214") }}
+
+
+  V-258215:
+    title: "Successful/unsuccessful uses of the umount system call in RHEL 9 must generate an audit record."
+    meta: { stig_id: V-258215 }
+    exec: |
+      missing=0
+      if grep -RhsF -- '-a always,exit -F arch=b32 -S umount -F auid>=1000 -F auid!=unset -k privileged-umount' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F arch=b32 -S umount -F auid>=1000 -F auid!=unset -k privileged-umount'
+      else
+        printf 'missing=%s\n' '-a always,exit -F arch=b32 -S umount -F auid>=1000 -F auid!=unset -k privileged-umount'
+        missing=1
+      fi
+      test "$missing" -eq 0
+    exit-status: 0
+    stdout:
+      - "verified="
+    skip: {{ not (index .Vars.enabled_rules "V-258215") }}
+
+
+  V-258216:
+    title: "Successful/unsuccessful uses of the umount2 system call in RHEL 9 must generate an audit record."
+    meta: { stig_id: V-258216 }
+    exec: |
+      missing=0
+      if grep -RhsF -- '-a always,exit -F arch=b32 -S umount2 -F auid>=1000 -F auid!=unset -k privileged-umount' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F arch=b32 -S umount2 -F auid>=1000 -F auid!=unset -k privileged-umount'
+      else
+        printf 'missing=%s\n' '-a always,exit -F arch=b32 -S umount2 -F auid>=1000 -F auid!=unset -k privileged-umount'
+        missing=1
+      fi
+      if grep -RhsF -- '-a always,exit -F arch=b64 -S umount2 -F auid>=1000 -F auid!=unset -k privileged-umount' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F arch=b64 -S umount2 -F auid>=1000 -F auid!=unset -k privileged-umount'
+      else
+        printf 'missing=%s\n' '-a always,exit -F arch=b64 -S umount2 -F auid>=1000 -F auid!=unset -k privileged-umount'
+        missing=1
+      fi
+      test "$missing" -eq 0
+    exit-status: 0
+    stdout:
+      - "verified="
+    skip: {{ not (index .Vars.enabled_rules "V-258216") }}
+
+
+  V-258217:
+    title: "RHEL 9 must generate audit records for all account creations, modifications, disabling, and termination events that affect /etc/sudoers."
+    meta: { stig_id: V-258217 }
+    exec: |
+      missing=0
+      if grep -RhsF -- '-a always,exit -F arch=b32 -F path=/etc/sudoers -F perm=wa -k identity' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F arch=b32 -F path=/etc/sudoers -F perm=wa -k identity'
+      else
+        printf 'missing=%s\n' '-a always,exit -F arch=b32 -F path=/etc/sudoers -F perm=wa -k identity'
+        missing=1
+      fi
+      if grep -RhsF -- '-a always,exit -F arch=b64 -F path=/etc/sudoers -F perm=wa -k identity' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F arch=b64 -F path=/etc/sudoers -F perm=wa -k identity'
+      else
+        printf 'missing=%s\n' '-a always,exit -F arch=b64 -F path=/etc/sudoers -F perm=wa -k identity'
+        missing=1
+      fi
+      test "$missing" -eq 0
+    exit-status: 0
+    stdout:
+      - "verified="
+    skip: {{ not (index .Vars.enabled_rules "V-258217") }}
+
+
+  V-258218:
+    title: "RHEL 9 must generate audit records for all account creations, modifications, disabling, and termination events that affect /etc/sudoers.d/directory."
+    meta: { stig_id: V-258218 }
+    exec: |
+      missing=0
+      if grep -RhsF -- '-a always,exit -F arch=b32 -F path=/etc/sudoers.d -F perm=wa -k identity' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F arch=b32 -F path=/etc/sudoers.d -F perm=wa -k identity'
+      else
+        printf 'missing=%s\n' '-a always,exit -F arch=b32 -F path=/etc/sudoers.d -F perm=wa -k identity'
+        missing=1
+      fi
+      if grep -RhsF -- '-a always,exit -F arch=b64 -F path=/etc/sudoers.d -F perm=wa -k identity' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F arch=b64 -F path=/etc/sudoers.d -F perm=wa -k identity'
+      else
+        printf 'missing=%s\n' '-a always,exit -F arch=b64 -F path=/etc/sudoers.d -F perm=wa -k identity'
+        missing=1
+      fi
+      test "$missing" -eq 0
+    exit-status: 0
+    stdout:
+      - "verified="
+    skip: {{ not (index .Vars.enabled_rules "V-258218") }}
+
+
+  V-258219:
+    title: "RHEL 9 must generate audit records for all account creations, modifications, disabling, and termination events that affect /etc/group."
+    meta: { stig_id: V-258219 }
+    exec: |
+      missing=0
+      if grep -RhsF -- '-a always,exit -F arch=b32 -F path=/etc/group -F perm=wa -k identity' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F arch=b32 -F path=/etc/group -F perm=wa -k identity'
+      else
+        printf 'missing=%s\n' '-a always,exit -F arch=b32 -F path=/etc/group -F perm=wa -k identity'
+        missing=1
+      fi
+      if grep -RhsF -- '-a always,exit -F arch=b64 -F path=/etc/group -F perm=wa -k identity' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F arch=b64 -F path=/etc/group -F perm=wa -k identity'
+      else
+        printf 'missing=%s\n' '-a always,exit -F arch=b64 -F path=/etc/group -F perm=wa -k identity'
+        missing=1
+      fi
+      test "$missing" -eq 0
+    exit-status: 0
+    stdout:
+      - "verified="
+    skip: {{ not (index .Vars.enabled_rules "V-258219") }}
+
+
+  V-258220:
+    title: "RHEL 9 must generate audit records for all account creations, modifications, disabling, and termination events that affect /etc/gshadow."
+    meta: { stig_id: V-258220 }
+    exec: |
+      missing=0
+      if grep -RhsF -- '-a always,exit -F arch=b32 -F path=/etc/gshadow -F perm=wa -k identity' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F arch=b32 -F path=/etc/gshadow -F perm=wa -k identity'
+      else
+        printf 'missing=%s\n' '-a always,exit -F arch=b32 -F path=/etc/gshadow -F perm=wa -k identity'
+        missing=1
+      fi
+      if grep -RhsF -- '-a always,exit -F arch=b64 -F path=/etc/gshadow -F perm=wa -k identity' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F arch=b64 -F path=/etc/gshadow -F perm=wa -k identity'
+      else
+        printf 'missing=%s\n' '-a always,exit -F arch=b64 -F path=/etc/gshadow -F perm=wa -k identity'
+        missing=1
+      fi
+      test "$missing" -eq 0
+    exit-status: 0
+    stdout:
+      - "verified="
+    skip: {{ not (index .Vars.enabled_rules "V-258220") }}
+
+
+  V-258221:
+    title: "RHEL 9 must generate audit records for all account creations, modifications, disabling, and termination events that affect /etc/opasswd."
+    meta: { stig_id: V-258221 }
+    exec: |
+      missing=0
+      if grep -RhsF -- '-a always,exit -F arch=b32 -F path=/etc/opasswd -F perm=wa -k identity' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F arch=b32 -F path=/etc/opasswd -F perm=wa -k identity'
+      else
+        printf 'missing=%s\n' '-a always,exit -F arch=b32 -F path=/etc/opasswd -F perm=wa -k identity'
+        missing=1
+      fi
+      if grep -RhsF -- '-a always,exit -F arch=b64 -F path=/etc/opasswd -F perm=wa -k identity' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F arch=b64 -F path=/etc/opasswd -F perm=wa -k identity'
+      else
+        printf 'missing=%s\n' '-a always,exit -F arch=b64 -F path=/etc/opasswd -F perm=wa -k identity'
+        missing=1
+      fi
+      test "$missing" -eq 0
+    exit-status: 0
+    stdout:
+      - "verified="
+    skip: {{ not (index .Vars.enabled_rules "V-258221") }}
+
+
+  V-258222:
+    title: "RHEL 9 must generate audit records for all account creations, modifications, disabling, and termination events that affect /etc/passwd."
+    meta: { stig_id: V-258222 }
+    exec: |
+      missing=0
+      if grep -RhsF -- '-a always,exit -F arch=b32 -F path=/etc/passwd -F perm=wa -k identity' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F arch=b32 -F path=/etc/passwd -F perm=wa -k identity'
+      else
+        printf 'missing=%s\n' '-a always,exit -F arch=b32 -F path=/etc/passwd -F perm=wa -k identity'
+        missing=1
+      fi
+      if grep -RhsF -- '-a always,exit -F arch=b64 -F path=/etc/passwd -F perm=wa -k identity' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F arch=b64 -F path=/etc/passwd -F perm=wa -k identity'
+      else
+        printf 'missing=%s\n' '-a always,exit -F arch=b64 -F path=/etc/passwd -F perm=wa -k identity'
+        missing=1
+      fi
+      test "$missing" -eq 0
+    exit-status: 0
+    stdout:
+      - "verified="
+    skip: {{ not (index .Vars.enabled_rules "V-258222") }}
+
+
+  V-258223:
+    title: "RHEL 9 must generate audit records for all account creations, modifications, disabling, and termination events that affect /etc/shadow."
+    meta: { stig_id: V-258223 }
+    exec: |
+      missing=0
+      if grep -RhsF -- '-a always,exit -F arch=b32 -F path=/etc/shadow -F perm=wa -k identity' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F arch=b32 -F path=/etc/shadow -F perm=wa -k identity'
+      else
+        printf 'missing=%s\n' '-a always,exit -F arch=b32 -F path=/etc/shadow -F perm=wa -k identity'
+        missing=1
+      fi
+      if grep -RhsF -- '-a always,exit -F arch=b64 -F path=/etc/shadow -F perm=wa -k identity' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F arch=b64 -F path=/etc/shadow -F perm=wa -k identity'
+      else
+        printf 'missing=%s\n' '-a always,exit -F arch=b64 -F path=/etc/shadow -F perm=wa -k identity'
+        missing=1
+      fi
+      test "$missing" -eq 0
+    exit-status: 0
+    stdout:
+      - "verified="
+    skip: {{ not (index .Vars.enabled_rules "V-258223") }}
+
+
+  V-258224:
+    title: "RHEL 9 must generate audit records for all account creations, modifications, disabling, and termination events that affect /var/log/faillock."
+    meta: { stig_id: V-258224 }
+    exec: |
+      missing=0
+      if grep -RhsF -- '-a always,exit -F arch=b32 -F path=/var/log/faillock -F perm=wa -F auid>=1000 -F auid!=unset -k logins' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F arch=b32 -F path=/var/log/faillock -F perm=wa -F auid>=1000 -F auid!=unset -k logins'
+      else
+        printf 'missing=%s\n' '-a always,exit -F arch=b32 -F path=/var/log/faillock -F perm=wa -F auid>=1000 -F auid!=unset -k logins'
+        missing=1
+      fi
+      if grep -RhsF -- '-a always,exit -F arch=b64 -F path=/var/log/faillock -F perm=wa -F auid>=1000 -F auid!=unset -k logins' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F arch=b64 -F path=/var/log/faillock -F perm=wa -F auid>=1000 -F auid!=unset -k logins'
+      else
+        printf 'missing=%s\n' '-a always,exit -F arch=b64 -F path=/var/log/faillock -F perm=wa -F auid>=1000 -F auid!=unset -k logins'
+        missing=1
+      fi
+      test "$missing" -eq 0
+    exit-status: 0
+    stdout:
+      - "verified="
+    skip: {{ not (index .Vars.enabled_rules "V-258224") }}
+
+
+  V-258225:
+    title: "RHEL 9 must generate audit records for all account creations, modifications, disabling, and termination events that affect /var/log/lastlog."
+    meta: { stig_id: V-258225 }
+    exec: |
+      missing=0
+      if grep -RhsF -- '-a always,exit -F arch=b32 -F path=/var/log/lastlog -F perm=wa -F auid>=1000 -F auid!=unset -k logins' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F arch=b32 -F path=/var/log/lastlog -F perm=wa -F auid>=1000 -F auid!=unset -k logins'
+      else
+        printf 'missing=%s\n' '-a always,exit -F arch=b32 -F path=/var/log/lastlog -F perm=wa -F auid>=1000 -F auid!=unset -k logins'
+        missing=1
+      fi
+      if grep -RhsF -- '-a always,exit -F arch=b64 -F path=/var/log/lastlog  -F perm=wa -F auid>=1000 -F auid!=unset -k logins' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F arch=b64 -F path=/var/log/lastlog  -F perm=wa -F auid>=1000 -F auid!=unset -k logins'
+      else
+        printf 'missing=%s\n' '-a always,exit -F arch=b64 -F path=/var/log/lastlog  -F perm=wa -F auid>=1000 -F auid!=unset -k logins'
+        missing=1
+      fi
+      test "$missing" -eq 0
+    exit-status: 0
+    stdout:
+      - "verified="
+    skip: {{ not (index .Vars.enabled_rules "V-258225") }}
+
+
+  V-258228:
+    title: "RHEL 9 audit system must protect logon UIDs from unauthorized change."
+    meta: { stig_id: V-258228 }
+    exec: |
+      missing=0
+      if grep -RhsF -- '--loginuid-immutable' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '--loginuid-immutable'
+      else
+        printf 'missing=%s\n' '--loginuid-immutable'
+        missing=1
+      fi
+      test "$missing" -eq 0
+    exit-status: 0
+    stdout:
+      - "verified="
+    skip: {{ not (index .Vars.enabled_rules "V-258228") }}
+
+
+  V-258229:
+    title: "RHEL 9 audit system must protect auditing rules from unauthorized change."
+    meta: { stig_id: V-258229 }
+    exec: |
+      missing=0
+      if grep -RhsF -- '-e 2' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-e 2'
+      else
+        printf 'missing=%s\n' '-e 2'
+        missing=1
+      fi
+      test "$missing" -eq 0
+    exit-status: 0
+    stdout:
+      - "verified="
+    skip: {{ not (index .Vars.enabled_rules "V-258229") }}
+
+
+  V-279936:
+    title: "RHEL 9 must audit any script or executable called by cron as root or by any privileged user."
+    meta: { stig_id: V-279936 }
+    exec: |
+      missing=0
+      if grep -RhsF -- '-a always,exit -F arch=b64 -S execve -F subj_type=crond_t -F euid=0 -k cron_exec' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F arch=b64 -S execve -F subj_type=crond_t -F euid=0 -k cron_exec'
+      else
+        printf 'missing=%s\n' '-a always,exit -F arch=b64 -S execve -F subj_type=crond_t -F euid=0 -k cron_exec'
+        missing=1
+      fi
+      if grep -RhsF -- '-a always,exit -F arch=b32 -S execve -F subj_type=crond_t -F euid=0 -k cron_exec' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F arch=b32 -S execve -F subj_type=crond_t -F euid=0 -k cron_exec'
+      else
+        printf 'missing=%s\n' '-a always,exit -F arch=b32 -S execve -F subj_type=crond_t -F euid=0 -k cron_exec'
+        missing=1
+      fi
+      if grep -RhsF -- '-a always,exit -F arch=b64 -S execve -F subj_type=crond_t -F auid>=1000 -F auid!=unset -k cron_exec' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F arch=b64 -S execve -F subj_type=crond_t -F auid>=1000 -F auid!=unset -k cron_exec'
+      else
+        printf 'missing=%s\n' '-a always,exit -F arch=b64 -S execve -F subj_type=crond_t -F auid>=1000 -F auid!=unset -k cron_exec'
+        missing=1
+      fi
+      if grep -RhsF -- '-a always,exit -F arch=b32 -S execve -F subj_type=crond_t -F auid>=1000 -F auid!=unset -k cron_exec' /etc/audit/rules.d /etc/audit/audit.rules 2>/dev/null | grep -q .; then
+        printf 'verified=%s\n' '-a always,exit -F arch=b32 -S execve -F subj_type=crond_t -F auid>=1000 -F auid!=unset -k cron_exec'
+      else
+        printf 'missing=%s\n' '-a always,exit -F arch=b32 -S execve -F subj_type=crond_t -F auid>=1000 -F auid!=unset -k cron_exec'
+        missing=1
+      fi
+      test "$missing" -eq 0
+    exit-status: 0
+    stdout:
+      - "verified="
+    skip: {{ not (index .Vars.enabled_rules "V-279936") }}
+
