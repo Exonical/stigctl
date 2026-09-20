@@ -1,0 +1,28 @@
+command:
+  V-257984:
+    title: "RHEL 9 SSHD must not allow blank passwords."
+    meta:
+      stig_id: V-257984
+    exec: |
+      /usr/sbin/sshd -T 2>/dev/null | grep -Eiq '^permitemptypasswords[[:space:]]+no$'
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257984") }}
+
+  V-257986:
+    title: "RHEL 9 must enable the Pluggable Authentication Module (PAM) interface for SSHD."
+    meta:
+      stig_id: V-257986
+    exec: |
+      /usr/sbin/sshd -T 2>/dev/null | grep -Eiq '^usepam[[:space:]]+yes$'
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257986") }}
+
+  V-258078:
+    title: "RHEL 9 must use a Linux Security Module configured to enforce limits on system services."
+    meta:
+      stig_id: V-258078
+    exec: |
+      test "$(getenforce 2>/dev/null)" = Enforcing &&
+      grep -Eq '^[[:space:]]*SELINUX[[:space:]]*=[[:space:]]*enforcing[[:space:]]*$' /etc/selinux/config
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-258078") }}
