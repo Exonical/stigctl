@@ -202,3 +202,10 @@ package:
       stig_id: V-272488
     installed: true
     skip: {{ not (index .Vars.enabled_rules "V-272488") }}
+  V-257826:
+    name: vsftpd
+    title: "RHEL 9 must not have a File Transfer Protocol (FTP) server package installed."
+    meta:
+      stig_id: V-257826
+    installed: false
+    skip: {{ not (index .Vars.enabled_rules "V-257826") }}
