@@ -1,0 +1,505 @@
+command:
+  V-258042:
+    title: "RHEL 9 user account passwords must have a 60-day maximum password lifetime restriction."
+    meta: { stig_id: V-258042 }
+    exec: |
+      bad=""; while IFS=: read -r u _ uid _ _ _ shell; do test "$uid" -ge 1000 || continue; case "$shell" in */nologin|*/false) continue;; esac; max="$(chage -l "$u" 2>/dev/null | awk -F: '/Maximum number of days between password change/{gsub(/[[:space:]]/,"",$2);print $2}')"; test -n "$max" && test "$max" != never && test "$max" -le 60 || { bad="$u:$max"; break; }; done < /etc/passwd
+      echo "evidence=max_days_violation=${bad:-none}"
+      test -z "$bad"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258042") }}
+
+  V-258043:
+    title: "All RHEL 9 local interactive user accounts must be assigned a home directory upon creation."
+    meta: { stig_id: V-258043 }
+    exec: |
+      v="$(awk '$1=="CREATE_HOME"{print tolower($2);exit}' /etc/login.defs)"
+      echo "evidence=CREATE_HOME=${v:-missing}"
+      test "$v" = yes
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258043") }}
+
+  V-258045:
+    title: "RHEL 9 duplicate User IDs (UIDs) must not exist for interactive users."
+    meta: { stig_id: V-258045 }
+    exec: |
+      dup="$(awk -F: '$3>=1000{c[$3]++;n[$3]=n[$3]" "$1} END{for(i in c)if(c[i]>1)print i":"n[i]}' /etc/passwd | head -n20)"
+      echo "evidence=duplicate_uids=${dup:-none}"
+      test -z "$dup"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258045") }}
+
+  V-258046:
+    title: "RHEL 9 system accounts must not have an interactive login shell."
+    meta: { stig_id: V-258046 }
+    exec: |
+      bad="$(awk -F: '$3<1000 && $1!="root" && $7 !~ /(nologin|false)$/ {print $1":"$7}' /etc/passwd | head -n20)"
+      echo "evidence=interactive_system_accounts=${bad:-none}"
+      test -z "$bad"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258046") }}
+
+  V-258048:
+    title: "All RHEL 9 interactive users must have a primary group that exists."
+    meta: { stig_id: V-258048 }
+    exec: |
+      bad=""; while IFS=: read -r u _ uid gid _ _ shell; do test "$uid" -ge 1000 || continue; case "$shell" in */nologin|*/false) continue;; esac; getent group "$gid" >/dev/null || { bad="$u:$gid"; break; }; done < /etc/passwd
+      echo "evidence=missing_primary_group=${bad:-none}"
+      test -z "$bad"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258048") }}
+
+  V-258049:
+    title: "RHEL 9 must disable account identifiers (individuals, groups, roles, and devices) after 35 days of inactivity."
+    meta: { stig_id: V-258049 }
+    exec: |
+      v="$(awk -F= 'tolower($1) ~ /^[[:space:]]*inactive[[:space:]]*$/{gsub(/[[:space:]]/,"",$2);print $2;exit}' /etc/default/useradd)"
+      echo "evidence=INACTIVE=${v:-missing}"
+      test -n "$v" && test "$v" -ge 0 && test "$v" -le 35
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258049") }}
+
+  V-258051:
+    title: "All RHEL 9 local interactive users must have a home directory assigned in the /etc/passwd file."
+    meta: { stig_id: V-258051 }
+    exec: |
+      bad="$(awk -F: '$3>=1000 && $7 !~ /(nologin|false)$/ && ($6=="" || $6=="/") {print $1":"$6}' /etc/passwd | head -n20)"
+      echo "evidence=missing_home_assignment=${bad:-none}"
+      test -z "$bad"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258051") }}
+
+  V-258052:
+    title: "All RHEL 9 local interactive user home directories defined in the /etc/passwd file must exist."
+    meta: { stig_id: V-258052 }
+    exec: |
+      bad=""; while IFS=: read -r u _ uid _ _ home shell; do test "$uid" -ge 1000 || continue; case "$shell" in */nologin|*/false) continue;; esac; test -d "$home" || { bad="$u:$home"; break; }; done < /etc/passwd
+      echo "evidence=missing_home_directory=${bad:-none}"
+      test -z "$bad"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258052") }}
+
+  V-258053:
+    title: "All RHEL 9 local interactive user home directories must be group-owned by the home directory owner's primary group."
+    meta: { stig_id: V-258053 }
+    exec: |
+      bad=""; while IFS=: read -r u _ uid gid _ home shell; do test "$uid" -ge 1000 || continue; case "$shell" in */nologin|*/false) continue;; esac; test -d "$home" || continue; actual="$(stat -c %g "$home")"; test "$actual" = "$gid" || { bad="$u:$actual:$gid"; break; }; done < /etc/passwd
+      echo "evidence=home_group_violation=${bad:-none}"
+      test -z "$bad"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258053") }}
+
+  V-258054:
+    title: "RHEL 9 must automatically lock an account when three unsuccessful logon attempts occur."
+    meta: { stig_id: V-258054 }
+    exec: |
+      v="$(awk -F= '$1 ~ /^[[:space:]]*deny[[:space:]]*$/{gsub(/[[:space:]]/,"",$2);print $2;exit}' /etc/security/faillock.conf)"
+      echo "evidence=deny=${v:-missing}"
+      test -n "$v" && test "$v" -gt 0 && test "$v" -le 3
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258054") }}
+
+  V-258056:
+    title: "RHEL 9 must automatically lock an account when three unsuccessful logon attempts occur during a 15-minute time period."
+    meta: { stig_id: V-258056 }
+    exec: |
+      v="$(awk -F= '$1 ~ /^[[:space:]]*fail_interval[[:space:]]*$/{gsub(/[[:space:]]/,"",$2);print $2;exit}' /etc/security/faillock.conf)"
+      echo "evidence=fail_interval=${v:-missing}"
+      test -n "$v" && test "$v" -gt 0 && test "$v" -le 900
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258056") }}
+
+  V-258057:
+    title: "RHEL 9 must maintain an account lock until the locked account is released by an administrator."
+    meta: { stig_id: V-258057 }
+    exec: |
+      v="$(awk -F= '$1 ~ /^[[:space:]]*unlock_time[[:space:]]*$/{gsub(/[[:space:]]/,"",$2);print $2;exit}' /etc/security/faillock.conf)"
+      echo "evidence=unlock_time=${v:-missing}"
+      test "$v" = 0
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258057") }}
+
+  V-258055:
+    title: "RHEL 9 must automatically lock the root account until the root account is released by an administrator when three unsuccessful logon attempts occur during a 15-minute time period."
+    meta: { stig_id: V-258055 }
+    exec: |
+      grep -Eq '^[[:space:]]*even_deny_root([[:space:]]|$)' /etc/security/faillock.conf
+      echo "evidence=even_deny_root=enabled"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258055") }}
+
+  V-258060:
+    title: "RHEL 9 must ensure account lockouts persist."
+    meta: { stig_id: V-258060 }
+    exec: |
+      v="$(awk -F= '$1 ~ /^[[:space:]]*dir[[:space:]]*$/{gsub(/[[:space:]]/,"",$2);print $2;exit}' /etc/security/faillock.conf)"
+      echo "evidence=faillock_dir=${v:-missing}"
+      test -n "$v" && test "$v" != /var/run/faillock
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258060") }}
+
+  V-258061:
+    title: "RHEL 9 groups must have unique Group ID (GID)."
+    meta: { stig_id: V-258061 }
+    exec: |
+      dup="$(awk -F: '{c[$3]++;n[$3]=n[$3]" "$1} END{for(i in c)if(c[i]>1)print i":"n[i]}' /etc/group | head -n20)"
+      echo "evidence=duplicate_gids=${dup:-none}"
+      test -z "$dup"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258061") }}
+
+  V-258068:
+    title: "RHEL 9 must automatically exit interactive command shell user sessions after 10 minutes of inactivity."
+    meta: { stig_id: V-258068 }
+    exec: |
+      v="$(grep -RhsE '^[[:space:]]*(declare[[:space:]]+-xr[[:space:]]+)?TMOUT[[:space:]]*=' /etc/profile /etc/profile.d/*.sh 2>/dev/null | tail -n1 | sed -E 's/.*TMOUT[[:space:]]*=[[:space:]]*([0-9]+).*/\1/')"
+      echo "evidence=TMOUT=${v:-missing}"
+      test -n "$v" && test "$v" -gt 0 && test "$v" -le 600
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258068") }}
+
+  V-258069:
+    title: "RHEL 9 must limit the number of concurrent sessions to ten for all accounts and/or account types."
+    meta: { stig_id: V-258069 }
+    exec: |
+      any="$(grep -RhsE '^[[:space:]]*[^#]+[[:space:]]+hard[[:space:]]+maxlogins[[:space:]]+[0-9]+' /etc/security/limits.conf /etc/security/limits.d/*.conf 2>/dev/null | head -n1)"
+      bad="$(grep -RhsE '^[[:space:]]*[^#]+[[:space:]]+hard[[:space:]]+maxlogins[[:space:]]+' /etc/security/limits.conf /etc/security/limits.d/*.conf 2>/dev/null | awk '$NF>10{print;exit}')"
+      echo "evidence=maxlogins_rule=${any:-missing}"
+      test -n "$any" && test -z "$bad"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258069") }}
+
+  V-258070:
+    title: "RHEL 9 must log username information when unsuccessful logon attempts occur."
+    meta: { stig_id: V-258070 }
+    exec: |
+      grep -Eq '^[[:space:]]*audit([[:space:]]|$)' /etc/security/faillock.conf
+      echo "evidence=faillock_audit=enabled"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258070") }}
+
+  V-258071:
+    title: "RHEL 9 must enforce a delay of at least four seconds between logon prompts following a failed logon attempt."
+    meta: { stig_id: V-258071 }
+    exec: |
+      v="$(awk '$1=="FAIL_DELAY"{print $2;exit}' /etc/login.defs)"
+      echo "evidence=FAIL_DELAY=${v:-missing}"
+      test -n "$v" && test "$v" -ge 4
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258071") }}
+
+  V-258077:
+    title: "RHEL 9 must terminate idle user sessions."
+    meta: { stig_id: V-258077 }
+    exec: |
+      v="$(systemd-analyze cat-config systemd/logind.conf 2>/dev/null | awk -F= '/^[[:space:]]*StopIdleSessionSec[[:space:]]*=/{gsub(/[[:space:]]/,"",$2);print $2;exit}')"
+      echo "evidence=StopIdleSessionSec=${v:-missing}"
+      test "$v" = 600
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258077") }}
+
+  V-258079:
+    title: "RHEL 9 must enable the SELinux targeted policy."
+    meta: { stig_id: V-258079 }
+    exec: |
+      v="$(awk -F= '$1 ~ /^[[:space:]]*SELINUXTYPE[[:space:]]*$/{gsub(/[[:space:]]/,"",$2);print $2;exit}' /etc/selinux/config)"
+      echo "evidence=SELINUXTYPE=${v:-missing}"
+      test "$v" = targeted
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258079") }}
+
+  V-258081:
+    title: "RHEL 9 must have policycoreutils package installed."
+    meta: { stig_id: V-258081 }
+    exec: |
+      pkg="$(rpm -q policycoreutils 2>/dev/null || true)"
+      echo "evidence=policycoreutils=${pkg:-missing}"
+      test -n "$pkg"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258081") }}
+
+  V-258086:
+    title: "RHEL 9 must require users to reauthenticate for privilege escalation."
+    meta: { stig_id: V-258086 }
+    exec: |
+      bad="$(grep -REi '^[[:space:]]*Defaults.*!authenticate' /etc/sudoers /etc/sudoers.d 2>/dev/null | head -n20)"
+      echo "evidence=sudo_noauthenticate=${bad:-none}"
+      test -z "$bad"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258086") }}
+
+  V-258087:
+    title: "RHEL 9 must restrict privilege elevation to authorized personnel."
+    meta: { stig_id: V-258087 }
+    exec: |
+      line="$(grep -REhsE '^[[:space:]]*%wheel[[:space:]]+ALL=' /etc/sudoers /etc/sudoers.d 2>/dev/null | head -n1)"
+      echo "evidence=wheel_sudo_rule=${line:-missing}"
+      test -n "$line"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258087") }}
+
+  V-258088:
+    title: "RHEL 9 must restrict the use of the \"su\" command."
+    meta: { stig_id: V-258088 }
+    exec: |
+      line="$(grep -E '^[[:space:]]*auth[[:space:]]+required[[:space:]]+pam_wheel\.so([[:space:]]+use_uid)?([[:space:]]|$)' /etc/pam.d/su 2>/dev/null | head -n1)"
+      echo "evidence=pam_wheel=${line:-missing}"
+      test -n "$line"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258088") }}
+
+  V-258089:
+    title: "RHEL 9 fapolicy module must be installed."
+    meta: { stig_id: V-258089 }
+    exec: |
+      pkg="$(rpm -q fapolicyd 2>/dev/null || true)"
+      echo "evidence=fapolicyd=${pkg:-missing}"
+      test -n "$pkg"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258089") }}
+
+  V-258090:
+    title: "RHEL 9 fapolicy module must be enabled."
+    meta: { stig_id: V-258090 }
+    exec: |
+      e="$(systemctl is-enabled fapolicyd 2>/dev/null || true)"
+      a="$(systemctl is-active fapolicyd 2>/dev/null || true)"
+      echo "evidence=fapolicyd_enabled=$e active=$a"
+      test "$e" = enabled && test "$a" = active
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258090") }}
+
+  V-258099:
+    title: "RHEL 9 password-auth must be configured to use a sufficient number of hashing rounds."
+    meta: { stig_id: V-258099 }
+    exec: |
+      v="$(awk '/^[[:space:]]*password[[:space:]]+.*pam_unix\.so/ {for(i=1;i<=NF;i++) if($i ~ /^rounds=/){split($i,a,"=");print a[2];exit}}' /etc/pam.d/password-auth)"
+      echo "evidence=pam_unix_rounds=${v:-missing}"
+      test -n "$v" && test "$v" -ge 100000
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258099") }}
+
+  V-258100:
+    title: "RHEL 9 system-auth must be configured to use a sufficient number of hashing rounds."
+    meta: { stig_id: V-258100 }
+    exec: |
+      v="$(awk '/^[[:space:]]*password[[:space:]]+.*pam_unix\.so/ {for(i=1;i<=NF;i++) if($i ~ /^rounds=/){split($i,a,"=");print a[2];exit}}' /etc/pam.d/system-auth)"
+      echo "evidence=pam_unix_rounds=${v:-missing}"
+      test -n "$v" && test "$v" -ge 100000
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258100") }}
+
+  V-258105:
+    title: "RHEL 9 passwords must have a 24 hours minimum password lifetime restriction in /etc/shadow."
+    meta: { stig_id: V-258105 }
+    exec: |
+      bad=""; while IFS=: read -r u _ uid _ _ _ shell; do test "$uid" -ge 1000 || continue; case "$shell" in */nologin|*/false) continue;; esac; min="$(chage -l "$u" 2>/dev/null | awk -F: '/Minimum number of days between password change/{gsub(/[[:space:]]/,"",$2);print $2}')"; test "$min" = 1 || { bad="$u:$min"; break; }; done < /etc/passwd
+      echo "evidence=min_days_violation=${bad:-none}"
+      test -z "$bad"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258105") }}
+
+  V-258116:
+    title: "RHEL 9 must be configured so that user and group account administration utilities are configured to store only encrypted representations of passwords."
+    meta: { stig_id: V-258116 }
+    exec: |
+      v="$(awk -F= '$1 ~ /^[[:space:]]*crypt_style[[:space:]]*$/{gsub(/[[:space:]]/,"",$2);print tolower($2);exit}' /etc/libuser.conf 2>/dev/null)"
+      echo "evidence=crypt_style=${v:-missing}"
+      test "$v" = sha512
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258116") }}
+
+  V-258118:
+    title: "RHEL 9 must not be configured to bypass password requirements for privilege escalation."
+    meta: { stig_id: V-258118 }
+    exec: |
+      bad="$(grep -E '^[[:space:]]*[^#].*pam_succeed_if' /etc/pam.d/sudo 2>/dev/null | head -n20)"
+      echo "evidence=pam_succeed_if=${bad:-none}"
+      test -z "$bad"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258118") }}
+
+  V-258120:
+    title: "RHEL 9 must not have accounts configured with blank or null passwords."
+    meta: { stig_id: V-258120 }
+    exec: |
+      bad="$(awk -F: '$2==""{print $1}' /etc/shadow | head -n20)"
+      echo "evidence=blank_password_accounts=${bad:-none}"
+      test -z "$bad"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258120") }}
+
+  V-258125:
+    title: "The pcscd socket on RHEL 9 must be active."
+    meta: { stig_id: V-258125 }
+    exec: |
+      s="$(systemctl is-active pcscd.socket 2>/dev/null || true)"
+      echo "evidence=pcscd_socket=$s"
+      test "$s" = active
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258125") }}
+
+  V-258128:
+    title: "RHEL 9 must require authentication to access emergency mode."
+    meta: { stig_id: V-258128 }
+    exec: |
+      line="$(grep -RhsE '^[[:space:]]*ExecStart=.*systemd-sulogin-shell[[:space:]]+emergency' /usr/lib/systemd/system/emergency.service /etc/systemd/system/emergency.service.d 2>/dev/null | head -n1)"
+      echo "evidence=emergency_sulogin=${line:-missing}"
+      test -n "$line"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258128") }}
+
+  V-258129:
+    title: "RHEL 9 must require authentication to access single-user mode."
+    meta: { stig_id: V-258129 }
+    exec: |
+      line="$(grep -RhsE '^[[:space:]]*ExecStart=.*systemd-sulogin-shell[[:space:]]+rescue' /usr/lib/systemd/system/rescue.service /etc/systemd/system/rescue.service.d 2>/dev/null | head -n1)"
+      echo "evidence=rescue_sulogin=${line:-missing}"
+      test -n "$line"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258129") }}
+
+  V-258133:
+    title: "RHEL 9 must prohibit the use of cached authenticators after one day."
+    meta: { stig_id: V-258133 }
+    exec: |
+      cache="$(grep -RihsE '^[[:space:]]*cache_credentials[[:space:]]*=' /etc/sssd/sssd.conf /etc/sssd/conf.d 2>/dev/null | tail -n1 | cut -d= -f2- | tr -d '[:space:]' | tr '[:upper:]' '[:lower:]')"
+      if test "$cache" != true; then echo "evidence=cache_credentials=${cache:-disabled}"; exit 0; fi
+      exp="$(grep -RihsE '^[[:space:]]*offline_credentials_expiration[[:space:]]*=' /etc/sssd/sssd.conf /etc/sssd/conf.d 2>/dev/null | tail -n1 | cut -d= -f2- | tr -d '[:space:]')"
+      echo "evidence=offline_credentials_expiration=${exp:-missing}"
+      test "$exp" = 1
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258133") }}
+
+  V-258135:
+    title: "RHEL 9 must routinely check the baseline configuration for unauthorized changes and notify the system administrator when anomalies in the operation of any security functions are discovered."
+    meta: { stig_id: V-258135 }
+    exec: |
+      found="$(grep -RhsEi 'aide.*--check' /etc/crontab /etc/cron.* /var/spool/cron/root 2>/dev/null | head -n20)"
+      echo "evidence=aide_schedule=${found:-missing}"
+      test -n "$found"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258135") }}
+
+  V-258136:
+    title: "RHEL 9 must use a file integrity tool that is configured to use FIPS 140-3-approved cryptographic hashes for validating file contents and directories."
+    meta: { stig_id: V-258136 }
+    exec: |
+      bad="$(grep -Ev '^[[:space:]]*(#|$|@@|!|=)' /etc/aide.conf 2>/dev/null | grep -v sha512 | head -n20)"
+      echo "evidence=aide_lines_without_sha512=${bad:-none}"
+      test -z "$bad" && grep -q sha512 /etc/aide.conf
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258136") }}
+
+  V-258137:
+    title: "RHEL 9 must use cryptographic mechanisms to protect the integrity of audit tools."
+    meta: { stig_id: V-258137 }
+    exec: |
+      bad=""; for t in auditctl auditd ausearch aureport autrace augenrules; do grep -Eq "^/usr/sbin/$t[[:space:]].*sha512" /etc/aide.conf || { bad="$t"; break; }; done
+      echo "evidence=aide_missing_audit_tool=${bad:-none}"
+      test -z "$bad"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258137") }}
+
+  V-258138:
+    title: "RHEL 9 must be configured so that the file integrity tool verifies Access Control Lists (ACLs)."
+    meta: { stig_id: V-258138 }
+    exec: |
+      grep -Eq '^[[:space:]]*[^#].*acl' /etc/aide.conf
+      echo "evidence=aide_acl=enabled"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258138") }}
+
+  V-258139:
+    title: "RHEL 9 must be configured so that the file integrity tool verifies extended attributes."
+    meta: { stig_id: V-258139 }
+    exec: |
+      grep -Eq '^[[:space:]]*[^#].*xattrs' /etc/aide.conf
+      echo "evidence=aide_xattrs=enabled"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-258139") }}
+
