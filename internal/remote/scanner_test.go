@@ -118,6 +118,25 @@ func TestScanCollectsArtifactAndCleansRemoteWorkspace(t *testing.T) {
 	}
 }
 
+func TestScanCollectsJUnitXMLArtifact(t *testing.T) {
+	dir := t.TempDir()
+	req := scanRequest(dir)
+	req.Format = "junit"
+	runner := &fakeRunner{artifact: []byte(`<?xml version="1.0"?><testsuite name="rhel9:v2r9" tests="1"></testsuite>`)}
+	scanner := Scanner{runner: runner}
+
+	result, err := scanner.Scan(context.Background(), req)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.HasSuffix(result.OutputPath, ".xml") {
+		t.Fatalf("JUnit output path = %q, want .xml suffix", result.OutputPath)
+	}
+	if !result.Published {
+		t.Fatal("JUnit result was not published")
+	}
+}
+
 func TestScanPreservesPreviousArtifactWhenRemoteFailsBeforeWriting(t *testing.T) {
 	dir := t.TempDir()
 	req := scanRequest(dir)
