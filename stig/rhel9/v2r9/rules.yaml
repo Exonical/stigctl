@@ -4127,25 +4127,43 @@ rules:
     title: RHEL 9 system commands must be group-owned by root or a system account.
     rule_id: SV-257919r1044979
     severity: medium
-    status: manual
-    remediation: {}
-    validation: {}
+    status: automated
+    remediation:
+      file: remediation/20-filesystem.yaml
+      step: V-257919
+    validation:
+      type: goss
+      file: validation/20-filesystem.yaml
+      resource: command
+      test: V-257919
 
   V-257921:
     title: RHEL 9 library files must be group-owned by root or a system account.
     rule_id: SV-257921r1106308
     severity: medium
-    status: manual
-    remediation: {}
-    validation: {}
+    status: automated
+    remediation:
+      file: remediation/20-filesystem.yaml
+      step: V-257921
+    validation:
+      type: goss
+      file: validation/20-filesystem.yaml
+      resource: command
+      test: V-257921
 
   V-257923:
     title: RHEL 9 library directories must be group-owned by root or a system account.
     rule_id: SV-257923r1044991
     severity: medium
-    status: manual
-    remediation: {}
-    validation: {}
+    status: automated
+    remediation:
+      file: remediation/20-filesystem.yaml
+      step: V-257923
+    validation:
+      type: goss
+      file: validation/20-filesystem.yaml
+      resource: command
+      test: V-257923
 
   V-257928:
     title: All RHEL 9 world-writable directories must be owned by root, sys, bin, or an application user.
