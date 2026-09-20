@@ -244,3 +244,21 @@ command:
       done
     exit-status: 0
     skip: {{ not (index .Vars.enabled_rules "V-257927") }}
+
+  V-257879:
+    title: "RHEL 9 local disk partitions must implement cryptographic mechanisms for information requiring at-rest protection."
+    meta:
+      stig_id: V-257879
+    exec: |
+      src="$(findmnt -n -o SOURCE / 2>/dev/null)"
+      test -n "$src" || exit 1
+      case "$src" in
+        /dev/*)
+          lsblk -s -n -o TYPE "$src" 2>/dev/null | grep -qx crypt
+          ;;
+        *)
+          exit 1
+          ;;
+      esac
+    exit-status: 0
+    skip: {{ not (index .Vars.enabled_rules "V-257879") }}
