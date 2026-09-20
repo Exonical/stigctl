@@ -74,3 +74,14 @@ command:
       test -z "$(find /etc/audit/rules.d /etc/audit/auditd.conf /etc/audit/audit.rules -type f -perm /077 -print 2>/dev/null)"
     exit-status: 0
     skip: {{ not (index .Vars.enabled_rules "V-258171") }}
+
+  V-258164:
+    title: "RHEL 9 audit system must audit local events."
+    meta: { stig_id: V-258164 }
+    exec: |
+      awk -F= '/^[[:space:]]*local_events[[:space:]]*=/{gsub(/[[:space:]]/,"",$2); value=tolower($2)} END{if (value=="") exit 1; print value}' /etc/audit/auditd.conf
+    exit-status: 0
+    stdout:
+      - "yes"
+    skip: {{ not (index .Vars.enabled_rules "V-258164") }}
+
