@@ -34,3 +34,52 @@ stages:
           else
             sed -ri 's/(^|[[:space:]])nullok([[:space:]]|$)/ /g' /etc/pam.d/system-auth /etc/pam.d/password-auth 2>/dev/null || true
           fi
+
+    - name: V-257820
+      commands:
+        - |
+          if grep -qE '^[[:space:]]*gpgcheck[[:space:]]*=' /etc/dnf/dnf.conf; then
+            sed -ri 's/^[[:space:]]*gpgcheck[[:space:]]*=.*/gpgcheck=1/' /etc/dnf/dnf.conf
+          else
+            printf '\ngpgcheck=1\n' >> /etc/dnf/dnf.conf
+          fi
+
+    - name: V-257821
+      commands:
+        - |
+          if grep -qE '^[[:space:]]*localpkg_gpgcheck[[:space:]]*=' /etc/dnf/dnf.conf; then
+            sed -ri 's/^[[:space:]]*localpkg_gpgcheck[[:space:]]*=.*/localpkg_gpgcheck=1/' /etc/dnf/dnf.conf
+          else
+            printf '\nlocalpkg_gpgcheck=1\n' >> /etc/dnf/dnf.conf
+          fi
+
+    - name: V-257822
+      commands:
+        - |
+          for repo in /etc/yum.repos.d/*.repo; do
+            test -e "$repo" || continue
+            tmp="$(mktemp)"
+            awk '
+              function finish_section() {
+                if (in_section && !saw_gpgcheck) {
+                  print "gpgcheck=1"
+                }
+              }
+              /^[[:space:]]*\[[^]]+\][[:space:]]*$/ {
+                finish_section()
+                print
+                in_section=1
+                saw_gpgcheck=0
+                next
+              }
+              /^[[:space:]]*gpgcheck[[:space:]]*=/ {
+                print "gpgcheck=1"
+                saw_gpgcheck=1
+                next
+              }
+              { print }
+              END { finish_section() }
+            ' "$repo" > "$tmp"
+            cat "$tmp" > "$repo"
+            rm -f "$tmp"
+          done
