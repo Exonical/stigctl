@@ -27,7 +27,7 @@ builds:
       - arm64
 
 archives:
-  - id: stigctl
+  - id: stigctl-archive
     ids:
       - stigctl
     formats:
@@ -40,6 +40,13 @@ archives:
       - profiles/**/*
       - schemas/**/*
       - stig/**/*
+
+  - id: stigctl-binary
+    ids:
+      - stigctl
+    formats:
+      - binary
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
 
 checksum:
   name_template: checksums.txt
