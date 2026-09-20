@@ -503,3 +503,16 @@ command:
       - "evidence="
     skip: {{ not (index .Vars.enabled_rules "V-258139") }}
 
+  V-270180:
+    title: "The RHEL 9 fapolicy module must be configured to employ a deny-all, permit-by-exception policy to allow the execution of authorized software programs."
+    meta: { stig_id: V-270180 }
+    exec: |
+      p="$(awk -F= '$1 ~ /^[[:space:]]*permissive[[:space:]]*$/{gsub(/[[:space:]]/,"",$2);print $2;exit}' /etc/fapolicyd/fapolicyd.conf 2>/dev/null)"
+      last="$(grep -RhsE '^[[:space:]]*deny(_audit|_log)?[[:space:]]+perm=any[[:space:]]+all[[:space:]]*:[[:space:]]+all[[:space:]]*$' /etc/fapolicyd/rules.d /etc/fapolicyd/compiled.rules 2>/dev/null | tail -n1)"
+      echo "evidence=permissive=${p:-missing} deny_all=${last:-missing}"
+      test "$p" = 0 && test -n "$last"
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-270180") }}
+
