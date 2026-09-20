@@ -527,8 +527,7 @@ command:
         test -d "$home" || continue
         while IFS= read -r file; do
           while IFS= read -r line; do
-            value="$(printf '%s
-' "$line" | sed -E 's/^[[:space:]]*umask[[:space:]]+0*([0-7]{2,4}).*/\1/I')"
+            value="$(printf '%s\\n' "$line" | sed -E 's/^[[:space:]]*umask[[:space:]]+0*([0-7]{2,4}).*/\1/I')"
             case "$value" in *[!0-7]*|"") bad="$user:$file:$line"; break 3;; esac
             test $((8#$value & 8#077)) -eq $((8#077)) || { bad="$user:$file:$line"; break 3; }
           done < <(grep -Ei '^[[:space:]]*umask[[:space:]]+' "$file" 2>/dev/null || true)
@@ -552,12 +551,11 @@ command:
         test -d "$home" || continue
         while IFS= read -r file; do
           while IFS= read -r line; do
-            value="$(printf '%s
-' "$line" | sed -E 's/^[[:space:]]*(export[[:space:]]+)?PATH[[:space:]]*=[[:space:]]*//; s/^"//; s/"$//')"
+            value="$(printf '%s\\n' "$line" | sed -E 's/^[[:space:]]*(export[[:space:]]+)?PATH[[:space:]]*=[[:space:]]*//; s/^"//; s/"$//')"
             IFS=: read -ra parts <<< "$value"
             for part in "${parts[@]}"; do
               case "$part" in
-                ""|'$PATH'|"${PATH}"|'$HOME'|'$HOME/'*|"${HOME}"|"${HOME}/"*|"$home"|"$home/"*|/usr/local/sbin|/usr/local/bin|/usr/sbin|/usr/bin|/sbin|/bin) ;;
+                ""|'$PATH'|'${PATH}'|'$HOME'|'$HOME/'*|'${HOME}'|'${HOME}/'*|"$home"|"$home/"*|/usr/local/sbin|/usr/local/bin|/usr/sbin|/usr/bin|/sbin|/bin) ;;
                 *) bad="$user:$file:$part"; break 4 ;;
               esac
             done
@@ -579,8 +577,7 @@ command:
       test -n "$dir"
       ctx="$(stat -c %C "$dir" 2>/dev/null || true)"
       echo "evidence=faillock_dir=$dir context=${ctx:-missing}"
-      printf '%s
-' "$ctx" | grep -q ':faillog_t:'
+      printf '%s\\n' "$ctx" | grep -q ':faillog_t:'
     exit-status: 0
     stdout:
       - "evidence="
@@ -592,8 +589,7 @@ command:
     exec: |
       value="$(opensc-tool --get-conf-entry app:default:card_drivers 2>/dev/null || true)"
       echo "evidence=card_drivers=${value:-missing}"
-      printf '%s
-' "$value" | grep -qw cac
+      printf '%s\\n' "$value" | grep -qw cac
     exit-status: 0
     stdout:
       - "evidence="
@@ -648,8 +644,7 @@ command:
       text="$(openssl x509 -text -noout -in "$file" 2>/dev/null || true)"
       echo "evidence=sssd_auth_ca_db_present=$(test -n "$text" && echo true || echo false)"
       test -n "$text"
-      printf '%s
-' "$text" | grep -Eqi 'U\.S\. Government|DoD'
+      printf '%s\\n' "$text" | grep -Eqi 'U\.S\. Government|DoD'
       openssl x509 -checkend 0 -noout -in "$file" >/dev/null 2>&1
     exit-status: 0
     stdout:
