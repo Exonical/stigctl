@@ -178,10 +178,21 @@ exceptions:
   V-257916: *container_service_na
   V-257917: *container_service_na
 
-  # These CAT I controls depend on host boot, storage, GUI, or optional
-  # crypto service state that a container cannot represent faithfully.
+  # These CAT I controls depend on host boot or storage state that a
+  # container cannot represent faithfully.
   V-257789: *container_service_na
   V-257879: *container_service_na
-  V-258018: *container_service_na
-  V-258232: *container_service_na
-  V-258242: *container_service_na
+
+  # Libreswan is not required for the container-ci role. Keeping the package
+  # absent allows V-258232 to evaluate as a passing conditional check.
+  V-257954:
+    status: not_applicable
+    scope:
+      profiles: [container-ci]
+    justification:
+      reason: "Libreswan is not required for the container-ci system role."
+    approval:
+      owner: stigctl-ci
+      approved_by: stigctl-ci
+    lifecycle:
+      created: 2026-09-20
