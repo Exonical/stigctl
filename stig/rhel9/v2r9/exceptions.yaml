@@ -275,6 +275,9 @@ exceptions:
   V-258127: *container_service_na
   V-258131: *container_service_na
   V-258132: *container_service_na
+  # fapolicyd is a host enforcement service and is not namespace-aware; a
+  # container cannot faithfully represent the host's fapolicyd enforcement boundary.
+  V-270180: *container_service_na
   V-258146: *container_service_na
   V-258147: *container_service_na
   V-258148: *container_service_na
