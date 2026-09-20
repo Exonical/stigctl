@@ -83,3 +83,22 @@ stages:
             cat "$tmp" > "$repo"
             rm -f "$tmp"
           done
+
+    - name: V-257835
+      commands:
+        - dnf -y remove tftp-server || true
+
+    - name: V-258018
+      commands:
+        - |
+          if rpm -q gdm >/dev/null 2>&1; then
+            install -d -m 0755 /etc/gdm
+            test -f /etc/gdm/custom.conf || printf '[daemon]\n' > /etc/gdm/custom.conf
+            if grep -qE '^[[:space:]]*AutomaticLoginEnable[[:space:]]*=' /etc/gdm/custom.conf; then
+              sed -ri 's/^[[:space:]]*AutomaticLoginEnable[[:space:]]*=.*/AutomaticLoginEnable=false/' /etc/gdm/custom.conf
+            else
+              sed -i '/^\[daemon\]/a AutomaticLoginEnable=false' /etc/gdm/custom.conf
+            fi
+            sed -ri '/^[[:space:]]*AutomaticLogin[[:space:]]*=/d' /etc/gdm/custom.conf
+          fi
+
