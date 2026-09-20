@@ -73,6 +73,41 @@ jobs:
           version: v2.18.2
           args: check
 
+
+  cklb-golden:
+    name: CKLB golden compatibility
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+          cache: true
+          cache-dependency-path: go.sum
+
+      - name: Download authoritative RHEL 9 V2R9 STIG
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSLo /tmp/U_RHEL_9_V2R9_STIG.zip \
+            https://dl.dod.cyber.mil/wp-content/uploads/stigs/zip/U_RHEL_9_V2R9_STIG.zip
+          echo "1875de2543d01695c5a346c51888cc336113e9199bfe6726d74a08de286ca1ae  /tmp/U_RHEL_9_V2R9_STIG.zip" \
+            | sha256sum --check -
+          mkdir -p /tmp/rhel9-v2r9
+          unzip -j /tmp/U_RHEL_9_V2R9_STIG.zip '*xccdf.xml' -d /tmp/rhel9-v2r9
+          test -f /tmp/rhel9-v2r9/U_RHEL_9_STIG_V2R9_Manual-xccdf.xml
+
+      - name: Compare generated CKLB with real STIG Viewer 3 export
+        env:
+          STIGCTL_GOLDEN_XCCDF: /tmp/rhel9-v2r9/U_RHEL_9_STIG_V2R9_Manual-xccdf.xml
+        run: |
+          go test ./internal/export/cklb \
+            -run '^TestRHEL9V2R9GoldenCKLB$' \
+            -count=1 \
+            -v
+
   rocky9-stig:
     name: Apply and validate RHEL 9 STIG on Rocky Linux 9
     runs-on: ubuntu-latest
@@ -139,6 +174,7 @@ jobs:
       - lint
       - release-config
       - rocky9-stig
+      - cklb-golden
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     permissions:
       contents: write
