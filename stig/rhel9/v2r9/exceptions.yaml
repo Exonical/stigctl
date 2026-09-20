@@ -171,3 +171,9 @@ exceptions:
   V-258008: *container_service_na
   V-258009: *container_service_na
   V-258011: *container_service_na
+
+  # Minimal CI containers do not create /var/log/messages because no host
+  # rsyslog daemon is running; validate these on real system targets.
+  V-257886: *container_service_na
+  V-257916: *container_service_na
+  V-257917: *container_service_na
