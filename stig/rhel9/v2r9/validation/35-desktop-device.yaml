@@ -269,3 +269,16 @@ command:
       - "evidence="
     skip: {{ not (index .Vars.enabled_rules "V-258040") }}
 
+  V-270174:
+    title: "RHEL 9 must display the Standard Mandatory DOD Notice and Consent Banner before granting local or remote access to the system via a graphical user logon."
+    meta: { stig_id: V-270174 }
+    exec: |
+      if ! rpm -q gdm >/dev/null 2>&1; then echo "evidence=gdm_installed=false"; exit 0; fi
+      v="$(gsettings get org.gnome.login-screen banner-message-text 2>/dev/null || true)"
+      echo "evidence=banner_text_present=$(printf '%s' "$v" | grep -Fq 'You are accessing a U.S. Government (USG) Information System (IS)' && echo true || echo false)"
+      printf '%s\n' "$v" | grep -Fq 'You are accessing a U.S. Government (USG) Information System (IS)'
+    exit-status: 0
+    stdout:
+      - "evidence="
+    skip: {{ not (index .Vars.enabled_rules "V-270174") }}
+
